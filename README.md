@@ -6,4 +6,4 @@ We start by mobilising the occurrence of species listed in:
 2. Annex I of the Birds Directive (~200 species)
 3. The Global Reptile Assessment (~10000 species)
 
-The specifications for the generation of the buckets can be found in separate files in this repository.
+The specifications for the generation of the occurence cubes can be found in separate files in this repository.
