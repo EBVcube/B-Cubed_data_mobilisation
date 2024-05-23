@@ -15,6 +15,7 @@ Meeting 02.05.2024
     * To define the starting time of the dataset ,e.g. 1990, 2000, a data exploration of the first records by decades will be performed (histograms).
 * Spatial resolution:
     * Official EEA grid at 10 km for EU27. Create mask for terrestrial and marine species. (i.e., two different cubes)
+    * Coordinate reference system EPSG: 3035
     * Exclude pixels with range uncertainty greater than the pixel size.
 * Taxonomic match: Use latest list available by ETC BE.
 
