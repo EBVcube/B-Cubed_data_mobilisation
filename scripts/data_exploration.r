@@ -22,13 +22,16 @@ sor_ag <- ag_c1 %>%
   arrange(Total_Occ, specieskey)
 
 
-# data sorting
+# data sorting based on total number of occurrences
 ag_c2 <- c1 %>%
   group_by(specieskey) %>%
   summarize(Total_Occ = sum(occurrences))
 
+# ascending data sort
 sor_plot <- ag_c2 %>%
   arrange(Total_Occ)
+
+sor_plot[2]
 
 i <- 55
 j <- 60
