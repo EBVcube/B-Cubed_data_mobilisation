@@ -62,3 +62,13 @@ class(ag_c1)
 
 myDates <- Sy.Date("2015-10")   
 str(myDate)
+
+
+# join total occurrences with species names
+tax <- read.csv(here("input/data/ias_10/List87IAS_EU_match_gbif_synonyms.csv"))
+colnames(tax)
+colnames(tax)[colnames(tax) == "key"] <- "specieskey" 
+
+xout <- merge(x=ag_c2, y=tax[,3:4], by="specieskey")
+write.csv(xout, here("output/summary_data/csv/summary_ias_total_occurrences.csv"))
+
