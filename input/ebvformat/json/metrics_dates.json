@@ -4,10 +4,10 @@
     "data": {
         "id": "667bf4166d4b9",
         "naming_authority": "The German Centre for Integrative Biodiversity Research (iDiv) Halle-Jena-Leipzig",
-        "title": "Species Occurrence Metrics of Invasive Alien Species of Union concern of the European Union at 10 Km based on GBIF records",
+        "title": "Species Occurrence Metrics Prototype of Invasive Alien Species of Union concern of the European Union at 10 Km based on GBIF records",
         "date_created": "2024-06-26",
         "date_issued": "pending",
-        "summary": "This dataset covers GBIF occurrences of species listed in the Regulation (EU) 1143/2014 on invasive alien species (IAS), which specifies the measures to be taken by Member States to control IAS (European Parliament 2014).  Initially, the list of IAS of Union concern was adopted in 2016 and has since been updated in 2017, 2019 and 2022. There are currently 88 IAS subject to strict environmental restrictions on their trade, keeping, breeding, cultivation and release into the environment. \\r\\n\\r\\nHere, we used the latest updated list of IAS from the European Topic Centre on Biodiversity and Ecosystems (ETC BE) and the European Environment Agency (EEA) available in June 2024. The currently valid scientific name was matched to the with the GBIF backbone taxonomy. Thus, we obtained the accepted GBIF scientific name and the corresponding species key for all species included in the regulation.\\r\\n\\r\\nWe created the CSV cubes of species occurrence through the GBIF API from R, and used the EEA spatial grid at 10 km. We obtained monthly occurrence data for 77 species and calculated the following metrics:\\r\\n- Earliest date of records\\r\\n- Latest date of records\\r\\n\\r\\n",
+        "summary": "This dataset covers GBIF occurrences of species listed in the Regulation (EU) 1143/2014 on invasive alien species (IAS), which specifies the measures to be taken by Member States to control IAS (European Parliament 2014).  Initially, the list of IAS of Union concern was adopted in 2016 and has since been updated in 2017, 2019 and 2022. There are currently 88 IAS subject to strict environmental restrictions on their trade, keeping, breeding, cultivation and release into the environment. \\r\\n\\r\\nHere, we used the latest updated list of IAS from the European Topic Centre on Biodiversity and Ecosystems (ETC BE) and the European Environment Agency (EEA) available in June 2024. The currently valid scientific name was matched to the with the GBIF backbone taxonomy. Thus, we obtained the accepted GBIF scientific name and the corresponding species key for all species included in the regulation.\\r\\n\\r\\nWe created the CSV cubes of species occurrence through the GBIF API from R, and used the EEA spatial grid at 10 km. We obtained monthly occurrence data for 77 species and calculated the following metrics:\\r\\n- Total number of occurrences\\r\\n- Earliest date of records\\r\\n- Latest date of records\\r\\n\\r\\n",
         "references": [
             "https://doi.org/10.15468/dl.m4694q"
         ],
@@ -41,19 +41,24 @@
         },
         "ebv_entity": {
             "ebv_entity_type": "Species",
-            "ebv_entity_scope": "88 Invasive Alien Species of union concern (EU)",
+            "ebv_entity_scope": "77 Invasive Alien Species of union concern (EU)",
             "ebv_entity_classification_name": "N/A",
             "ebv_entity_classification_url": "N/A"
         },
         "ebv_metric": {
-            "ebv_metric_1": {
-                ":standard_name": "Earliest date of records",
-                ":long_name": "abbbbbbbbbbbbbbbb",
+          "ebv_metric_1": {
+              ":standard_name": "total_occurreneces",
+              ":long_name": "Total number of occurreneces in GBIF",
+              ":units": "Number of occurrences"
+          },
+            "ebv_metric_2": {
+                ":standard_name": "earliest_date_of_records",
+                ":long_name": "Earliest date of records in GBIF",
                 ":units": "Decimal dates (YYYYMM)"
             },
-            "ebv_metric_2": {
-                ":standard_name": "Latest date of records",
-                ":long_name": "abbbbbbbbbbbbbnnnnnnnnnnnnnnn",
+            "ebv_metric_3": {
+                ":standard_name": "latest_date_of_records",
+                ":long_name": "Latest date of records in GBIF",
                 ":units": "Decimal Dates (YYYYMM)"
             }
         },
@@ -79,6 +84,6 @@
             "Marine",
             "Freshwater"
         ],
-        "comment": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\r\\npppppppppppppppppppppppppppppppppp"
+        "comment": "Of the 88 species included in the EU list of IAS of concern, we obtained data for 77 species in GBIF. There are no data in GBIF for the other species and therefore they were not included. As a remark, the records included in these occurrence cubes only correspond to the accepted scientific name, synonyms are not yet included."
     }
 }
