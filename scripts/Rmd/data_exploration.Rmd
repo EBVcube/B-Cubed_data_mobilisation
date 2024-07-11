@@ -1,0 +1,95 @@
+---
+title: <span style="color:#005857">IAS occurrence cubes<span>
+subtitle: <span style="color:#47A52A">Data exploration
+author: "**Authors**: Lina Estupinan-Suarez, Luise Quoss, <br>Emmanuel Oceguera, Miguel Fernandez"
+date: "`r Sys.Date()`"
+output:
+ html_notebook:
+    highlight: tango
+---
+<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\B3_logo_full.png" style='width: 300px; position:absolute; top:0; right:0; padding:10px;'/>
+---
+
+
+### Introduction
+In this script we explore the occurrence data of invasive alien species (IAS) of union concern (IAS) available in GBIF until June 2024.
+To do this, an IAS occurrence cube was previously created through GBIF AP using the occurrence cube generation software developed in the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) (B3) funded by
+the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). 
+Details of the data query in GBIF are available at: [doi: 10.15468/dl.x4a25s](https://www.gbif.org/occurrence/download/0081452-240506114902167). 
+The cube generation script is also part of this repository.
+
+### Load library and input data
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE)
+```
+
+```{r}
+rm(list=ls())
+gc()
+
+# load requiered libraries
+library(here)
+library(ggplot2)
+library(dplyr)
+library(lubridate);
+```
+
+After loading the requiered libraries, read the occurrence IAS cube obtained previously through GBIF.
+
+```{r}
+# load IAS occurrence cube obtained via GBIF
+cin <- read.csv(here(paste0("output/datacubes/csv/","0077925-240506114902167.csv")),  sep = "\t")
+
+# load the species taxonomy only with "accepted" scientific names in the GBIF backbone taxonomy
+tax <- read.csv(here("input/data/ias_10/taxonomy/List87IAS_EU_match_gbif_allaccepted.csv"))
+```
+
+
+### Data analysis
+
+### Calculate total number of occurrence
+```{r}
+# aggreagate occurrences at the species level 
+cag <- cin %>%
+  group_by(specieskey) %>%
+  summarize(totalOcc = sum(occurrences))
+```
+
+
+```{r}
+# rename columns for joining datasets
+colnames(tax)[colnames(tax) == "key"] <- "specieskey"
+
+# merge data set and sort in ascending order
+xout <- merge(x=cag, y=tax[,c("scientificName", "specieskey", "kingdom", "phylum", "class", "order", "family")], by="specieskey")
+xout <- xout[order(xout$totalOcc), ]
+write.csv(xout, here("output/summary_data/csv/summary_ias_totalOccurrences.csv"))
+```
+
+### Identify IAS with no records in GBIF
+```{r}
+# find what species have no records in GBIF
+noocc <- anti_join(tax, cag, by = "specieskey")
+write.csv(noocc, here("output/summary_data/csv/ias_noOccurrences.csv"))
+```
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
