@@ -1,0 +1,391 @@
+---
+title: <span style="color:#005857"> Metrics computation for <br> the IAS occurrences cube
+subtitle: <span style="color:#47A52A"> Data mobilisation from GBIF to the EBV Data Portal<span>
+author: 
+  - name: "Lina Estupinan-Suarez, Miguel Fernandez"
+    affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
+    email: lina.estupinans@idiv.de
+institute: "**Institute**: German Centre for Integrative Biodiversity Research (iDiv)"
+date: "`r Sys.Date()`"
+output:
+ html_notebook:
+    highlight: tango
+---
+<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3.png" style='width: 400px; position:absolute; top:0; right:0; padding:10px;'/>
+---
+
+
+### Introduction
+In this notebook we calculate simple metrics for the invasive alien species (IAS) of union concern in Europe.
+To do this, an IAS occurrence cube has been created previously (see Notebook 01) using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) (B3)
+Details of the data query in GBIF are available at: [doi: 10.15468/dl.x4a25s](https://www.gbif.org/occurrence/download/0081452-240506114902167). 
+Here we present five metrics: Total number of occurences, earliest date of occurrence, latest date of occurrences, basis of record of the earliest and latests date of occurrence.
+
+*Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
+
+
+### Load library and input data
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE)
+```
+We start loading all libraries needed in this notebook.
+
+```{r}
+rm(list=ls())
+gc()
+
+# load requiered libraries
+library(b3gbi) # for csv occurrence cubes
+library(purrr) # for data summary and grouping
+library(here)
+library(dplyr)
+library(lubridate) # for dates
+library(terra) # for raster
+library(ncdf4)
+library(ggplot2)
+library(sf)
+```
+
+Now we load all input data obtained in the previous notebooks. These are:
+- The occurrence IAS cube obtained previously through GBIF API.
+- Inputs related to the EEA grid at 10 km for rasterisation.
+- Taxonomic information of all analysed species.
+
+```{r}
+# load occurrence cube using b3gbi
+cin <- process_cube(here(paste0("output/datacubes/csv/","0077925-240506114902167.csv")))
+
+# import file for all IAS taxonomy using gbif backbone taxonomy
+gbif_tax <- read.csv(here("input/data/ias_10/taxonomy/List87IAS_EU_match_gbif_allaccepted.csv"))
+
+# load precomputed centroids for EEA 10 km grid
+coorin <- read.csv(here("input/grid/centroids/eeagrid_centroids_10K.csv"))
+
+# import and convert the EU borders to a data frame
+borders_eu <- st_read("C:/data/grid/eea_v_3035_100_k_adm-boundaries-eea38-plus_i_2018-2020_v01_r00/NUTS2021_3035.shp")
+
+# load reference EEA grid in raster format
+gridin <- rast(here("input/grid/eeagrid_10K.tif"))
+res <- res(gridin)[1] #resolution of reference raster
+
+# replace by corresponding column name of input dataset
+colnames(coorin)[colnames(coorin) == "eeacellcode"] <- "cellCode"
+```
+
+We now create an empty raster with three dimensions: latitute, longitude and species. In this empty raster we will map our metrics.
+
+```{r}
+# find number of species
+spskey <- unique(cin[["data"]][["taxonKey"]])
+
+# create empty raster
+r <- rast(ext(gridin), resolution=res(gridin), nlyrs=length(spskey), crs=crs(gridin))
+values(r) <- NA
+```
+
+
+### Calculate metrics
+
+#### **Metric 1**: Calculate total number of occurrences at GBIF pixelwise
+
+The function `total_occ` calculates the cumulative value of occurrences per pixel for each specie.
+```{r}
+# calculate total number of occurrences per pixel
+total_occ <- function(cin, gridin, coorin){
+    
+  # find number of species
+  spskey <- unique(cin[["data"]][["taxonKey"]])
+
+  # create empty raster
+  r <- rast(ext(gridin), resolution=res(gridin), nlyrs=length(spskey), crs=crs(gridin))
+  values(r) <- NA
+
+   for (i in 1:length(spskey)){ 
+  
+    # subset one species
+    spsi <- cin[["data"]][cin[["data"]]$taxonKey == spskey[i], ]
+
+    # sum up the total number of occurrences per cellCode
+    metricx <- spsi %>%
+      group_by(cellCode) %>%
+       summarize(total_occurrences = sum(obs), cellCode = first(cellCode))
+    
+    # merge pixel coordinates with the corresponing EEA grid ID
+    metriccoor <- merge(metricx[,c("total_occurrences", "cellCode")], coorin, by="cellCode")
+
+    # check for a few occurrences. Only 1 occurrence cannot be rasterised, and error extente when they are very few.
+    if(length(unique(metriccoor$x)) < 5){
+      #add second empty point
+      x <- metriccoor$x[1] + res
+      y <- metriccoor$y[1] + res
+      metriccoor <- rbind(metriccoor, c(NA, NA ,NA, x, y))
+    }
+  
+  # rasterize data
+  r[[i]]  <- rast(metriccoor[,c("x", "y", "total_occurrences")], type="xyz", crs=crs(gridin), extent=ext(gridin))
+    } 
+ 
+  return(r)
+}
+```
+
+The next step is to run the previous funcion and plot an example.
+
+```{r}
+total_occ_sps <- total_occ(cin, gridin, coorin)
+names(total_occ_sps) <- spskey
+```
+
+Prepare data for plotting
+```{r}
+# select one specie
+spi <- 40
+
+# conver data to a data frame
+df <- as.data.frame(total_occ_sps[[spi]], xy=TRUE)
+spid <- as.numeric(colnames(df)[3])
+colnames(df)[colnames(df) == colnames(df)[3]] <- "Value"
+
+# find the specie scientific name
+spi_name <- gbif_tax %>%
+  filter(key %in% spid)
+```
+
+```{r}
+ggplot() +
+  geom_raster(data = df, aes(x = x, y = y, fill = Value)) + # Use alpha for transparency
+  geom_sf(data = borders_eu, fill = NA, color = "gray") +
+  scale_fill_viridis_c(name="Total occurrences") + # Optional: for better color scale
+  theme_minimal() +
+  labs(
+    title = bquote("Total number of occurrences of " * italic(.(spi_name$scientificName)) * "at GBIF per pixel"),
+    x = "Latitude",
+    y = "Longitude",    
+    fill = "Total <br> occurrences")
+```
+
+#### **Metric 2 and 3**: Earliest and latest date of occurences at GBIF
+
+The following function finds the earliest and latest date of records per species at pixel level across the whole data set.
+
+```{r}
+min_max_dates <- function(cin, gridin, coorin, fxdates){
+  # find number of species
+  spskey <- unique(cin[["data"]][["taxonKey"]])
+
+  # create empty raster
+  r <- rast(ext(gridin), resolution=res(gridin), nlyrs=length(spskey), crs=crs(gridin))
+  values(r) <- NA
+  
+  # create empty dataframe for subsequent metrics
+  metricout <- data.frame()
+
+  for (i in 1:length(spskey)){  # length(spskey)
+    
+    # subset one species
+    spsi <- cin[["data"]][cin[["data"]]$taxonKey == spskey[i], ]
+
+    # add a new column for decimal dates
+    spsi$decimalDate <- format(ym(spsi$yearMonth), "%Y%m")
+    spsi$decimalDate <- as.numeric(spsi$decimalDate)
+
+    if (fxdates == "earliest dates"){
+    # find metric. In this example earliest date of record
+    metricx <- spsi %>%
+      group_by(cellCode) %>%
+      slice_min(decimalDate, with_ties = FALSE) %>%
+      ungroup()
+    metricx
+    } else if (fxdates == "latest dates") {
+    # find metric. In this example latest date of record
+    metricx <- spsi %>%
+      group_by(cellCode) %>%
+      slice_max(decimalDate, with_ties = FALSE) %>%
+      ungroup()
+    metricx
+    }
+
+    # merge pixel coordinates with the corresponing EEA grid ID
+    metriccoor <- merge(metricx[,c("decimalDate", "cellCode")], coorin, by="cellCode")
+
+    # check for a few occurrences. Only 1 occurrence cannot be rasterised, and an 'extent' error is generated when they are very few.
+    if(length(unique(metriccoor$x)) < 5){
+      #add second empty point
+      x <- metriccoor$x[1] + res
+      y <- metriccoor$y[1] + res
+      metriccoor <- rbind(metriccoor, c(NA, NA ,NA, x, y))
+    }
+
+  metricout <- rbind(metricout, metricx)
+  
+  # rasterize data
+  r[[i]]  <- rast(metriccoor[,c("x", "y", "decimalDate")], type="xyz", crs=crs(gridin), extent=ext(gridin))
+  }
+
+  results_list <- list(raster_metric = r, metrics = metricout)
+  return(results_list)
+
+}
+```
+
+In the following code chunck we compute metrics 2 and 3. Be aware that the last function argument specifies whether we calculate the earliest or latest date of record in GBIF.
+
+```{r}
+min_dates_all <- min_max_dates(cin, gridin, coorin, "earliest dates")
+max_dates_all <- min_max_dates(cin, gridin, coorin, "latest dates")
+```
+
+Note that the `min_max_dates` function returns a list. The first element of the list is a raster containing the earliest(latest) date of the records. The second element is a table that will be used in the next section to calculate metrics 4 and 5.
+```{r}
+# extract raster of earliest dates of records
+min_dates <- min_dates_all[[1]]
+names(min_dates) <- spskey
+
+# extract raster of latest dates of records
+max_dates <- max_dates_all[[1]]
+names(max_dates) <- spskey
+```
+
+Prepare data for plotting.
+
+```{r}
+# convert raster layers to data frames
+spi <- 5
+df1 <- as.data.frame(min_dates[[spi]], xy=TRUE)
+spid <- as.numeric(colnames(df1)[3])
+colnames(df1)[colnames(df1) == colnames(df1)[3]] <- "Value"
+df1[["Value"]] <- df1[["Value"]]/100 # to only show years
+
+df2 <- as.data.frame(max_dates[[spi]], xy=TRUE)
+colnames(df2)[colnames(df2) == colnames(df2)[3]] <- "Value"
+df2[["Value"]] <- df2[["Value"]]/100 # to only show years
+
+# find the specie scientific name
+spi_name <- gbif_tax %>%
+  filter(key %in% spid)
+```
+
+This code chunk is for plotting the "Earliest date of records at GBIF" of one specie. 
+```{r}
+ggplot() +
+  geom_raster(data = df1, aes(x = x, y = y, fill = Value)) + # Use alpha for transparency
+  geom_sf(data = borders_eu, fill = NA, color = "gray") +
+  scale_fill_viridis_c(name="Year") + # Optional: for better color scale
+  theme_minimal() +
+  labs(
+    title = bquote("Earliest date of records of" * italic(.(spi_name$scientificName) * "at GBIF pixelwise")),
+    x = "Latitude",
+    y = "Longitude",    
+    fill = "Year")
+```
+
+
+And the following code chunck is for plotting the "Latest date of records at GBIF" for the same specie.
+```{r}
+ggplot() +
+  geom_raster(data = df2, aes(x = x, y = y, fill = Value)) + # Use alpha for transparency
+  geom_sf(data = borders_eu, fill = NA, color = "gray") +
+  scale_fill_viridis_c(name="Year") + # Optional: for better color scale
+  theme_minimal() +
+  labs(
+    title = bquote("Latest date of records in GBIF for " * italic(.(spi_name$scientificName))),
+    x = "Latitude",
+    y = "Longitude",    
+    fill = "Year")
+```
+#### **Metrics 4 and 5:** Basis of records of the earliest and latest date of occurrenc in GBIF.
+
+First, we identify what are the unique "basis of record" of our IAS occurrence cube and add an identifier.
+```{r}
+# select unique 'basis of record' from cin
+basis_rec <- data.frame(unique((cin$data)[3]))
+basis_rec <- basis_rec[order((basis_rec$basisofrecord)),]
+```
+Now we use a data frame obtained previously when computing metric 2 and 3. Specifically, we refer to the second element of funtion `min_max_dates` that is a table with earliest and latest dates of species occurrences at GBIF.
+
+```{r}
+# extract dataframe of earliest dates of records
+min_dates_df <- min_dates_all[[2]]
+
+# add numeric identifiers based on the custom order of basisofrecord
+min_dates_df <- min_dates_df %>%
+  mutate(basisofrecordID = match(basisofrecord, basis_rec))
+
+# extract dataframe of latest dates of records
+max_dates_df <- max_dates_all[[2]]
+
+# add numeric identifiers based on the custom order of basisofrecord
+max_dates_df <- max_dates_df %>%
+  mutate(basisofrecordID = match(basisofrecord, basis_rec))
+```
+
+```{r}
+datasource_bydate <- function(df, gridin, coorin){
+# find number of species
+  spskey <- data.frame(unique(df[,"taxonKey"]))
+ 
+  # create empty raster
+  r <- rast(ext(gridin), resolution=res(gridin), nlyrs=dim(spskey)[1], crs=crs(gridin))
+  values(r) <- NA
+
+  for (i in 1:dim(spskey)[1]){
+    # subset one species
+     spsi <- df[df$taxonKey == spskey[i,], ]
+
+    # calculate the mean of the data source identifier per cellCode. It should be an integer number.
+    metricx <- spsi %>%
+      group_by(cellCode) %>%
+       summarize(basisofrecord_id = mean(basisofrecordID))
+    
+    # merge pixel coordinates with the corresponing EEA grid ID
+    metriccoor <- merge(metricx[,c("basisofrecord_id", "cellCode")], coorin, by="cellCode")
+
+    # check for a few occurrences. Only 1 occurrence cannot be rasterised, and an 'extent' error is generated when they are very few.
+    if(length(unique(metriccoor$x)) < 5){
+      #add second empty point
+      x <- metriccoor$x[1] + res
+      y <- metriccoor$y[1] + res
+      metriccoor <- rbind(metriccoor, c(NA, NA ,NA, x, y))
+    }
+  
+  # rasterize data
+  r[[i]]  <- rast(metriccoor[,c("x", "y", "basisofrecord_id")], type="xyz", crs=crs(gridin), extent=ext(gridin))
+  }
+
+  return(r)
+}
+```
+
+In the following code chunk we compute metrics 4 and 5.
+```{r}
+min_dates_datasource <- datasource_bydate(min_dates_df, gridin, coorin)
+max_dates_datasource <- datasource_bydate(max_dates_df, gridin, coorin)
+```
+
+#### Saving data sets as individual tiffs
+
+```{r}
+writeRaster(total_occ_sps, here("output/datacubes/tif_metrics/ias_total_occurrences.tif"), datatype = 'INT4U', overwrite = TRUE)
+writeRaster(min_dates, here("output/datacubes/tif_metrics/ias_earliest_date_records.tif"), datatype = 'INT4U', overwrite = TRUE)
+writeRaster(max_dates, here("output/datacubes/tif_metrics/ias_latest_date_records.tif"), datatype = 'INT4U', overwrite = TRUE)
+writeRaster(min_dates_datasource, here("output/datacubes/tif_metrics/ias_earliest_date_records_sourceofrecord.tif"), datatype = 'INT4U', overwrite = TRUE)
+writeRaster(max_dates_datasource, here("output/datacubes/tif_metrics/ias_latest_date_records_sourceofrecord.tif"), datatype = 'INT4U', overwrite = TRUE)
+```
+
+#### Prepare taxonomy for the EBV Data Portal
+Due to missing data for 10 species, we prepared a new file including only taxonomic information for our results.
+```{r}
+# filter taxonomy file for only species with data
+# import file for all IAS taxonomy and following the ebvcube format
+tax <- read.csv(here("input/data/ias_10/taxonomy/List87IAS_EU_match_gbif_synonyms_ebvcube.csv"))
+
+# subset only for species with data occurrences in GBIF
+gbif_spx <- gbif_tax %>%
+  filter(key %in% spskey)
+
+# sort the right taxonomic order for filling the EBV Data Portal requierement before saving
+gbif_spx2 <- gbif_spx[,c("kingdom", "phylum", "class", "order", "family", "genus", "species", "key")]
+
+# write.csv(gbif_spx2, here("input/data/ias_10/taxonomy/List77IAS_EU_gbif_accepted_ebvcube+key.csv"))
+```
+
