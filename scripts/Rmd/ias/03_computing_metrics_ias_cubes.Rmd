@@ -47,16 +47,17 @@ library(sf)
 ```
 
 Now we load all input data obtained in the previous notebooks. These are:
-- The occurrence IAS cube obtained previously through GBIF API.
-- Inputs related to the EEA grid at 10 km for rasterisation.
-- Taxonomic information of all analysed species.
+
+* The occurrence IAS cube obtained previously through GBIF API.
+* Inputs related to the EEA grid at 10 km for rasterisation.
+* Taxonomic information of all analysed species.
 
 ```{r}
 # load occurrence cube using b3gbi
 cin <- process_cube(here(paste0("output/datacubes/csv/","0077925-240506114902167.csv")))
 
 # import file for all IAS taxonomy using gbif backbone taxonomy
-gbif_tax <- read.csv(here("input/data/ias_10/taxonomy/List87IAS_EU_match_gbif_allaccepted.csv"))
+gbif_tax <- read.csv(here("input/data/ias/taxonomy/List87IAS_EU_match_gbif_allaccepted.csv"))
 
 # load precomputed centroids for EEA 10 km grid
 coorin <- read.csv(here("input/grid/centroids/eeagrid_centroids_10K.csv"))
@@ -139,7 +140,7 @@ names(total_occ_sps) <- spskey
 Prepare data for plotting
 ```{r}
 # select one specie
-spi <- 40
+spi <- 24
 
 # conver data to a data frame
 df <- as.data.frame(total_occ_sps[[spi]], xy=TRUE)
@@ -155,10 +156,10 @@ spi_name <- gbif_tax %>%
 ggplot() +
   geom_raster(data = df, aes(x = x, y = y, fill = Value)) + # Use alpha for transparency
   geom_sf(data = borders_eu, fill = NA, color = "gray") +
-  scale_fill_viridis_c(name="Total occurrences") + # Optional: for better color scale
+  scale_fill_binned(name="Total occurrences") + # Optional: for better color scale
   theme_minimal() +
   labs(
-    title = bquote("Total number of occurrences of " * italic(.(spi_name$scientificName)) * "at GBIF per pixel"),
+    title = bquote("Total number of occurrences of" * italic(.(spi_name$scientificName)) * "at GBIF per pixel"),
     x = "Latitude",
     y = "Longitude",    
     fill = "Total <br> occurrences")
@@ -250,7 +251,7 @@ Prepare data for plotting.
 
 ```{r}
 # convert raster layers to data frames
-spi <- 5
+spi <- 24
 df1 <- as.data.frame(min_dates[[spi]], xy=TRUE)
 spid <- as.numeric(colnames(df1)[3])
 colnames(df1)[colnames(df1) == colnames(df1)[3]] <- "Value"
@@ -270,7 +271,7 @@ This code chunk is for plotting the "Earliest date of records at GBIF" of one sp
 ggplot() +
   geom_raster(data = df1, aes(x = x, y = y, fill = Value)) + # Use alpha for transparency
   geom_sf(data = borders_eu, fill = NA, color = "gray") +
-  scale_fill_viridis_c(name="Year") + # Optional: for better color scale
+  scale_fill_binned(name="Year", type="viridis") + # Optional: for better color scale
   theme_minimal() +
   labs(
     title = bquote("Earliest date of records of" * italic(.(spi_name$scientificName) * "at GBIF pixelwise")),
@@ -285,7 +286,7 @@ And the following code chunck is for plotting the "Latest date of records at GBI
 ggplot() +
   geom_raster(data = df2, aes(x = x, y = y, fill = Value)) + # Use alpha for transparency
   geom_sf(data = borders_eu, fill = NA, color = "gray") +
-  scale_fill_viridis_c(name="Year") + # Optional: for better color scale
+  scale_fill_binned(name="Year", type="viridis") + # Optional: for better color scale
   theme_minimal() +
   labs(
     title = bquote("Latest date of records in GBIF for " * italic(.(spi_name$scientificName))),
@@ -358,18 +359,25 @@ datasource_bydate <- function(df, gridin, coorin){
 
 In the following code chunk we compute metrics 4 and 5.
 ```{r}
+# calculate metrics 4 and
 min_dates_datasource <- datasource_bydate(min_dates_df, gridin, coorin)
 max_dates_datasource <- datasource_bydate(max_dates_df, gridin, coorin)
+```
+
+```{r}
+# assign name of species key to the corresponding raster 'layer'
+names(max_dates_datasource) <- spskey
+names(min_dates_datasource) <- spskey
 ```
 
 #### Saving data sets as individual tiffs
 
 ```{r}
-writeRaster(total_occ_sps, here("output/datacubes/tif_metrics/ias_total_occurrences.tif"), datatype = 'INT4U', overwrite = TRUE)
-writeRaster(min_dates, here("output/datacubes/tif_metrics/ias_earliest_date_records.tif"), datatype = 'INT4U', overwrite = TRUE)
-writeRaster(max_dates, here("output/datacubes/tif_metrics/ias_latest_date_records.tif"), datatype = 'INT4U', overwrite = TRUE)
-writeRaster(min_dates_datasource, here("output/datacubes/tif_metrics/ias_earliest_date_records_sourceofrecord.tif"), datatype = 'INT4U', overwrite = TRUE)
-writeRaster(max_dates_datasource, here("output/datacubes/tif_metrics/ias_latest_date_records_sourceofrecord.tif"), datatype = 'INT4U', overwrite = TRUE)
+writeRaster(total_occ_sps, here("output/datacubes/tif_metrics/01_ias_total_occurrences.tif"), datatype = 'INT4U', overwrite = TRUE)
+writeRaster(min_dates, here("output/datacubes/tif_metrics/02_ias_earliest_date_records.tif"), datatype = 'INT4U', overwrite = TRUE)
+writeRaster(max_dates, here("output/datacubes/tif_metrics/03_ias_latest_date_records.tif"), datatype = 'INT4U', overwrite = TRUE)
+writeRaster(min_dates_datasource, here("output/datacubes/tif_metrics/04_ias_earliest_date_records_sourceofrecord.tif"), datatype = 'INT4U', overwrite = TRUE)
+writeRaster(max_dates_datasource, here("output/datacubes/tif_metrics/05_ias_latest_date_records_sourceofrecord.tif"), datatype = 'INT4U', overwrite = TRUE)
 ```
 
 #### Prepare taxonomy for the EBV Data Portal
@@ -377,7 +385,7 @@ Due to missing data for 10 species, we prepared a new file including only taxono
 ```{r}
 # filter taxonomy file for only species with data
 # import file for all IAS taxonomy and following the ebvcube format
-tax <- read.csv(here("input/data/ias_10/taxonomy/List87IAS_EU_match_gbif_synonyms_ebvcube.csv"))
+tax <- read.csv(here("input/data/ias/taxonomy/List87IAS_EU_match_gbif_synonyms_ebvcube.csv"))
 
 # subset only for species with data occurrences in GBIF
 gbif_spx <- gbif_tax %>%
@@ -386,6 +394,6 @@ gbif_spx <- gbif_tax %>%
 # sort the right taxonomic order for filling the EBV Data Portal requierement before saving
 gbif_spx2 <- gbif_spx[,c("kingdom", "phylum", "class", "order", "family", "genus", "species", "key")]
 
-# write.csv(gbif_spx2, here("input/data/ias_10/taxonomy/List77IAS_EU_gbif_accepted_ebvcube+key.csv"))
+# write.csv(gbif_spx2, here("input/data/ias/taxonomy/List77IAS_EU_gbif_accepted_ebvcube+key.csv"))
 ```
 

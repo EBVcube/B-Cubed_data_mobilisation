@@ -48,7 +48,7 @@ After loading the requiered libraries, we loaded the occurrence IAS cube obtaine
 cin <- read.csv(here(paste0("output/datacubes/csv/","0077925-240506114902167.csv")),  sep = "\t")
 
 # load the species taxonomy only with "accepted" scientific names in the GBIF backbone taxonomy
-tax <- read.csv(here("input/data/ias_10/taxonomy/List87IAS_EU_match_gbif_allaccepted.csv"))
+tax <- read.csv(here("input/data/ias/taxonomy/List87IAS_EU_match_gbif_allaccepted.csv"))
 ```
 
 
