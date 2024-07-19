@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2024-07-12" />
+<meta name="date" content="2024-07-19" />
 
 <title>Data mobilisation from GBIF   to the EBV Data Portal</title>
 
@@ -1838,7 +1838,7 @@ a occurrence cube of IAS</h3>
 German Centre for Integrative Biodiversity Research
 (iDiv)<br><a class="author_email" href="mailto:#"><a href="mailto:lina.estupinans@idiv.de" class="email">lina.estupinans@idiv.de</a></a>
 </address>
-<h4 class="date">2024-07-12</h4>
+<h4 class="date">2024-07-19</h4>
 
 </div>
 
@@ -1864,7 +1864,7 @@ notebooks exploring the results and calculating simple metrics are also
 available at the same repository.</em></p>
 </div>
 <div id="load-libraries" class="section level3">
-<h3>Load libraries</h3>
+<h3>Load Libraries</h3>
 <!-- rnb-text-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -1873,10 +1873,10 @@ available at the same repository.</em></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list=</span><span class="fu">ls</span>())</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgdXNlZCAoTWIpIGdjIHRyaWdnZXIgKE1iKSBtYXggdXNlZCAoTWIpXG5OY2VsbHMgNTMwMjg1IDI4LjQgICAgMTE4NjExMiA2My40ICAgNjU3OTc0IDM1LjJcblZjZWxscyA5Njc0NTkgIDcuNCAgICA4Mzg4NjA4IDY0LjAgIDE3NjgxNzggMTMuNVxuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgdXNlZCAoTWIpIGdjIHRyaWdnZXIgKE1iKSBtYXggdXNlZCAoTWIpXG5OY2VsbHMgNTMwMjg1IDI4LjQgICAgMTE4NjExMiA2My40ICAgNjU3OTc0IDM1LjJcblZjZWxscyA5Njc0ODEgIDcuNCAgICA4Mzg4NjA4IDY0LjAgIDE3NjgxNzggMTMuNVxuIn0= -->
 <pre><code>         used (Mb) gc trigger (Mb) max used (Mb)
 Ncells 530285 28.4    1186112 63.4   657974 35.2
-Vcells 967459  7.4    8388608 64.0  1768178 13.5</code></pre>
+Vcells 967481  7.4    8388608 64.0  1768178 13.5</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-source-begin eyJkYXRhIjpbIiMgbG9hZCByZXF1aWVyZWQgbGlicmFyaWVzIiwibGlicmFyeShoZXJlKSIsImxpYnJhcnkoaHR0cikiLCJsaWJyYXJ5KGh0dHIyKSIsImxpYnJhcnkoanNvbmxpdGUpIiwibGlicmFyeShiM2diaSkiXX0= -->
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># load requiered libraries</span></span>
@@ -1889,37 +1889,38 @@ Vcells 967459  7.4    8388608 64.0  1768178 13.5</code></pre>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="submitting-a-json-query" class="section level3">
-<h3>Submitting a JSON query</h3>
-<p>The JSON file containing the query specification was prepared in
-advance (see the “input/queries” folder). In this case, the cube
-specification includes the geographical extent (EU27), the spatial
-resolution (~1 km), the time period (&gt;1900), the species of interest
-(Invasive Alien Species of Union Concern (IAS), the top taxonomy and the
-data sources. We used the 1 km grid of the European Environment Agency
-as a reference.</p>
+<div id="submit-a-json-query" class="section level3">
+<h3>Submit a JSON query</h3>
+<p>The JSON file containing the query specification has been previously
+prepared (see the <code>input/queries</code> folder). In this case, the
+cube specification includes the geographical extent (EU27), the spatial
+resolution (~1 km), the time period (&gt;1900), the specieskey of the
+species of interest (invasive alien species of Union concern (IAS)), and
+we request the number of occurrences per grid cell, the higher taxonomy
+and the basis of records. We used the European Environment Agency grid
+at 1km as a reference.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgc2F2ZSBHQklGIEFQSSBhZGRyZXNzIiwiZ2JpZl91cmwgPC0gJ2h0dHA6Ly9hcGkuZ2JpZi5vcmcvdjEvb2NjdXJyZW5jZS9kb3dubG9hZC9yZXF1ZXN0LycgIiwiIiwiIyBzZXQgR0JJRiB1c2VyIG5hbWUgYW5kIHBhc3N3b3JkLiBJbiB0aGlzIGV4YW1wbGUgdGhlIGRhdGEgaXMgc2F2ZWQgaW4gYSBzZXBhcmF0ZSBmaWxlIGZvciBzZWN1cml0eSByZWFzb25zLiBGaWxsIGluIHRoZSB2YXJpYWJsZXMgd2l0aCB5b3VyIG93biBkYXRhLiIsImdiaWZfdXNlciA8LSByZWFkLmNzdihcIkM6L2dpdHJlcG8vY3JlZGVudGlhbHMudHh0XCIsIGhlYWRlciA9IEZBTFNFKTsiLCJteV91c2VybmFtZSA8LSBnYmlmX3VzZXJbMSwxXTsgIyAneW91cl91c2VybmFtZSciLCJteV9wYXNzd29yZCA8LSBnYmlmX3VzZXJbMiwxXTsgIyAneW91cl9wYXNzd29yZCciLCIiLCIjIHNldCB0aGUgbG9jYXRpb24gZm9yIHRoZSByZXN1bHRpbmcgb2NjdXJyZW5jZSBjdWJlIiwicGF0aF9vdXQgPC0gaGVyZShcIm91dHB1dC9kYXRhY3ViZXMvY3N2XCIpIiwiIiwiIyBsb2FkIHRoZSBKU09OIHdpdGggdGhlIHF1ZXJ5IHNwZWNpZmljYXRpb25zIiwicXVlcnlfaWFzIDwtIFwicXVlcnlfaWFzLmpzb25cIiJdfQ== -->
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># save GBIF API address</span></span>
+<!-- rnb-source-begin eyJkYXRhIjpbIiMgU2F2ZSBHQklGIEFQSSBhZGRyZXNzIiwiZ2JpZl91cmwgPC0gJ2h0dHA6Ly9hcGkuZ2JpZi5vcmcvdjEvb2NjdXJyZW5jZS9kb3dubG9hZC9yZXF1ZXN0LycgIiwiIiwiIyBTZXQgR0JJRiB1c2VyIG5hbWUgYW5kIHBhc3N3b3JkLiBJbiB0aGlzIGV4YW1wbGUgdGhlIGRhdGEgaXMgc2F2ZWQgaW4gYSBzZXBhcmF0ZSBmaWxlIGZvciBzZWN1cml0eSByZWFzb25zLiBGaWxsIGluIHRoZSB2YXJpYWJsZXMgd2l0aCB5b3VyIG93biBkYXRhLiIsImdiaWZfdXNlciA8LSByZWFkLmNzdihcIkM6L2dpdHJlcG8vY3JlZGVudGlhbHMudHh0XCIsIGhlYWRlciA9IEZBTFNFKTsiLCJteV91c2VybmFtZSA8LSBnYmlmX3VzZXJbMSwxXTsgIyAneW91cl91c2VybmFtZSciLCJteV9wYXNzd29yZCA8LSBnYmlmX3VzZXJbMiwxXTsgIyAneW91cl9wYXNzd29yZCciLCIiLCIjIFNldCB0aGUgbG9jYXRpb24gZm9yIHRoZSByZXN1bHRpbmcgb2NjdXJyZW5jZSBjdWJlIiwicGF0aF9vdXQgPC0gaGVyZShcIm91dHB1dC9kYXRhY3ViZXMvY3N2L2lhcy9cIikiLCIiLCIjIExvYWQgdGhlIEpTT04gd2l0aCB0aGUgcXVlcnkgc3BlY2lmaWNhdGlvbnMiLCJxdWVyeV9pYXMgPC0gXCJxdWVyeV9pYXMuanNvblwiIl19 -->
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Save GBIF API address</span></span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>gbif_url <span class="ot">&lt;-</span> <span class="st">&#39;http://api.gbif.org/v1/occurrence/download/request/&#39;</span> </span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co"># set GBIF user name and password. In this example the data is saved in a separate file for security reasons. Fill in the variables with your own data.</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co"># Set GBIF user name and password. In this example the data is saved in a separate file for security reasons. Fill in the variables with your own data.</span></span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>gbif_user <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;C:/gitrepo/credentials.txt&quot;</span>, <span class="at">header =</span> <span class="cn">FALSE</span>);</span>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>my_username <span class="ot">&lt;-</span> gbif_user[<span class="dv">1</span>,<span class="dv">1</span>]; <span class="co"># &#39;your_username&#39;</span></span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>my_password <span class="ot">&lt;-</span> gbif_user[<span class="dv">2</span>,<span class="dv">1</span>]; <span class="co"># &#39;your_password&#39;</span></span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co"># set the location for the resulting occurrence cube</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>path_out <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">&quot;output/datacubes/csv&quot;</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co"># Set the location for the resulting occurrence cube</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>path_out <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">&quot;output/datacubes/csv/ias/&quot;</span>)</span>
 <span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co"># load the JSON with the query specifications</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co"># Load the JSON with the query specifications</span></span>
 <span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>query_ias <span class="ot">&lt;-</span> <span class="st">&quot;query_ias.json&quot;</span></span></code></pre></div>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgUmVxdWVzdCBkYXRhIHVzaW5nIEdCSUYgQVBJIGFuZCB5b3VyIHNhdmVkIHF1ZXJ5IiwicmVxIDwtICByZXF1ZXN0KGdiaWZfdXJsKSB8PiBcbiAgcmVxX2F1dGhfYmFzaWModXNlcm5hbWUgPSBteV91c2VybmFtZSwgcGFzc3dvcmQgPSBteV9wYXNzd29yZCkgfD4gXG4gIHJlcV9oZWFkZXJzKFwiQ29udGVudC1UeXBlXCIgPSBcImFwcGxpY2F0aW9uL2pzb25cIikgfD4gXG4gIHJlcV9yZXRyeShtYXhfdHJpZXMgPSA1KSB8PlxuICByZXFfYm9keV9maWxlKGhlcmUocGFzdGUwKFwiaW5wdXQvcXVlcmllcy9cIiwgcXVlcnlfaWFzKSksIHR5cGUgPSBOVUxMKSIsIiIsIiMgUGVyZm9ybSB0aGUgcmVxdWVzdCBhbmQgcmV0dXJuIHRoZSByZXNwb25zZSAodGhlIHJlc3BvbnNlIGlzIGEgZG93bmxvYWQgSUQpIiwiI3Jlc3BvbnNlIDwtIHJlcSB8PiByZXFfcGVyZm9ybSgpICB8PiByZXNwX2JvZHlfc3RyaW5nKCkiLCJyZXNwb25zZSA8LSBcIjAwNzc5MjUtMjQwNTA2MTE0OTAyMTY3XCIiXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjpbIiMgUmVxdWVzdCBkYXRhIHVzaW5nIEdCSUYgQVBJIGFuZCB5b3VyIHNhdmVkIHF1ZXJ5IiwicmVxIDwtICByZXF1ZXN0KGdiaWZfdXJsKSB8PiBcbiAgcmVxX2F1dGhfYmFzaWModXNlcm5hbWUgPSBteV91c2VybmFtZSwgcGFzc3dvcmQgPSBteV9wYXNzd29yZCkgfD4gXG4gIHJlcV9oZWFkZXJzKFwiQ29udGVudC1UeXBlXCIgPSBcImFwcGxpY2F0aW9uL2pzb25cIikgfD4gXG4gIHJlcV9yZXRyeShtYXhfdHJpZXMgPSA1KSB8PlxuICByZXFfYm9keV9maWxlKGhlcmUocGFzdGUwKFwiaW5wdXQvcXVlcmllcy9cIiwgcXVlcnlfaWFzKSksIHR5cGUgPSBOVUxMKSIsIiIsIiMgUGVyZm9ybSB0aGUgcmVxdWVzdCBhbmQgcmV0dXJuIHRoZSByZXNwb25zZSAodGhlIHJlc3BvbnNlIGlzIGEgZG93bmxvYWQgSUQpIiwiIyByZXNwb25zZSA8LSByZXEgfD4gcmVxX3BlcmZvcm0oKSAgfD4gcmVzcF9ib2R5X3N0cmluZygpIiwicmVzcG9uc2UgPC0gXCIwMDc3OTI1LTI0MDUwNjExNDkwMjE2N1wiIl19 -->
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Request data using GBIF API and your saved query</span></span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>req <span class="ot">&lt;-</span>  <span class="fu">request</span>(gbif_url) <span class="sc">|&gt;</span> </span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">req_auth_basic</span>(<span class="at">username =</span> my_username, <span class="at">password =</span> my_password) <span class="sc">|&gt;</span> </span>
@@ -1928,21 +1929,21 @@ as a reference.</p>
 <span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="fu">req_body_file</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;input/queries/&quot;</span>, query_ias)), <span class="at">type =</span> <span class="cn">NULL</span>)</span>
 <span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a></span>
 <span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co"># Perform the request and return the response (the response is a download ID)</span></span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#response &lt;- req |&gt; req_perform()  |&gt; resp_body_string()</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co"># response &lt;- req |&gt; req_perform()  |&gt; resp_body_string()</span></span>
 <span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>response <span class="ot">&lt;-</span> <span class="st">&quot;0077925-240506114902167&quot;</span></span></code></pre></div>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="unpacking-the-ias-occurrence-cube-and-loading-it-into-r" class="section level3">
-<h3>Unpacking the IAS occurrence cube and loading it into R</h3>
+<div id="unpack-the-ias-occurrence-cube-and-load-it-into-r" class="section level3">
+<h3>Unpack the IAS occurrence cube and load it into R</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgZG93bmxvYWQgdGhlIGN1YmUiLCJkb3dubG9hZC5maWxlKHBhc3RlMChnYmlmX3VybCwgcmVzcG9uc2UsIFwiLnppcFwiKSwgZGVzdGZpbGU9cGFzdGUwKHBhdGhfb3V0LCByZXNwb25zZSwgXCIuemlwXCIpKSIsIiIsIiMgb3IgZG93bmxvYWQgbWFudWFsbHkgZnJvbSIsInBhc3RlMChnYmlmX3VybCwgcmVzcG9uc2UpIl19 -->
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># download the cube</span></span>
+<!-- rnb-source-begin eyJkYXRhIjpbIiMgRG93bmxvYWQgdGhlIGN1YmUiLCJkb3dubG9hZC5maWxlKHBhc3RlMChnYmlmX3VybCwgcmVzcG9uc2UsIFwiLnppcFwiKSwgZGVzdGZpbGU9cGFzdGUwKHBhdGhfb3V0LCByZXNwb25zZSwgXCIuemlwXCIpKSIsIiIsIiMgT3IgZG93bmxvYWQgbWFudWFsbHkgZnJvbSIsInBhc3RlMChnYmlmX3VybCwgcmVzcG9uc2UpIl19 -->
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Download the cube</span></span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">download.file</span>(<span class="fu">paste0</span>(gbif_url, response, <span class="st">&quot;.zip&quot;</span>), <span class="at">destfile=</span><span class="fu">paste0</span>(path_out, response, <span class="st">&quot;.zip&quot;</span>))</span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co"># or download manually from</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co"># Or download manually from</span></span>
 <span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="fu">paste0</span>(gbif_url, response)</span></code></pre></div>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiaHR0cDovL2FwaS5nYmlmLm9yZy92MS9vY2N1cnJlbmNlL2Rvd25sb2FkL3JlcXVlc3QvMDA3NzkyNS0yNDA1MDYxMTQ5MDIxNjdcIlxuIn0= -->
@@ -1951,21 +1952,21 @@ as a reference.</p>
 <!-- rnb-output-begin eyJkYXRhIjoiaHR0cDovL2FwaS5nYmlmLm9yZy92MS9vY2N1cnJlbmNlL2Rvd25sb2FkL3JlcXVlc3QvMDA3NzkyNS0yNDA1MDYxMTQ5MDIxNjdcbiJ9 -->
 <pre><code>http://api.gbif.org/v1/occurrence/download/request/0077925-240506114902167</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgdW56aXAiLCJ1bnppcChwYXN0ZTAocGF0aF9vdXQsIFwiL1wiLCByZXNwb25zZSxcIi56aXBcIiksIGV4ZGlyPXBhc3RlMChwYXRoX291dCxcIi9cIikpIl19 -->
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># unzip</span></span>
+<!-- rnb-source-begin eyJkYXRhIjpbIiMgVW56aXAiLCJ1bnppcChwYXN0ZTAocGF0aF9vdXQsIFwiL1wiLCByZXNwb25zZSxcIi56aXBcIiksIGV4ZGlyPXBhc3RlMChwYXRoX291dCxcIi9cIikpIl19 -->
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Unzip</span></span>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">unzip</span>(<span class="fu">paste0</span>(path_out, <span class="st">&quot;/&quot;</span>, response,<span class="st">&quot;.zip&quot;</span>), <span class="at">exdir=</span><span class="fu">paste0</span>(path_out,<span class="st">&quot;/&quot;</span>))</span></code></pre></div>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>The resulting occurrence cube is in a CSV data format. The number of
-species occurrence are aggregated per cell based on the (enconded)
-reference grid. There are a few ways to load the resulting occurrence
-cube. Here we show two appraoches. One is using the CSV read command and
-the other one is using the ‘b3gbi’ library.</p>
+<p>The resulting occurrence cube is in CSV format. The number of species
+occurrence is aggregated per cell based on the (coded) reference grid.
+There are several ways to load the resulting cube. Two examples are
+shown here. One is using the CSV read command and the other is using the
+<code>b3gbi</code> library.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgbG9hZCBHQklGIGRhdGEgY3ViZSB1c2luZyBhIHNpbXBsZSBDU1YgcmVhZCBmdW5jdGlvbiIsImMxIDwtIHJlYWQuY3N2KHBhc3RlMChwYXRoX291dCwgXCIvXCIsIHJlc3BvbnNlLFwiLmNzdlwiKSwgc2VwID0gXCJcXHRcIikiLCJjb2xuYW1lcyhjMSkiXX0= -->
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># load GBIF data cube using a simple CSV read function</span></span>
+<!-- rnb-source-begin eyJkYXRhIjpbIiMgTG9hZCBHQklGIGRhdGEgY3ViZSB1c2luZyBhIHNpbXBsZSBDU1YgcmVhZCBmdW5jdGlvbiIsImMxIDwtIHJlYWQuY3N2KHBhc3RlMChwYXRoX291dCwgXCIvXCIsIHJlc3BvbnNlLFwiLmNzdlwiKSwgc2VwID0gXCJcXHRcIikiLCJjb2xuYW1lcyhjMSkiXX0= -->
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Load GBIF data cube using a simple CSV read function</span></span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>c1 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">paste0</span>(path_out, <span class="st">&quot;/&quot;</span>, response,<span class="st">&quot;.csv&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="fu">colnames</span>(c1)</span></code></pre></div>
 <!-- rnb-source-end -->
@@ -1988,12 +1989,12 @@ occurrences</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Alrternatively we can use the <code>process_cube</code> function from
-the ‘b3gbi’ library.</p>
+<p>Alternatively, we can use the <code>process_cube</code> function from
+the <code>b3gbi</code> library.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgcHJlcGFyZSBjdWJlIHVzaW5nIGIzZ2JpIiwiYzIgPC0gcHJvY2Vzc19jdWJlKHBhc3RlMChwYXRoX291dCwgXCIvXCIsIHJlc3BvbnNlLFwiLmNzdlwiKSkiLCJwcmludChjMikiXX0= -->
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># prepare cube using b3gbi</span></span>
+<!-- rnb-source-begin eyJkYXRhIjpbIiMgUHJlcGFyZSBjdWJlIHVzaW5nIGIzZ2JpIiwiYzIgPC0gcHJvY2Vzc19jdWJlKHBhc3RlMChwYXRoX291dCwgXCIvXCIsIHJlc3BvbnNlLFwiLmNzdlwiKSkiLCJwcmludChjMikiXX0= -->
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Prepare cube using b3gbi</span></span>
 <span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>c2 <span class="ot">&lt;-</span> <span class="fu">process_cube</span>(<span class="fu">paste0</span>(path_out, <span class="st">&quot;/&quot;</span>, response,<span class="st">&quot;.csv&quot;</span>))</span>
 <span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="fu">print</span>(c2)</span></code></pre></div>
 <!-- rnb-source-end -->
@@ -2039,7 +2040,7 @@ First 10 rows of data (use n = to show more):
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogPHNwYW4gc3R5bGU9ImNvbG9yOiMwMDU4NTciPkRhdGEgbW9iaWxpc2F0aW9uIGZyb20gR0JJRiA8YnI+IHRvIHRoZSBFQlYgRGF0YSBQb3J0YWw8c3Bhbj4NCnN1YnRpdGxlOiA8c3BhbiBzdHlsZT0iY29sb3I6IzQ3QTUyQSI+IFByb3RvdHlwZSBmb3IgY3JlYXRpbmcgYSBvY2N1cnJlbmNlIGN1YmUgb2YgSUFTDQphdXRob3I6IA0KICAtIG5hbWU6ICJMaW5hIEVzdHVwaW5hbi1TdWFyZXosIE1pZ3VlbCBGZXJuYW5kZXoiDQogICAgYWZmaWxpYXRpb246ICJHZXJtYW4gQ2VudHJlIGZvciBJbnRlZ3JhdGl2ZSBCaW9kaXZlcnNpdHkgUmVzZWFyY2ggKGlEaXYpIg0KICAgIGVtYWlsOiBsaW5hLmVzdHVwaW5hbnNAaWRpdi5kZQ0KaW5zdGl0dXRlOiAiKipJbnN0aXR1dGUqKjogR2VybWFuIENlbnRyZSBmb3IgSW50ZWdyYXRpdmUgQmlvZGl2ZXJzaXR5IFJlc2VhcmNoIChpRGl2KSINCmRhdGU6ICJgciBTeXMuRGF0ZSgpYCINCm91dHB1dDoNCiBodG1sX25vdGVib29rOg0KICAgIGhpZ2hsaWdodDogdGFuZ28NCi0tLQ0KPCEtLSA8aW1nIHNyYz0iQzpcZ2l0cmVwb1xCLUN1YmVkX2RhdGFfbW9iaWxpemF0aW9uXGlucHV0XGxvZ29zXEIzX2xvZ29fZnVsbC5wbmciIHN0eWxlPSd3aWR0aDogMjAwcHg7IHBvc2l0aW9uOmFic29sdXRlOyB0b3A6MDsgcmlnaHQ6MDsgcGFkZGluZzoxMHB4OycvPiAtLT4NCjxpbWcgc3JjPSJDOlxnaXRyZXBvXEItQ3ViZWRfZGF0YV9tb2JpbGl6YXRpb25caW5wdXRcbG9nb3NcaWRpditiMy5wbmciIHN0eWxlPSd3aWR0aDogNDAwcHg7IHBvc2l0aW9uOmFic29sdXRlOyB0b3A6MDsgcmlnaHQ6MDsgcGFkZGluZzoxMHB4OycvPg0KLS0tDQoNCg0KIyMjIEludHJvZHVjdGlvbg0KSW4gdGhpcyBub3RlYm9vayB3ZSBjcmVhdGUgYSBjdWJlIG9mIG9jY3VycmVuY2Ugb2YgaW52YXNpdmUgYWxpZW4gc3BlY2llcyAoSUFTKSBvZiB1bmlvbiBjb25jZXJuIChJQVMpIGJhc2VkIG9uIGFsbCBzcGVjaWVzIHJlY29yZHMgYXZhaWxhYmxlIGluIEdCSUYgdW50aWwgSnVuZSAyMDI0Lg0KVG8gZG8gdGhpcywgd2Ugc2VudCBhIHJlcXVlc3Qgd2l0aCB0aGUgY3ViZSBzcGVjaWZpY2F0aW9ucyAoSlNPTiBmaWxlKSB2aWEgdGhlIEdCSUYgQVBJLiBXZSB1c2VkIHRoZSBvY2N1cnJlbmNlIGN1YmUgZ2VuZXJhdGlvbiBzb2Z0d2FyZSBkZXZlbG9wZWQgaW4gdGhlIFtCaW9kaXZlcnNpdHkgQnVpbGRpbmcgQmxvY2tzIGZvciBwb2xpY3kgcHJvamVjdF0oaHR0cHM6Ly9iLWN1YmVkLmV1LykuDQpEZXRhaWxzIG9mIHRoZSBHQklGIGRhdGEgcXVlcnkgYXJlIGF2YWlsYWJsZSBhdDogW2RvaTogMTAuMTU0NjgvZGwueDRhMjVzXShodHRwczovL3d3dy5nYmlmLm9yZy9vY2N1cnJlbmNlL2Rvd25sb2FkLzAwODE0NTItMjQwNTA2MTE0OTAyMTY3KS4gDQoNCipOb3RlOiBUaGlzIHNlcmllcyBvZiBub3RlYm9va3MgaXMgcGFydCBvZiB0aGUgcmVzdWx0cyBvZiB0aGUgVGFzayAzLjMgb2YgdGhlIFtCaW9kaXZlcnNpdHkgQnVpbGRpbmcgQmxvY2tzIGZvciBwb2xpY3kgcHJvamVjdF0oaHR0cHM6Ly9iLWN1YmVkLmV1LykgZnVuZGVkIGJ5IHRoZSBFdXJvcGVhbiBVbmlvbuKAmXMgSG9yaXpvbiBFdXJvcGUgUmVzZWFyY2ggYW5kIElubm92YXRpb24gUHJvZ3JhbW1lIChJRCBObyAxMDEwNTk1OTIpLiBBZGRpdGlvbmFsIG5vdGVib29rcyBleHBsb3JpbmcgdGhlIHJlc3VsdHMgYW5kIGNhbGN1bGF0aW5nIHNpbXBsZSBtZXRyaWNzIGFyZSBhbHNvIGF2YWlsYWJsZSBhdCB0aGUgc2FtZSByZXBvc2l0b3J5LioNCg0KIyMjIExvYWQgbGlicmFyaWVzDQpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRX0NCmtuaXRyOjpvcHRzX2NodW5rJHNldChtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFKQ0KYGBgDQoNCmBgYHtyfQ0Kcm0obGlzdD1scygpKQ0KZ2MoKQ0KDQojIGxvYWQgcmVxdWllcmVkIGxpYnJhcmllcw0KbGlicmFyeShoZXJlKQ0KbGlicmFyeShodHRyKQ0KbGlicmFyeShodHRyMikNCmxpYnJhcnkoanNvbmxpdGUpDQpsaWJyYXJ5KGIzZ2JpKQ0KYGBgDQoNCiMjIyBTdWJtaXR0aW5nIGEgSlNPTiBxdWVyeQ0KVGhlIEpTT04gZmlsZSBjb250YWluaW5nIHRoZSBxdWVyeSBzcGVjaWZpY2F0aW9uIHdhcyBwcmVwYXJlZCBpbiBhZHZhbmNlIChzZWUgdGhlICJpbnB1dC9xdWVyaWVzIiBmb2xkZXIpLiBJbiB0aGlzIGNhc2UsIHRoZSBjdWJlIHNwZWNpZmljYXRpb24gaW5jbHVkZXMgdGhlIGdlb2dyYXBoaWNhbCBleHRlbnQgKEVVMjcpLCB0aGUgc3BhdGlhbCByZXNvbHV0aW9uICh+MSBrbSksIHRoZSB0aW1lIHBlcmlvZCAoPjE5MDApLCB0aGUgc3BlY2llcyBvZiBpbnRlcmVzdCAoSW52YXNpdmUgQWxpZW4gU3BlY2llcyBvZiBVbmlvbiBDb25jZXJuIChJQVMpLCB0aGUgdG9wIHRheG9ub215IGFuZCB0aGUgZGF0YSBzb3VyY2VzLiBXZSB1c2VkIHRoZSAxIGttIGdyaWQgb2YgdGhlIEV1cm9wZWFuIEVudmlyb25tZW50IEFnZW5jeSBhcyBhIHJlZmVyZW5jZS4NCg0KYGBge3J9DQojIHNhdmUgR0JJRiBBUEkgYWRkcmVzcw0KZ2JpZl91cmwgPC0gJ2h0dHA6Ly9hcGkuZ2JpZi5vcmcvdjEvb2NjdXJyZW5jZS9kb3dubG9hZC9yZXF1ZXN0LycgDQoNCiMgc2V0IEdCSUYgdXNlciBuYW1lIGFuZCBwYXNzd29yZC4gSW4gdGhpcyBleGFtcGxlIHRoZSBkYXRhIGlzIHNhdmVkIGluIGEgc2VwYXJhdGUgZmlsZSBmb3Igc2VjdXJpdHkgcmVhc29ucy4gRmlsbCBpbiB0aGUgdmFyaWFibGVzIHdpdGggeW91ciBvd24gZGF0YS4NCmdiaWZfdXNlciA8LSByZWFkLmNzdigiQzovZ2l0cmVwby9jcmVkZW50aWFscy50eHQiLCBoZWFkZXIgPSBGQUxTRSk7DQpteV91c2VybmFtZSA8LSBnYmlmX3VzZXJbMSwxXTsgIyAneW91cl91c2VybmFtZScNCm15X3Bhc3N3b3JkIDwtIGdiaWZfdXNlclsyLDFdOyAjICd5b3VyX3Bhc3N3b3JkJw0KDQojIHNldCB0aGUgbG9jYXRpb24gZm9yIHRoZSByZXN1bHRpbmcgb2NjdXJyZW5jZSBjdWJlDQpwYXRoX291dCA8LSBoZXJlKCJvdXRwdXQvZGF0YWN1YmVzL2NzdiIpDQoNCiMgbG9hZCB0aGUgSlNPTiB3aXRoIHRoZSBxdWVyeSBzcGVjaWZpY2F0aW9ucw0KcXVlcnlfaWFzIDwtICJxdWVyeV9pYXMuanNvbiINCmBgYA0KDQoNCmBgYHtyfQ0KIyBSZXF1ZXN0IGRhdGEgdXNpbmcgR0JJRiBBUEkgYW5kIHlvdXIgc2F2ZWQgcXVlcnkNCnJlcSA8LSAgcmVxdWVzdChnYmlmX3VybCkgfD4gDQogIHJlcV9hdXRoX2Jhc2ljKHVzZXJuYW1lID0gbXlfdXNlcm5hbWUsIHBhc3N3b3JkID0gbXlfcGFzc3dvcmQpIHw+IA0KICByZXFfaGVhZGVycygiQ29udGVudC1UeXBlIiA9ICJhcHBsaWNhdGlvbi9qc29uIikgfD4gDQogIHJlcV9yZXRyeShtYXhfdHJpZXMgPSA1KSB8Pg0KICByZXFfYm9keV9maWxlKGhlcmUocGFzdGUwKCJpbnB1dC9xdWVyaWVzLyIsIHF1ZXJ5X2lhcykpLCB0eXBlID0gTlVMTCkNCg0KIyBQZXJmb3JtIHRoZSByZXF1ZXN0IGFuZCByZXR1cm4gdGhlIHJlc3BvbnNlICh0aGUgcmVzcG9uc2UgaXMgYSBkb3dubG9hZCBJRCkNCiNyZXNwb25zZSA8LSByZXEgfD4gcmVxX3BlcmZvcm0oKSAgfD4gcmVzcF9ib2R5X3N0cmluZygpDQpyZXNwb25zZSA8LSAiMDA3NzkyNS0yNDA1MDYxMTQ5MDIxNjciDQpgYGANCg0KIyMjIFVucGFja2luZyB0aGUgSUFTIG9jY3VycmVuY2UgY3ViZSBhbmQgbG9hZGluZyBpdCBpbnRvIFINCg0KYGBge3J9DQojIGRvd25sb2FkIHRoZSBjdWJlDQpkb3dubG9hZC5maWxlKHBhc3RlMChnYmlmX3VybCwgcmVzcG9uc2UsICIuemlwIiksIGRlc3RmaWxlPXBhc3RlMChwYXRoX291dCwgcmVzcG9uc2UsICIuemlwIikpDQoNCiMgb3IgZG93bmxvYWQgbWFudWFsbHkgZnJvbQ0KcGFzdGUwKGdiaWZfdXJsLCByZXNwb25zZSkNCg0KIyB1bnppcA0KdW56aXAocGFzdGUwKHBhdGhfb3V0LCAiLyIsIHJlc3BvbnNlLCIuemlwIiksIGV4ZGlyPXBhc3RlMChwYXRoX291dCwiLyIpKQ0KYGBgDQoNClRoZSByZXN1bHRpbmcgb2NjdXJyZW5jZSBjdWJlIGlzIGluIGEgQ1NWIGRhdGEgZm9ybWF0LiBUaGUgbnVtYmVyIG9mIHNwZWNpZXMgb2NjdXJyZW5jZSBhcmUgYWdncmVnYXRlZCBwZXIgY2VsbCBiYXNlZCBvbiB0aGUgKGVuY29uZGVkKSByZWZlcmVuY2UgZ3JpZC4gVGhlcmUgYXJlIGEgZmV3IHdheXMgdG8gbG9hZCB0aGUgcmVzdWx0aW5nIG9jY3VycmVuY2UgY3ViZS4gSGVyZSB3ZSBzaG93IHR3byBhcHByYW9jaGVzLiBPbmUgaXMgdXNpbmcgdGhlIENTViByZWFkIGNvbW1hbmQgYW5kIHRoZSBvdGhlciBvbmUgaXMgdXNpbmcgdGhlICdiM2diaScgbGlicmFyeS4NCg0KYGBge3J9DQojIGxvYWQgR0JJRiBkYXRhIGN1YmUgdXNpbmcgYSBzaW1wbGUgQ1NWIHJlYWQgZnVuY3Rpb24NCmMxIDwtIHJlYWQuY3N2KHBhc3RlMChwYXRoX291dCwgIi8iLCByZXNwb25zZSwiLmNzdiIpLCBzZXAgPSAiXHQiKQ0KY29sbmFtZXMoYzEpDQpgYGANCkFscnRlcm5hdGl2ZWx5IHdlIGNhbiB1c2UgdGhlICBgYGBwcm9jZXNzX2N1YmVgYGAgIGZ1bmN0aW9uIGZyb20gdGhlICdiM2diaScgbGlicmFyeS4NCg0KYGBge3J9DQojIHByZXBhcmUgY3ViZSB1c2luZyBiM2diaQ0KYzIgPC0gcHJvY2Vzc19jdWJlKHBhc3RlMChwYXRoX291dCwgIi8iLCByZXNwb25zZSwiLmNzdiIpKQ0KcHJpbnQoYzIpDQpgYGANCg0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogPHNwYW4gc3R5bGU9ImNvbG9yOiMwMDU4NTciPkRhdGEgbW9iaWxpc2F0aW9uIGZyb20gR0JJRiA8YnI+IHRvIHRoZSBFQlYgRGF0YSBQb3J0YWw8c3Bhbj4NCnN1YnRpdGxlOiA8c3BhbiBzdHlsZT0iY29sb3I6IzQ3QTUyQSI+IFByb3RvdHlwZSBmb3IgY3JlYXRpbmcgYSBvY2N1cnJlbmNlIGN1YmUgb2YgSUFTDQphdXRob3I6IA0KICAtIG5hbWU6ICJMaW5hIEVzdHVwaW5hbi1TdWFyZXosIE1pZ3VlbCBGZXJuYW5kZXoiDQogICAgYWZmaWxpYXRpb246ICJHZXJtYW4gQ2VudHJlIGZvciBJbnRlZ3JhdGl2ZSBCaW9kaXZlcnNpdHkgUmVzZWFyY2ggKGlEaXYpIg0KICAgIGVtYWlsOiBsaW5hLmVzdHVwaW5hbnNAaWRpdi5kZQ0KaW5zdGl0dXRlOiAiKipJbnN0aXR1dGUqKjogR2VybWFuIENlbnRyZSBmb3IgSW50ZWdyYXRpdmUgQmlvZGl2ZXJzaXR5IFJlc2VhcmNoIChpRGl2KSINCmRhdGU6ICJgciBTeXMuRGF0ZSgpYCINCm91dHB1dDoNCiBodG1sX25vdGVib29rOg0KICAgIGhpZ2hsaWdodDogdGFuZ28NCi0tLQ0KPCEtLSA8aW1nIHNyYz0iQzpcZ2l0cmVwb1xCLUN1YmVkX2RhdGFfbW9iaWxpemF0aW9uXGlucHV0XGxvZ29zXEIzX2xvZ29fZnVsbC5wbmciIHN0eWxlPSd3aWR0aDogMjAwcHg7IHBvc2l0aW9uOmFic29sdXRlOyB0b3A6MDsgcmlnaHQ6MDsgcGFkZGluZzoxMHB4OycvPiAtLT4NCjxpbWcgc3JjPSJDOlxnaXRyZXBvXEItQ3ViZWRfZGF0YV9tb2JpbGl6YXRpb25caW5wdXRcbG9nb3NcaWRpditiMy5wbmciIHN0eWxlPSd3aWR0aDogNDAwcHg7IHBvc2l0aW9uOmFic29sdXRlOyB0b3A6MDsgcmlnaHQ6MDsgcGFkZGluZzoxMHB4OycvPg0KLS0tDQoNCg0KIyMjIEludHJvZHVjdGlvbg0KSW4gdGhpcyBub3RlYm9vayB3ZSBjcmVhdGUgYSBjdWJlIG9mIG9jY3VycmVuY2Ugb2YgaW52YXNpdmUgYWxpZW4gc3BlY2llcyAoSUFTKSBvZiB1bmlvbiBjb25jZXJuIChJQVMpIGJhc2VkIG9uIGFsbCBzcGVjaWVzIHJlY29yZHMgYXZhaWxhYmxlIGluIEdCSUYgdW50aWwgSnVuZSAyMDI0Lg0KVG8gZG8gdGhpcywgd2Ugc2VudCBhIHJlcXVlc3Qgd2l0aCB0aGUgY3ViZSBzcGVjaWZpY2F0aW9ucyAoSlNPTiBmaWxlKSB2aWEgdGhlIEdCSUYgQVBJLiBXZSB1c2VkIHRoZSBvY2N1cnJlbmNlIGN1YmUgZ2VuZXJhdGlvbiBzb2Z0d2FyZSBkZXZlbG9wZWQgaW4gdGhlIFtCaW9kaXZlcnNpdHkgQnVpbGRpbmcgQmxvY2tzIGZvciBwb2xpY3kgcHJvamVjdF0oaHR0cHM6Ly9iLWN1YmVkLmV1LykuDQpEZXRhaWxzIG9mIHRoZSBHQklGIGRhdGEgcXVlcnkgYXJlIGF2YWlsYWJsZSBhdDogW2RvaTogMTAuMTU0NjgvZGwueDRhMjVzXShodHRwczovL3d3dy5nYmlmLm9yZy9vY2N1cnJlbmNlL2Rvd25sb2FkLzAwODE0NTItMjQwNTA2MTE0OTAyMTY3KS4gDQoNCipOb3RlOiBUaGlzIHNlcmllcyBvZiBub3RlYm9va3MgaXMgcGFydCBvZiB0aGUgcmVzdWx0cyBvZiB0aGUgVGFzayAzLjMgb2YgdGhlIFtCaW9kaXZlcnNpdHkgQnVpbGRpbmcgQmxvY2tzIGZvciBwb2xpY3kgcHJvamVjdF0oaHR0cHM6Ly9iLWN1YmVkLmV1LykgZnVuZGVkIGJ5IHRoZSBFdXJvcGVhbiBVbmlvbuKAmXMgSG9yaXpvbiBFdXJvcGUgUmVzZWFyY2ggYW5kIElubm92YXRpb24gUHJvZ3JhbW1lIChJRCBObyAxMDEwNTk1OTIpLiBBZGRpdGlvbmFsIG5vdGVib29rcyBleHBsb3JpbmcgdGhlIHJlc3VsdHMgYW5kIGNhbGN1bGF0aW5nIHNpbXBsZSBtZXRyaWNzIGFyZSBhbHNvIGF2YWlsYWJsZSBhdCB0aGUgc2FtZSByZXBvc2l0b3J5LioNCg0KIyMjIExvYWQgTGlicmFyaWVzDQpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRX0NCmtuaXRyOjpvcHRzX2NodW5rJHNldChtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFKQ0KYGBgDQoNCmBgYHtyfQ0Kcm0obGlzdD1scygpKQ0KZ2MoKQ0KDQojIGxvYWQgcmVxdWllcmVkIGxpYnJhcmllcw0KbGlicmFyeShoZXJlKQ0KbGlicmFyeShodHRyKQ0KbGlicmFyeShodHRyMikNCmxpYnJhcnkoanNvbmxpdGUpDQpsaWJyYXJ5KGIzZ2JpKQ0KYGBgDQoNCiMjIyBTdWJtaXQgYSBKU09OIHF1ZXJ5DQpUaGUgSlNPTiBmaWxlIGNvbnRhaW5pbmcgdGhlIHF1ZXJ5IHNwZWNpZmljYXRpb24gaGFzIGJlZW4gcHJldmlvdXNseSBwcmVwYXJlZCAoc2VlIHRoZSBgaW5wdXQvcXVlcmllc2AgZm9sZGVyKS4gSW4gdGhpcyBjYXNlLCB0aGUgY3ViZSBzcGVjaWZpY2F0aW9uIGluY2x1ZGVzIHRoZSBnZW9ncmFwaGljYWwgZXh0ZW50IChFVTI3KSwgdGhlIHNwYXRpYWwgcmVzb2x1dGlvbiAofjEga20pLCB0aGUgdGltZSBwZXJpb2QgKD4xOTAwKSwgdGhlIHNwZWNpZXNrZXkgb2YgdGhlIHNwZWNpZXMgb2YgaW50ZXJlc3QgKGludmFzaXZlIGFsaWVuIHNwZWNpZXMgb2YgVW5pb24gY29uY2VybiAoSUFTKSksIGFuZCB3ZSByZXF1ZXN0IHRoZSBudW1iZXIgb2Ygb2NjdXJyZW5jZXMgcGVyIGdyaWQgY2VsbCwgdGhlIGhpZ2hlciB0YXhvbm9teSBhbmQgdGhlIGJhc2lzIG9mIHJlY29yZHMuIFdlIHVzZWQgdGhlIEV1cm9wZWFuIEVudmlyb25tZW50IEFnZW5jeSBncmlkIGF0IDFrbSBhcyBhIHJlZmVyZW5jZS4NCg0KYGBge3J9DQojIFNhdmUgR0JJRiBBUEkgYWRkcmVzcw0KZ2JpZl91cmwgPC0gJ2h0dHA6Ly9hcGkuZ2JpZi5vcmcvdjEvb2NjdXJyZW5jZS9kb3dubG9hZC9yZXF1ZXN0LycgDQoNCiMgU2V0IEdCSUYgdXNlciBuYW1lIGFuZCBwYXNzd29yZC4gSW4gdGhpcyBleGFtcGxlIHRoZSBkYXRhIGlzIHNhdmVkIGluIGEgc2VwYXJhdGUgZmlsZSBmb3Igc2VjdXJpdHkgcmVhc29ucy4gRmlsbCBpbiB0aGUgdmFyaWFibGVzIHdpdGggeW91ciBvd24gZGF0YS4NCmdiaWZfdXNlciA8LSByZWFkLmNzdigiQzovZ2l0cmVwby9jcmVkZW50aWFscy50eHQiLCBoZWFkZXIgPSBGQUxTRSk7DQpteV91c2VybmFtZSA8LSBnYmlmX3VzZXJbMSwxXTsgIyAneW91cl91c2VybmFtZScNCm15X3Bhc3N3b3JkIDwtIGdiaWZfdXNlclsyLDFdOyAjICd5b3VyX3Bhc3N3b3JkJw0KDQojIFNldCB0aGUgbG9jYXRpb24gZm9yIHRoZSByZXN1bHRpbmcgb2NjdXJyZW5jZSBjdWJlDQpwYXRoX291dCA8LSBoZXJlKCJvdXRwdXQvZGF0YWN1YmVzL2Nzdi9pYXMvIikNCg0KIyBMb2FkIHRoZSBKU09OIHdpdGggdGhlIHF1ZXJ5IHNwZWNpZmljYXRpb25zDQpxdWVyeV9pYXMgPC0gInF1ZXJ5X2lhcy5qc29uIg0KYGBgDQoNCg0KYGBge3J9DQojIFJlcXVlc3QgZGF0YSB1c2luZyBHQklGIEFQSSBhbmQgeW91ciBzYXZlZCBxdWVyeQ0KcmVxIDwtICByZXF1ZXN0KGdiaWZfdXJsKSB8PiANCiAgcmVxX2F1dGhfYmFzaWModXNlcm5hbWUgPSBteV91c2VybmFtZSwgcGFzc3dvcmQgPSBteV9wYXNzd29yZCkgfD4gDQogIHJlcV9oZWFkZXJzKCJDb250ZW50LVR5cGUiID0gImFwcGxpY2F0aW9uL2pzb24iKSB8PiANCiAgcmVxX3JldHJ5KG1heF90cmllcyA9IDUpIHw+DQogIHJlcV9ib2R5X2ZpbGUoaGVyZShwYXN0ZTAoImlucHV0L3F1ZXJpZXMvIiwgcXVlcnlfaWFzKSksIHR5cGUgPSBOVUxMKQ0KDQojIFBlcmZvcm0gdGhlIHJlcXVlc3QgYW5kIHJldHVybiB0aGUgcmVzcG9uc2UgKHRoZSByZXNwb25zZSBpcyBhIGRvd25sb2FkIElEKQ0KIyByZXNwb25zZSA8LSByZXEgfD4gcmVxX3BlcmZvcm0oKSAgfD4gcmVzcF9ib2R5X3N0cmluZygpDQpyZXNwb25zZSA8LSAiMDA3NzkyNS0yNDA1MDYxMTQ5MDIxNjciDQpgYGANCg0KIyMjIFVucGFjayB0aGUgSUFTIG9jY3VycmVuY2UgY3ViZSBhbmQgbG9hZCBpdCBpbnRvIFINCg0KYGBge3J9DQojIERvd25sb2FkIHRoZSBjdWJlDQpkb3dubG9hZC5maWxlKHBhc3RlMChnYmlmX3VybCwgcmVzcG9uc2UsICIuemlwIiksIGRlc3RmaWxlPXBhc3RlMChwYXRoX291dCwgcmVzcG9uc2UsICIuemlwIikpDQoNCiMgT3IgZG93bmxvYWQgbWFudWFsbHkgZnJvbQ0KcGFzdGUwKGdiaWZfdXJsLCByZXNwb25zZSkNCg0KIyBVbnppcA0KdW56aXAocGFzdGUwKHBhdGhfb3V0LCAiLyIsIHJlc3BvbnNlLCIuemlwIiksIGV4ZGlyPXBhc3RlMChwYXRoX291dCwiLyIpKQ0KYGBgDQoNClRoZSByZXN1bHRpbmcgb2NjdXJyZW5jZSBjdWJlIGlzIGluIENTViBmb3JtYXQuIFRoZSBudW1iZXIgb2Ygc3BlY2llcyBvY2N1cnJlbmNlIGlzIGFnZ3JlZ2F0ZWQgcGVyIGNlbGwgYmFzZWQgb24gdGhlIChjb2RlZCkgcmVmZXJlbmNlIGdyaWQuIFRoZXJlIGFyZSBzZXZlcmFsIHdheXMgdG8gbG9hZCB0aGUgcmVzdWx0aW5nIGN1YmUuIFR3byBleGFtcGxlcyBhcmUgc2hvd24gaGVyZS4gT25lIGlzIHVzaW5nIHRoZSBDU1YgcmVhZCBjb21tYW5kIGFuZCB0aGUgb3RoZXIgaXMgdXNpbmcgdGhlIGBiM2diaWAgbGlicmFyeS4NCg0KYGBge3J9DQojIExvYWQgR0JJRiBkYXRhIGN1YmUgdXNpbmcgYSBzaW1wbGUgQ1NWIHJlYWQgZnVuY3Rpb24NCmMxIDwtIHJlYWQuY3N2KHBhc3RlMChwYXRoX291dCwgIi8iLCByZXNwb25zZSwiLmNzdiIpLCBzZXAgPSAiXHQiKQ0KY29sbmFtZXMoYzEpDQpgYGANCkFsdGVybmF0aXZlbHksIHdlIGNhbiB1c2UgdGhlIGBwcm9jZXNzX2N1YmVgIGZ1bmN0aW9uIGZyb20gdGhlIGBiM2diaWAgbGlicmFyeS4NCg0KYGBge3J9DQojIFByZXBhcmUgY3ViZSB1c2luZyBiM2diaQ0KYzIgPC0gcHJvY2Vzc19jdWJlKHBhc3RlMChwYXRoX291dCwgIi8iLCByZXNwb25zZSwiLmNzdiIpKQ0KcHJpbnQoYzIpDQpgYGANCg0K</div>
 
 
 

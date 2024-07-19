@@ -22,7 +22,7 @@ The subsequent notebooks focus on the generation of species cubes, the calculati
 
 *Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
 
-### Load libraries
+### Load Libraries
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(message=FALSE, warning=FALSE)
 ```
@@ -31,7 +31,7 @@ knitr::opts_chunk$set(message=FALSE, warning=FALSE)
 rm(list=ls())
 gc()
 
-# load requiered libraries
+# Load requiered libraries
 library(here)
 library(sf)
 library(terra)
@@ -39,43 +39,43 @@ library(dplyr)
 ```
 
 ### Load EEA vector grid
-The European Union's grids are available at differente spatial scales in a vector format. EEA vector grids can be downloaded at the Data Hub [website](https://sdi.eea.europa.eu/catalogue/srv/eng/catalog.search#/metadata/e834751f-19d1-4842-823d-e90e600c5993). We start loading the EEA vector grid in the desire spatail resolution. For this purpose we used the 10 km grid.
+European Union grids are available at different spatial scales in vector format. The EEA vector grids can be downloaded from the Data Hub [website](https://sdi.eea.europa.eu/catalogue/srv/eng/catalog.search#/metadata/e834751f-19d1-4842-823d-e90e600c5993). We start by loading the EEA vector grid at the desired spatial resolution. For this, we use the 10 km grid.
 
 ```{r}
-# load EEE grid vector file
+# Load EEE grid vector file
 resx <- "10K" # "10K" or "100K" # define the spatial resolution of the vector file
 gridin <- st_read("C:/data/grid/eea_v_3035_10_km_eea-ref-grid-europe_p_2011_v01_r00/Grid_ETRS89-LAEA_10K.shp")
 ```
 
-Now, we rasterise the EEA vector grid and save it as a tif file. This will be later used as a grid reference for rasterisation in consequtive notebooks.
+We then rasterise the EEA vector grid and save it as a tif file. This file will later be used as a grid reference for rasterisation of the metrics.
 
 ```{r}
-# calculate the number of rows and columns corresponding respectively to latitude and longitude
+# Calculate the number of rows and columns corresponding respectively to latitude and longitude
 eo <- length(unique(gridin$EofOrigin))
 no <- length(unique(gridin$NofOrigin))
 
-# create raster from vector file
+# Create raster from vector file
 eear <- rast(gridin, nrows=no, ncols=eo, nlyrs=1, crs(gridin), vals=gridin$NofOrigin)
 plot(eear)
 
-# save raster
+# Save raster
 # writeRaster(eear, here(paste0("input/grid/eeagrid_", resx, ".tif")), datatype = 'INT4S', overwrite=TRUE)
 ```
 
-As last step, we compute the EEA grid centroids to easily join the occurrence cubes, in CSV format, with the corresponding latitude and longitude coordinates of the respective cell. We will use the "eeacellcode" for this purpose.
+As a last step, we calculate the centroids of the EEA grid to easily link the occurrence cubes, in CSV format, with the corresponding latitude and longitude coordinates of the respective cell. For this we will use the `eeacellcode`.
 
 ```{r}
-# stimate the EEA grid centroids from the vector file
+# Estimate the EEA grid centroids from the vector file
 gridxy <- st_coordinates(st_centroid(gridin))
 
-# add the coordinates to the reference grid
+# Add the coordinates to the reference grid
 gridin$x <- gridxy[,1]
 gridin$y <- gridxy[,2]
 
-# create a data frame from the polygons attribute table
+# Create a data frame from the polygons attribute table
 eeax <- as.data.frame(gridin)
 
-# substet the dataframe columns to export
+# Substet the dataframe columns to export
 eeacoor <- eeax[,c("CellCode", "x", "y")]
 colnames(eeacoor) <- c("eeacellcode", "x", "y")
 eeacoor[1:5,]

@@ -38,25 +38,25 @@ gc()
 library(here)
 library(ggplot2)
 library(dplyr)
-library(lubridate);
+library(lubridate)
 ```
 
-After loading the requiered libraries, we loaded the occurrence IAS cube obtained previously through GBIF API.
+After loading the necessary libraries, we load the occurrence IAS cube obtained previously through the GBIF API.
 
 ```{r}
-# load IAS occurrence cube obtained via GBIF
-cin <- read.csv(here(paste0("output/datacubes/csv/","0077925-240506114902167.csv")),  sep = "\t")
+# Load IAS occurrence cube obtained through GBIF
+cin <- read.csv(here(paste0("output/datacubes/csv/ias/","0077925-240506114902167.csv")),  sep = "\t")
 
-# load the species taxonomy only with "accepted" scientific names in the GBIF backbone taxonomy
+# Load species taxonomy only with scientific names ‘accepted’ in the GBIF backbone taxonomy
 tax <- read.csv(here("input/data/ias/taxonomy/List87IAS_EU_match_gbif_allaccepted.csv"))
 ```
 
 
-### Data analysis
+### Data Analysis
+#### Calculate Total Number of Occurrence
 
-#### Calculate total number of occurrence
 ```{r}
-# aggreagate occurrences at the species level
+# Aggregate occurrences at species level
 cag <- cin %>%
   group_by(specieskey) %>%
   summarize(totalOcc = sum(occurrences))
@@ -64,40 +64,19 @@ cag <- cin %>%
 
 
 ```{r}
-# rename columns for joining datasets
+# Rename columns for joining datasets
 colnames(tax)[colnames(tax) == "key"] <- "specieskey"
 
-# merge data set and sort in ascending order
+# Merge data set and sort in ascending order
 xout <- merge(x=cag, y=tax[,c("scientificName", "specieskey", "kingdom", "phylum", "class", "order", "family")], by="specieskey")
 xout <- xout[order(xout$totalOcc), ]
 write.csv(xout, here("output/summary_data/csv/summary_ias_totalOccurrences.csv"))
 ```
 
-#### Identify IAS with no records in GBIF
+#### Identify IAS without Records in GBIF
 ```{r}
-# find what species have no records in GBIF
+# Find what species have no records in GBIF
 noocc <- anti_join(tax, cag, by = "specieskey")
 write.csv(noocc, here("output/summary_data/csv/ias_noOccurrences.csv"))
 print(noocc)
-```
-
-```{r}
-
-```
-
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
 ```

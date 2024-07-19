@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2024-07-17" />
+<meta name="date" content="2024-07-19" />
 
 <title> Data exploration of   the IAS occurrences cube</title>
 
@@ -1839,7 +1839,7 @@ Fernandez</h4>
 German Centre for Integrative Biodiversity Research
 (iDiv)<br><a class="author_email" href="mailto:#"><a href="mailto:lina.estupinans@idiv.de" class="email">lina.estupinans@idiv.de</a></a>
 </address>
-<h4 class="date">2024-07-17</h4>
+<h4 class="date">2024-07-19</h4>
 
 </div>
 
@@ -1874,42 +1874,42 @@ available at the same repository.</em></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list=</span><span class="fu">ls</span>())</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgdXNlZCAoTWIpIGdjIHRyaWdnZXIgKE1iKSBtYXggdXNlZCAoTWIpXG5OY2VsbHMgNTMwMzQ2IDI4LjQgICAgMTE4NjI4NyA2My40ICAgNjU3OTc0IDM1LjJcblZjZWxscyA5NjcwODcgIDcuNCAgICA4Mzg4NjA4IDY0LjAgIDE3NjgxNzggMTMuNVxuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgdXNlZCAoTWIpIGdjIHRyaWdnZXIgKE1iKSBtYXggdXNlZCAoTWIpXG5OY2VsbHMgNTMwMjIwIDI4LjQgICAgMTE4NTkyNyA2My40ICAgNjU3OTc0IDM1LjJcblZjZWxscyA5NjY3OTMgIDcuNCAgICA4Mzg4NjA4IDY0LjAgIDE3NjgxNzggMTMuNVxuIn0= -->
 <pre><code>         used (Mb) gc trigger (Mb) max used (Mb)
-Ncells 530346 28.4    1186287 63.4   657974 35.2
-Vcells 967087  7.4    8388608 64.0  1768178 13.5</code></pre>
+Ncells 530220 28.4    1185927 63.4   657974 35.2
+Vcells 966793  7.4    8388608 64.0  1768178 13.5</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgbG9hZCByZXF1aWVyZWQgbGlicmFyaWVzIiwibGlicmFyeShoZXJlKSIsImxpYnJhcnkoZ2dwbG90MikiLCJsaWJyYXJ5KGRwbHlyKSIsImxpYnJhcnkobHVicmlkYXRlKTsiXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjpbIiMgbG9hZCByZXF1aWVyZWQgbGlicmFyaWVzIiwibGlicmFyeShoZXJlKSIsImxpYnJhcnkoZ2dwbG90MikiLCJsaWJyYXJ5KGRwbHlyKSIsImxpYnJhcnkobHVicmlkYXRlKSJdfQ== -->
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># load requiered libraries</span></span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="fu">library</span>(lubridate);</span></code></pre></div>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code></pre></div>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>After loading the requiered libraries, we loaded the occurrence IAS
-cube obtained previously through GBIF API.</p>
+<p>After loading the necessary libraries, we load the occurrence IAS
+cube obtained previously through the GBIF API.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgbG9hZCBJQVMgb2NjdXJyZW5jZSBjdWJlIG9idGFpbmVkIHZpYSBHQklGIiwiY2luIDwtIHJlYWQuY3N2KGhlcmUocGFzdGUwKFwib3V0cHV0L2RhdGFjdWJlcy9jc3YvXCIsXCIwMDc3OTI1LTI0MDUwNjExNDkwMjE2Ny5jc3ZcIikpLCAgc2VwID0gXCJcXHRcIikiLCIiLCIjIGxvYWQgdGhlIHNwZWNpZXMgdGF4b25vbXkgb25seSB3aXRoIFwiYWNjZXB0ZWRcIiBzY2llbnRpZmljIG5hbWVzIGluIHRoZSBHQklGIGJhY2tib25lIHRheG9ub215IiwidGF4IDwtIHJlYWQuY3N2KGhlcmUoXCJpbnB1dC9kYXRhL2lhc18xMC90YXhvbm9teS9MaXN0ODdJQVNfRVVfbWF0Y2hfZ2JpZl9hbGxhY2NlcHRlZC5jc3ZcIikpIl19 -->
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># load IAS occurrence cube obtained via GBIF</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>cin <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/datacubes/csv/&quot;</span>,<span class="st">&quot;0077925-240506114902167.csv&quot;</span>)),  <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>)</span>
+<!-- rnb-source-begin eyJkYXRhIjpbIiMgTG9hZCBJQVMgb2NjdXJyZW5jZSBjdWJlIG9idGFpbmVkIHRocm91Z2ggR0JJRiIsImNpbiA8LSByZWFkLmNzdihoZXJlKHBhc3RlMChcIm91dHB1dC9kYXRhY3ViZXMvY3N2L2lhcy9cIixcIjAwNzc5MjUtMjQwNTA2MTE0OTAyMTY3LmNzdlwiKSksICBzZXAgPSBcIlxcdFwiKSIsIiIsIiMgTG9hZCBzcGVjaWVzIHRheG9ub215IG9ubHkgd2l0aCBzY2llbnRpZmljIG5hbWVzIOKAmGFjY2VwdGVk4oCZIGluIHRoZSBHQklGIGJhY2tib25lIHRheG9ub215IiwidGF4IDwtIHJlYWQuY3N2KGhlcmUoXCJpbnB1dC9kYXRhL2lhcy90YXhvbm9teS9MaXN0ODdJQVNfRVVfbWF0Y2hfZ2JpZl9hbGxhY2NlcHRlZC5jc3ZcIikpIl19 -->
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Load IAS occurrence cube obtained through GBIF</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>cin <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/datacubes/csv/ias/&quot;</span>,<span class="st">&quot;0077925-240506114902167.csv&quot;</span>)),  <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co"># load the species taxonomy only with &quot;accepted&quot; scientific names in the GBIF backbone taxonomy</span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>tax <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">&quot;input/data/ias_10/taxonomy/List87IAS_EU_match_gbif_allaccepted.csv&quot;</span>))</span></code></pre></div>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co"># Load species taxonomy only with scientific names ‘accepted’ in the GBIF backbone taxonomy</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>tax <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">&quot;input/data/ias/taxonomy/List87IAS_EU_match_gbif_allaccepted.csv&quot;</span>))</span></code></pre></div>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
 <div id="data-analysis" class="section level3">
-<h3>Data analysis</h3>
+<h3>Data Analysis</h3>
 <div id="calculate-total-number-of-occurrence" class="section level4">
-<h4>Calculate total number of occurrence</h4>
+<h4>Calculate Total Number of Occurrence</h4>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgYWdncmVhZ2F0ZSBvY2N1cnJlbmNlcyBhdCB0aGUgc3BlY2llcyBsZXZlbCIsImNhZyA8LSBjaW4gJT4lXG4gIGdyb3VwX2J5KHNwZWNpZXNrZXkpICU+JVxuICBzdW1tYXJpemUodG90YWxPY2MgPSBzdW0ob2NjdXJyZW5jZXMpKSJdfQ== -->
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># aggreagate occurrences at the species level</span></span>
+<!-- rnb-source-begin eyJkYXRhIjpbIiMgQWdncmVnYXRlIG9jY3VycmVuY2VzIGF0IHNwZWNpZXMgbGV2ZWwiLCJjYWcgPC0gY2luICU+JVxuICBncm91cF9ieShzcGVjaWVza2V5KSAlPiVcbiAgc3VtbWFyaXplKHRvdGFsT2NjID0gc3VtKG9jY3VycmVuY2VzKSkiXX0= -->
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Aggregate occurrences at species level</span></span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>cag <span class="ot">&lt;-</span> cin <span class="sc">%&gt;%</span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">group_by</span>(specieskey) <span class="sc">%&gt;%</span></span>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">totalOcc =</span> <span class="fu">sum</span>(occurrences))</span></code></pre></div>
@@ -1918,11 +1918,11 @@ cube obtained previously through GBIF API.</p>
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgcmVuYW1lIGNvbHVtbnMgZm9yIGpvaW5pbmcgZGF0YXNldHMiLCJjb2xuYW1lcyh0YXgpW2NvbG5hbWVzKHRheCkgPT0gXCJrZXlcIl0gPC0gXCJzcGVjaWVza2V5XCIiLCIiLCIjIG1lcmdlIGRhdGEgc2V0IGFuZCBzb3J0IGluIGFzY2VuZGluZyBvcmRlciIsInhvdXQgPC0gbWVyZ2UoeD1jYWcsIHk9dGF4WyxjKFwic2NpZW50aWZpY05hbWVcIiwgXCJzcGVjaWVza2V5XCIsIFwia2luZ2RvbVwiLCBcInBoeWx1bVwiLCBcImNsYXNzXCIsIFwib3JkZXJcIiwgXCJmYW1pbHlcIildLCBieT1cInNwZWNpZXNrZXlcIikiLCJ4b3V0IDwtIHhvdXRbb3JkZXIoeG91dCR0b3RhbE9jYyksIF0iLCJ3cml0ZS5jc3YoeG91dCwgaGVyZShcIm91dHB1dC9zdW1tYXJ5X2RhdGEvY3N2L3N1bW1hcnlfaWFzX3RvdGFsT2NjdXJyZW5jZXMuY3N2XCIpKSJdfQ== -->
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># rename columns for joining datasets</span></span>
+<!-- rnb-source-begin eyJkYXRhIjpbIiMgUmVuYW1lIGNvbHVtbnMgZm9yIGpvaW5pbmcgZGF0YXNldHMiLCJjb2xuYW1lcyh0YXgpW2NvbG5hbWVzKHRheCkgPT0gXCJrZXlcIl0gPC0gXCJzcGVjaWVza2V5XCIiLCIiLCIjIE1lcmdlIGRhdGEgc2V0IGFuZCBzb3J0IGluIGFzY2VuZGluZyBvcmRlciIsInhvdXQgPC0gbWVyZ2UoeD1jYWcsIHk9dGF4WyxjKFwic2NpZW50aWZpY05hbWVcIiwgXCJzcGVjaWVza2V5XCIsIFwia2luZ2RvbVwiLCBcInBoeWx1bVwiLCBcImNsYXNzXCIsIFwib3JkZXJcIiwgXCJmYW1pbHlcIildLCBieT1cInNwZWNpZXNrZXlcIikiLCJ4b3V0IDwtIHhvdXRbb3JkZXIoeG91dCR0b3RhbE9jYyksIF0iLCJ3cml0ZS5jc3YoeG91dCwgaGVyZShcIm91dHB1dC9zdW1tYXJ5X2RhdGEvY3N2L3N1bW1hcnlfaWFzX3RvdGFsT2NjdXJyZW5jZXMuY3N2XCIpKSJdfQ== -->
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Rename columns for joining datasets</span></span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">colnames</span>(tax)[<span class="fu">colnames</span>(tax) <span class="sc">==</span> <span class="st">&quot;key&quot;</span>] <span class="ot">&lt;-</span> <span class="st">&quot;specieskey&quot;</span></span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co"># merge data set and sort in ascending order</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co"># Merge data set and sort in ascending order</span></span>
 <span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>xout <span class="ot">&lt;-</span> <span class="fu">merge</span>(<span class="at">x=</span>cag, <span class="at">y=</span>tax[,<span class="fu">c</span>(<span class="st">&quot;scientificName&quot;</span>, <span class="st">&quot;specieskey&quot;</span>, <span class="st">&quot;kingdom&quot;</span>, <span class="st">&quot;phylum&quot;</span>, <span class="st">&quot;class&quot;</span>, <span class="st">&quot;order&quot;</span>, <span class="st">&quot;family&quot;</span>)], <span class="at">by=</span><span class="st">&quot;specieskey&quot;</span>)</span>
 <span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>xout <span class="ot">&lt;-</span> xout[<span class="fu">order</span>(xout<span class="sc">$</span>totalOcc), ]</span>
 <span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="fu">write.csv</span>(xout, <span class="fu">here</span>(<span class="st">&quot;output/summary_data/csv/summary_ias_totalOccurrences.csv&quot;</span>))</span></code></pre></div>
@@ -1930,12 +1930,12 @@ cube obtained previously through GBIF API.</p>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="identify-ias-with-no-records-in-gbif" class="section level4">
-<h4>Identify IAS with no records in GBIF</h4>
+<div id="identify-ias-without-records-in-gbif" class="section level4">
+<h4>Identify IAS without Records in GBIF</h4>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgZmluZCB3aGF0IHNwZWNpZXMgaGF2ZSBubyByZWNvcmRzIGluIEdCSUYiLCJub29jYyA8LSBhbnRpX2pvaW4odGF4LCBjYWcsIGJ5ID0gXCJzcGVjaWVza2V5XCIpIiwid3JpdGUuY3N2KG5vb2NjLCBoZXJlKFwib3V0cHV0L3N1bW1hcnlfZGF0YS9jc3YvaWFzX25vT2NjdXJyZW5jZXMuY3N2XCIpKSIsInByaW50KG5vb2NjKSJdfQ== -->
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># find what species have no records in GBIF</span></span>
+<!-- rnb-source-begin eyJkYXRhIjpbIiMgRmluZCB3aGF0IHNwZWNpZXMgaGF2ZSBubyByZWNvcmRzIGluIEdCSUYiLCJub29jYyA8LSBhbnRpX2pvaW4odGF4LCBjYWcsIGJ5ID0gXCJzcGVjaWVza2V5XCIpIiwid3JpdGUuY3N2KG5vb2NjLCBoZXJlKFwib3V0cHV0L3N1bW1hcnlfZGF0YS9jc3YvaWFzX25vT2NjdXJyZW5jZXMuY3N2XCIpKSIsInByaW50KG5vb2NjKSJdfQ== -->
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Find what species have no records in GBIF</span></span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>noocc <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(tax, cag, <span class="at">by =</span> <span class="st">&quot;specieskey&quot;</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="fu">write.csv</span>(noocc, <span class="fu">here</span>(<span class="st">&quot;output/summary_data/csv/ias_noOccurrences.csv&quot;</span>))</span>
 <span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="fu">print</span>(noocc)</span></code></pre></div>
@@ -2020,31 +2020,11 @@ cube obtained previously through GBIF API.</p>
 10               NA</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
 </div>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogPHNwYW4gc3R5bGU9ImNvbG9yOiMwMDU4NTciPiBEYXRhIGV4cGxvcmF0aW9uIG9mIDxicj4gdGhlIElBUyBvY2N1cnJlbmNlcyBjdWJlDQpzdWJ0aXRsZTogPHNwYW4gc3R5bGU9ImNvbG9yOiM0N0E1MkEiPiBEYXRhIG1vYmlsaXNhdGlvbiBmcm9tIEdCSUYgdG8gdGhlIEVCViBEYXRhIFBvcnRhbDxzcGFuPg0KYXV0aG9yOiANCiAgLSBuYW1lOiAiTGluYSBFc3R1cGluYW4tU3VhcmV6LCBFbW1hbnVlbCBPY2VndWVyYSwgTWlndWVsIEZlcm5hbmRleiINCiAgICBhZmZpbGlhdGlvbjogIkdlcm1hbiBDZW50cmUgZm9yIEludGVncmF0aXZlIEJpb2RpdmVyc2l0eSBSZXNlYXJjaCAoaURpdikiDQogICAgZW1haWw6IGxpbmEuZXN0dXBpbmFuc0BpZGl2LmRlDQppbnN0aXR1dGU6ICIqKkluc3RpdHV0ZSoqOiBHZXJtYW4gQ2VudHJlIGZvciBJbnRlZ3JhdGl2ZSBCaW9kaXZlcnNpdHkgUmVzZWFyY2ggKGlEaXYpIg0KZGF0ZTogImByIFN5cy5EYXRlKClgIg0Kb3V0cHV0Og0KIGh0bWxfbm90ZWJvb2s6DQogICAgaGlnaGxpZ2h0OiB0YW5nbw0KLS0tDQo8IS0tIDxpbWcgc3JjPSJDOlxnaXRyZXBvXEItQ3ViZWRfZGF0YV9tb2JpbGl6YXRpb25caW5wdXRcbG9nb3NcQjNfbG9nb19mdWxsLnBuZyIgc3R5bGU9J3dpZHRoOiAyMDBweDsgcG9zaXRpb246YWJzb2x1dGU7IHRvcDowOyByaWdodDowOyBwYWRkaW5nOjEwcHg7Jy8+IC0tPg0KPGltZyBzcmM9IkM6XGdpdHJlcG9cQi1DdWJlZF9kYXRhX21vYmlsaXphdGlvblxpbnB1dFxsb2dvc1xpZGl2K2IzLnBuZyIgc3R5bGU9J3dpZHRoOiA0MDBweDsgcG9zaXRpb246YWJzb2x1dGU7IHRvcDowOyByaWdodDowOyBwYWRkaW5nOjEwcHg7Jy8+DQotLS0NCg0KDQojIyMgSW50cm9kdWN0aW9uDQpJbiB0aGlzIG5vdGVib29rIHdlIGV4cGxvcmUgdGhlIG9jY3VycmVuY2UgZGF0YSBvZiBpbnZhc2l2ZSBhbGllbiBzcGVjaWVzIChJQVMpIG9mIHVuaW9uIGNvbmNlcm4gKElBUykgYXZhaWxhYmxlIGluIEdCSUYgdW50aWwgSnVuZSAyMDI0Lg0KVG8gZG8gdGhpcywgYW4gSUFTIG9jY3VycmVuY2UgY3ViZSB3YXMgcHJldmlvdXNseSBjcmVhdGVkIHVzaW5nIHRoZSBbb2NjdXJyZW5jZSBjdWJlIHNvZnR3YXJlXShodHRwczovL3RlY2hkb2NzLmdiaWYub3JnL2VuL2RhdGEtdXNlL2RhdGEtY3ViZXMpIGRldmVsb3BlZCBieSBHQklGIHVuZGVyIHRoZSBbQmlvZGl2ZXJzaXR5IEJ1aWxkaW5nIEJsb2NrcyBmb3IgcG9saWN5IHByb2plY3RdKGh0dHBzOi8vYi1jdWJlZC5ldS8pIChCMykNCkRldGFpbHMgb2YgdGhlIGRhdGEgcXVlcnkgaW4gR0JJRiBhcmUgYXZhaWxhYmxlIGF0OiBbZG9pOiAxMC4xNTQ2OC9kbC54NGEyNXNdKGh0dHBzOi8vd3d3LmdiaWYub3JnL29jY3VycmVuY2UvZG93bmxvYWQvMDA4MTQ1Mi0yNDA1MDYxMTQ5MDIxNjcpLiANClRoZSBjdWJlIGdlbmVyYXRpb24gc2NyaXB0IGlzIGFsc28gcGFydCBvZiB0aGlzIHJlcG9zaXRvcnkuDQoNCipOb3RlOiBUaGlzIHNlcmllcyBvZiBub3RlYm9va3MgaXMgcGFydCBvZiB0aGUgcmVzdWx0cyBvZiB0aGUgVGFzayAzLjMgb2YgdGhlIFtCaW9kaXZlcnNpdHkgQnVpbGRpbmcgQmxvY2tzIGZvciBwb2xpY3kgcHJvamVjdF0oaHR0cHM6Ly9iLWN1YmVkLmV1LykgZnVuZGVkIGJ5IHRoZSBFdXJvcGVhbiBVbmlvbuKAmXMgSG9yaXpvbiBFdXJvcGUgUmVzZWFyY2ggYW5kIElubm92YXRpb24gUHJvZ3JhbW1lIChJRCBObyAxMDEwNTk1OTIpLiBBZGRpdGlvbmFsIG5vdGVib29rcyBleHBsb3JpbmcgdGhlIHJlc3VsdHMgYW5kIGNhbGN1bGF0aW5nIHNpbXBsZSBtZXRyaWNzIGFyZSBhbHNvIGF2YWlsYWJsZSBhdCB0aGUgc2FtZSByZXBvc2l0b3J5LioNCg0KDQojIyMgTG9hZCBsaWJyYXJ5IGFuZCBpbnB1dCBkYXRhDQpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRX0NCmtuaXRyOjpvcHRzX2NodW5rJHNldChtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFKQ0KYGBgDQoNCmBgYHtyfQ0Kcm0obGlzdD1scygpKQ0KZ2MoKQ0KDQojIGxvYWQgcmVxdWllcmVkIGxpYnJhcmllcw0KbGlicmFyeShoZXJlKQ0KbGlicmFyeShnZ3Bsb3QyKQ0KbGlicmFyeShkcGx5cikNCmxpYnJhcnkobHVicmlkYXRlKTsNCmBgYA0KDQpBZnRlciBsb2FkaW5nIHRoZSByZXF1aWVyZWQgbGlicmFyaWVzLCB3ZSBsb2FkZWQgdGhlIG9jY3VycmVuY2UgSUFTIGN1YmUgb2J0YWluZWQgcHJldmlvdXNseSB0aHJvdWdoIEdCSUYgQVBJLg0KDQpgYGB7cn0NCiMgbG9hZCBJQVMgb2NjdXJyZW5jZSBjdWJlIG9idGFpbmVkIHZpYSBHQklGDQpjaW4gPC0gcmVhZC5jc3YoaGVyZShwYXN0ZTAoIm91dHB1dC9kYXRhY3ViZXMvY3N2LyIsIjAwNzc5MjUtMjQwNTA2MTE0OTAyMTY3LmNzdiIpKSwgIHNlcCA9ICJcdCIpDQoNCiMgbG9hZCB0aGUgc3BlY2llcyB0YXhvbm9teSBvbmx5IHdpdGggImFjY2VwdGVkIiBzY2llbnRpZmljIG5hbWVzIGluIHRoZSBHQklGIGJhY2tib25lIHRheG9ub215DQp0YXggPC0gcmVhZC5jc3YoaGVyZSgiaW5wdXQvZGF0YS9pYXNfMTAvdGF4b25vbXkvTGlzdDg3SUFTX0VVX21hdGNoX2diaWZfYWxsYWNjZXB0ZWQuY3N2IikpDQpgYGANCg0KDQojIyMgRGF0YSBhbmFseXNpcw0KDQojIyMjIENhbGN1bGF0ZSB0b3RhbCBudW1iZXIgb2Ygb2NjdXJyZW5jZQ0KYGBge3J9DQojIGFnZ3JlYWdhdGUgb2NjdXJyZW5jZXMgYXQgdGhlIHNwZWNpZXMgbGV2ZWwNCmNhZyA8LSBjaW4gJT4lDQogIGdyb3VwX2J5KHNwZWNpZXNrZXkpICU+JQ0KICBzdW1tYXJpemUodG90YWxPY2MgPSBzdW0ob2NjdXJyZW5jZXMpKQ0KYGBgDQoNCg0KYGBge3J9DQojIHJlbmFtZSBjb2x1bW5zIGZvciBqb2luaW5nIGRhdGFzZXRzDQpjb2xuYW1lcyh0YXgpW2NvbG5hbWVzKHRheCkgPT0gImtleSJdIDwtICJzcGVjaWVza2V5Ig0KDQojIG1lcmdlIGRhdGEgc2V0IGFuZCBzb3J0IGluIGFzY2VuZGluZyBvcmRlcg0KeG91dCA8LSBtZXJnZSh4PWNhZywgeT10YXhbLGMoInNjaWVudGlmaWNOYW1lIiwgInNwZWNpZXNrZXkiLCAia2luZ2RvbSIsICJwaHlsdW0iLCAiY2xhc3MiLCAib3JkZXIiLCAiZmFtaWx5IildLCBieT0ic3BlY2llc2tleSIpDQp4b3V0IDwtIHhvdXRbb3JkZXIoeG91dCR0b3RhbE9jYyksIF0NCndyaXRlLmNzdih4b3V0LCBoZXJlKCJvdXRwdXQvc3VtbWFyeV9kYXRhL2Nzdi9zdW1tYXJ5X2lhc190b3RhbE9jY3VycmVuY2VzLmNzdiIpKQ0KYGBgDQoNCiMjIyMgSWRlbnRpZnkgSUFTIHdpdGggbm8gcmVjb3JkcyBpbiBHQklGDQpgYGB7cn0NCiMgZmluZCB3aGF0IHNwZWNpZXMgaGF2ZSBubyByZWNvcmRzIGluIEdCSUYNCm5vb2NjIDwtIGFudGlfam9pbih0YXgsIGNhZywgYnkgPSAic3BlY2llc2tleSIpDQp3cml0ZS5jc3Yobm9vY2MsIGhlcmUoIm91dHB1dC9zdW1tYXJ5X2RhdGEvY3N2L2lhc19ub09jY3VycmVuY2VzLmNzdiIpKQ0KcHJpbnQobm9vY2MpDQpgYGANCg0KYGBge3J9DQoNCmBgYA0KDQoNCmBgYHtyfQ0KDQpgYGANCg0KYGBge3J9DQoNCmBgYA0KDQpgYGB7cn0NCg0KYGBgDQoNCmBgYHtyfQ0KDQpgYGA=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogPHNwYW4gc3R5bGU9ImNvbG9yOiMwMDU4NTciPiBEYXRhIGV4cGxvcmF0aW9uIG9mIDxicj4gdGhlIElBUyBvY2N1cnJlbmNlcyBjdWJlDQpzdWJ0aXRsZTogPHNwYW4gc3R5bGU9ImNvbG9yOiM0N0E1MkEiPiBEYXRhIG1vYmlsaXNhdGlvbiBmcm9tIEdCSUYgdG8gdGhlIEVCViBEYXRhIFBvcnRhbDxzcGFuPg0KYXV0aG9yOiANCiAgLSBuYW1lOiAiTGluYSBFc3R1cGluYW4tU3VhcmV6LCBFbW1hbnVlbCBPY2VndWVyYSwgTWlndWVsIEZlcm5hbmRleiINCiAgICBhZmZpbGlhdGlvbjogIkdlcm1hbiBDZW50cmUgZm9yIEludGVncmF0aXZlIEJpb2RpdmVyc2l0eSBSZXNlYXJjaCAoaURpdikiDQogICAgZW1haWw6IGxpbmEuZXN0dXBpbmFuc0BpZGl2LmRlDQppbnN0aXR1dGU6ICIqKkluc3RpdHV0ZSoqOiBHZXJtYW4gQ2VudHJlIGZvciBJbnRlZ3JhdGl2ZSBCaW9kaXZlcnNpdHkgUmVzZWFyY2ggKGlEaXYpIg0KZGF0ZTogImByIFN5cy5EYXRlKClgIg0Kb3V0cHV0Og0KIGh0bWxfbm90ZWJvb2s6DQogICAgaGlnaGxpZ2h0OiB0YW5nbw0KLS0tDQo8IS0tIDxpbWcgc3JjPSJDOlxnaXRyZXBvXEItQ3ViZWRfZGF0YV9tb2JpbGl6YXRpb25caW5wdXRcbG9nb3NcQjNfbG9nb19mdWxsLnBuZyIgc3R5bGU9J3dpZHRoOiAyMDBweDsgcG9zaXRpb246YWJzb2x1dGU7IHRvcDowOyByaWdodDowOyBwYWRkaW5nOjEwcHg7Jy8+IC0tPg0KPGltZyBzcmM9IkM6XGdpdHJlcG9cQi1DdWJlZF9kYXRhX21vYmlsaXphdGlvblxpbnB1dFxsb2dvc1xpZGl2K2IzLnBuZyIgc3R5bGU9J3dpZHRoOiA0MDBweDsgcG9zaXRpb246YWJzb2x1dGU7IHRvcDowOyByaWdodDowOyBwYWRkaW5nOjEwcHg7Jy8+DQotLS0NCg0KDQojIyMgSW50cm9kdWN0aW9uDQpJbiB0aGlzIG5vdGVib29rIHdlIGV4cGxvcmUgdGhlIG9jY3VycmVuY2UgZGF0YSBvZiBpbnZhc2l2ZSBhbGllbiBzcGVjaWVzIChJQVMpIG9mIHVuaW9uIGNvbmNlcm4gKElBUykgYXZhaWxhYmxlIGluIEdCSUYgdW50aWwgSnVuZSAyMDI0Lg0KVG8gZG8gdGhpcywgYW4gSUFTIG9jY3VycmVuY2UgY3ViZSB3YXMgcHJldmlvdXNseSBjcmVhdGVkIHVzaW5nIHRoZSBbb2NjdXJyZW5jZSBjdWJlIHNvZnR3YXJlXShodHRwczovL3RlY2hkb2NzLmdiaWYub3JnL2VuL2RhdGEtdXNlL2RhdGEtY3ViZXMpIGRldmVsb3BlZCBieSBHQklGIHVuZGVyIHRoZSBbQmlvZGl2ZXJzaXR5IEJ1aWxkaW5nIEJsb2NrcyBmb3IgcG9saWN5IHByb2plY3RdKGh0dHBzOi8vYi1jdWJlZC5ldS8pIChCMykNCkRldGFpbHMgb2YgdGhlIGRhdGEgcXVlcnkgaW4gR0JJRiBhcmUgYXZhaWxhYmxlIGF0OiBbZG9pOiAxMC4xNTQ2OC9kbC54NGEyNXNdKGh0dHBzOi8vd3d3LmdiaWYub3JnL29jY3VycmVuY2UvZG93bmxvYWQvMDA4MTQ1Mi0yNDA1MDYxMTQ5MDIxNjcpLiANClRoZSBjdWJlIGdlbmVyYXRpb24gc2NyaXB0IGlzIGFsc28gcGFydCBvZiB0aGlzIHJlcG9zaXRvcnkuDQoNCipOb3RlOiBUaGlzIHNlcmllcyBvZiBub3RlYm9va3MgaXMgcGFydCBvZiB0aGUgcmVzdWx0cyBvZiB0aGUgVGFzayAzLjMgb2YgdGhlIFtCaW9kaXZlcnNpdHkgQnVpbGRpbmcgQmxvY2tzIGZvciBwb2xpY3kgcHJvamVjdF0oaHR0cHM6Ly9iLWN1YmVkLmV1LykgZnVuZGVkIGJ5IHRoZSBFdXJvcGVhbiBVbmlvbuKAmXMgSG9yaXpvbiBFdXJvcGUgUmVzZWFyY2ggYW5kIElubm92YXRpb24gUHJvZ3JhbW1lIChJRCBObyAxMDEwNTk1OTIpLiBBZGRpdGlvbmFsIG5vdGVib29rcyBleHBsb3JpbmcgdGhlIHJlc3VsdHMgYW5kIGNhbGN1bGF0aW5nIHNpbXBsZSBtZXRyaWNzIGFyZSBhbHNvIGF2YWlsYWJsZSBhdCB0aGUgc2FtZSByZXBvc2l0b3J5LioNCg0KDQojIyMgTG9hZCBsaWJyYXJ5IGFuZCBpbnB1dCBkYXRhDQpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRX0NCmtuaXRyOjpvcHRzX2NodW5rJHNldChtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFKQ0KYGBgDQoNCmBgYHtyfQ0Kcm0obGlzdD1scygpKQ0KZ2MoKQ0KDQojIGxvYWQgcmVxdWllcmVkIGxpYnJhcmllcw0KbGlicmFyeShoZXJlKQ0KbGlicmFyeShnZ3Bsb3QyKQ0KbGlicmFyeShkcGx5cikNCmxpYnJhcnkobHVicmlkYXRlKQ0KYGBgDQoNCkFmdGVyIGxvYWRpbmcgdGhlIG5lY2Vzc2FyeSBsaWJyYXJpZXMsIHdlIGxvYWQgdGhlIG9jY3VycmVuY2UgSUFTIGN1YmUgb2J0YWluZWQgcHJldmlvdXNseSB0aHJvdWdoIHRoZSBHQklGIEFQSS4NCg0KYGBge3J9DQojIExvYWQgSUFTIG9jY3VycmVuY2UgY3ViZSBvYnRhaW5lZCB0aHJvdWdoIEdCSUYNCmNpbiA8LSByZWFkLmNzdihoZXJlKHBhc3RlMCgib3V0cHV0L2RhdGFjdWJlcy9jc3YvaWFzLyIsIjAwNzc5MjUtMjQwNTA2MTE0OTAyMTY3LmNzdiIpKSwgIHNlcCA9ICJcdCIpDQoNCiMgTG9hZCBzcGVjaWVzIHRheG9ub215IG9ubHkgd2l0aCBzY2llbnRpZmljIG5hbWVzIOKAmGFjY2VwdGVk4oCZIGluIHRoZSBHQklGIGJhY2tib25lIHRheG9ub215DQp0YXggPC0gcmVhZC5jc3YoaGVyZSgiaW5wdXQvZGF0YS9pYXMvdGF4b25vbXkvTGlzdDg3SUFTX0VVX21hdGNoX2diaWZfYWxsYWNjZXB0ZWQuY3N2IikpDQpgYGANCg0KDQojIyMgRGF0YSBBbmFseXNpcw0KIyMjIyBDYWxjdWxhdGUgVG90YWwgTnVtYmVyIG9mIE9jY3VycmVuY2UNCg0KYGBge3J9DQojIEFnZ3JlZ2F0ZSBvY2N1cnJlbmNlcyBhdCBzcGVjaWVzIGxldmVsDQpjYWcgPC0gY2luICU+JQ0KICBncm91cF9ieShzcGVjaWVza2V5KSAlPiUNCiAgc3VtbWFyaXplKHRvdGFsT2NjID0gc3VtKG9jY3VycmVuY2VzKSkNCmBgYA0KDQoNCmBgYHtyfQ0KIyBSZW5hbWUgY29sdW1ucyBmb3Igam9pbmluZyBkYXRhc2V0cw0KY29sbmFtZXModGF4KVtjb2xuYW1lcyh0YXgpID09ICJrZXkiXSA8LSAic3BlY2llc2tleSINCg0KIyBNZXJnZSBkYXRhIHNldCBhbmQgc29ydCBpbiBhc2NlbmRpbmcgb3JkZXINCnhvdXQgPC0gbWVyZ2UoeD1jYWcsIHk9dGF4WyxjKCJzY2llbnRpZmljTmFtZSIsICJzcGVjaWVza2V5IiwgImtpbmdkb20iLCAicGh5bHVtIiwgImNsYXNzIiwgIm9yZGVyIiwgImZhbWlseSIpXSwgYnk9InNwZWNpZXNrZXkiKQ0KeG91dCA8LSB4b3V0W29yZGVyKHhvdXQkdG90YWxPY2MpLCBdDQp3cml0ZS5jc3YoeG91dCwgaGVyZSgib3V0cHV0L3N1bW1hcnlfZGF0YS9jc3Yvc3VtbWFyeV9pYXNfdG90YWxPY2N1cnJlbmNlcy5jc3YiKSkNCmBgYA0KDQojIyMjIElkZW50aWZ5IElBUyB3aXRob3V0IFJlY29yZHMgaW4gR0JJRg0KYGBge3J9DQojIEZpbmQgd2hhdCBzcGVjaWVzIGhhdmUgbm8gcmVjb3JkcyBpbiBHQklGDQpub29jYyA8LSBhbnRpX2pvaW4odGF4LCBjYWcsIGJ5ID0gInNwZWNpZXNrZXkiKQ0Kd3JpdGUuY3N2KG5vb2NjLCBoZXJlKCJvdXRwdXQvc3VtbWFyeV9kYXRhL2Nzdi9pYXNfbm9PY2N1cnJlbmNlcy5jc3YiKSkNCnByaW50KG5vb2NjKQ0KYGBgDQo=</div>
 
 
 

@@ -23,7 +23,7 @@ Details of the GBIF data query are available at: [change!!!!](https://www.gbif.o
 
 *Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
 
-### Load libraries
+### Load Libraries
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(message=FALSE, warning=FALSE)
 ```
@@ -32,7 +32,7 @@ knitr::opts_chunk$set(message=FALSE, warning=FALSE)
 rm(list=ls())
 gc()
 
-# load requiered libraries
+# Load requiered libraries
 library(here)
 library(httr)
 library(httr2)
@@ -40,22 +40,22 @@ library(jsonlite)
 library(b3gbi)
 ```
 
-### Submitting a JSON query
-The JSON file containing the query specification was prepared in advance (see the "input/queries" folder). In this case, the cube specification includes the geographical extent (EU27), the spatial resolution (~1 km), the time period (>1900), the species of interest (Invasive Alien Species of Union Concern (IAS), the top taxonomy and the data sources. We used the 1 km grid of the European Environment Agency as a reference.
+### Submit a JSON query
+The JSON file containing the query specification has been previously prepared (see the `input/queries` folder). In this case, the cube specification includes the geographical extent (EU27), the spatial resolution (~1 km), the time period (>1900), the specieskey of the species of interest (list of species in the Birds Directive Annex I), and we request the number of occurrences per grid cell, the higher taxonomy and the basis of records. We used the European Environment Agency grid at 1km as a reference.
 
 ```{r}
-# save GBIF API address
+# Save GBIF API address
 gbif_url <- 'http://api.gbif.org/v1/occurrence/download/request/' 
 
-# set GBIF user name and password. In this example the data is saved in a separate file for security reasons. Fill in the variables with your own data.
+# Set GBIF user name and password. In this example the data is saved in a separate file for security reasons. Fill in the variables with your own data.
 gbif_user <- read.csv("C:/gitrepo/credentials.txt", header = FALSE);
 my_username <- gbif_user[1,1]; # 'your_username'
 my_password <- gbif_user[2,1]; # 'your_password'
 
-# set the location for the resulting occurrence cube
+# Set the location for the resulting occurrence cube
 path_out <- here("output/datacubes/csv/birds")
 
-# load the JSON with the query specifications
+# Load the JSON with the query specifications
 query_ias <- "query_birds_annex1.json"
 ```
 
@@ -73,30 +73,30 @@ response <- req |> req_perform()  |> resp_body_string()
 #"0022303-240626123714530" # test query
 ```
 
-### Unpacking the IAS occurrence cube and loading it into R
+### Unpack the IAS occurrence cube and load it into R
 
 ```{r}
-# download the cube
+# Download the cube
 download.file(paste0(gbif_url, response, ".zip"), destfile=paste0(path_out, response, ".zip"))
 
-# or download manually from
+# Or download manually from
 paste0(gbif_url, response)
 
-# unzip
+# Unzip
 unzip(paste0(path_out, "/", response,".zip"), exdir=paste0(path_out,"/"))
 ```
 
-The resulting occurrence cube is in a CSV data format. The number of species occurrence are aggregated per cell based on the (enconded) reference grid. There are a few ways to load the resulting occurrence cube. Here we show two appraoches. One is using the CSV read command and the other one is using the 'b3gbi' library.
+The resulting occurrence cube is in CSV format. The number of species occurrence is aggregated per cell based on the (coded) reference grid. There are several ways to load the resulting cube. Two examples are shown here. One is using the CSV read command and the other is using the `b3gbi` library.
 
 ```{r}
-# load GBIF data cube using a simple CSV read function
+# Load GBIF data cube using a simple CSV read function
 c1 <- read.csv(paste0(path_out, "/", response,".csv"), sep = "\t")
 colnames(c1)
 ```
-Alrternatively we can use the  ```process_cube```  function from the 'b3gbi' library.
+Alternatively, we can use the `process_cube` function from the `b3gbi` library.
 
 ```{r}
-# prepare cube using b3gbi
+# Prepare cube using b3gbi
 c2 <- process_cube(paste0(path_out, "/", response,".csv"))
 print(c2)
 ```
