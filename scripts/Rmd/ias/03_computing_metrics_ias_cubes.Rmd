@@ -1,6 +1,6 @@
 ---
-title: <span style="color:#005857"> Metrics computation for <br> the IAS occurrences cube
-subtitle: <span style="color:#47A52A"> Data mobilisation from GBIF to the EBV Data Portal<span>
+title: <span style="color:#005857"> Metrics Computation for <br> the IAS Occurrences Cube
+subtitle: <span style="color:#47A52A"> Data Mobilization from GBIF to the EBV Data Portal<span>
 author: 
   - name: "Lina Estupinan-Suarez, Miguel Fernandez"
     affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
@@ -8,27 +8,28 @@ author:
 institute: "**Institute**: German Centre for Integrative Biodiversity Research (iDiv)"
 date: "`r Sys.Date()`"
 output:
- html_notebook:
+  html_notebook:
     highlight: tango
 ---
-<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3.png" style='width: 400px; position:absolute; top:0; right:0; padding:10px;'/>
+<img src="C:\\gitrepo\\B-Cubed_data_mobilization\\input\\logos\\idiv+b3.png" style='width: 400px; position:absolute; top:0; right:0; padding:10px;'/>
 ---
 
-
 ### Introduction
-In this notebook we calculate simple metrics for the invasive alien species (IAS) of union concern in Europe.
-To do this, an IAS occurrence cube has been created previously (see Notebook 01) using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) (B3)
-Details of the data query in GBIF are available at: [doi: 10.15468/dl.x4a25s](https://www.gbif.org/occurrence/download/0081452-240506114902167). 
-Here we present five metrics: Total number of occurences, earliest date of occurrence, latest date of occurrences, basis of record of the earliest and latests date of occurrence.
+In this notebook, we calculate simple metrics for the invasive alien species (IAS) of union concern in Europe. To do this, an IAS occurrence cube has been created previously (see Notebook 01) using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for Policy Project](https://b-cubed.eu/) (B3). Details of the data query in GBIF are available at: [doi: 10.15468/dl.x4a25s](https://www.gbif.org/occurrence/download/0081452-240506114902167). Here, we present five metrics:
 
-*Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
+ - Total number of occurrences
+ - Earliest date of occurrence
+ - Latest date of occurrence
+ - Basis of record of the earliest occurrence
+ - Basis of record of the latest date of occurrence
 
+*Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy Project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
 
-### Load library and input data
+### Load Library and Input Data
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(message=FALSE, warning=FALSE)
 ```
-We start loading all libraries needed in this notebook.
+We start by loading all the libraries needed in this notebook.
 
 ```{r}
 rm(list=ls())
@@ -84,12 +85,10 @@ r <- rast(ext(gridin), resolution=res(gridin), nlyrs=length(spskey), crs=crs(gri
 values(r) <- NA
 ```
 
+### Metrics Computation 
+#### **Metric 1:** Total Number of Occurrences
+We calculate the total number of occurrences for each species. using the function `total_occ`.
 
-### Calculate metrics
-
-#### **Metric 1**: Calculate total number of occurrences at GBIF pixelwise
-
-The function `total_occ` calculates the cumulative value of occurrences per pixel for each specie.
 ```{r}
 # calculate total number of occurrences per pixel
 total_occ <- function(cin, gridin, coorin){
@@ -165,9 +164,9 @@ ggplot() +
     fill = "Total <br> occurrences")
 ```
 
-#### **Metric 2 and 3**: Earliest and latest date of occurences at GBIF
+#### **Metric 2 and 3:** Earliest Date of Occurrence and Latest Date of Occurrence at GBIF
 
-The following function finds the earliest and latest date of records per species at pixel level across the whole data set.
+We calculate the earliest (lateste) date of occurrence for each species. The function `min_max_dates` finds the earliest (or latest) dates of records per species at the pixel level across the entire dataset.
 
 ```{r}
 min_max_dates <- function(cin, gridin, coorin, fxdates){
@@ -229,14 +228,14 @@ min_max_dates <- function(cin, gridin, coorin, fxdates){
 }
 ```
 
-In the following code chunck we compute metrics 2 and 3. Be aware that the last function argument specifies whether we calculate the earliest or latest date of record in GBIF.
+In the following code chunk, we compute metrics 2 and 3. Note that the last function argument specifies whether we calculate the earliest or latest date of record in GBIF
 
 ```{r}
 min_dates_all <- min_max_dates(cin, gridin, coorin, "earliest dates")
 max_dates_all <- min_max_dates(cin, gridin, coorin, "latest dates")
 ```
 
-Note that the `min_max_dates` function returns a list. The first element of the list is a raster containing the earliest(latest) date of the records. The second element is a table that will be used in the next section to calculate metrics 4 and 5.
+Note that the min_max_dates function returns a list. The first element of the list is a raster containing the earliest (or latest) date of the records. The second element is a table that will be used in the next section to calculate metrics 4 and 5.
 ```{r}
 # extract raster of earliest dates of records
 min_dates <- min_dates_all[[1]]
@@ -266,7 +265,8 @@ spi_name <- gbif_tax %>%
   filter(key %in% spid)
 ```
 
-This code chunk is for plotting the "Earliest date of records at GBIF" of one specie. 
+This code chunk is for plotting the 'Earliest Date of Records at GBIF' for one species.
+
 ```{r}
 ggplot() +
   geom_raster(data = df1, aes(x = x, y = y, fill = Value)) + # Use alpha for transparency
@@ -274,7 +274,7 @@ ggplot() +
   scale_fill_binned(name="Year", type="viridis") + # Optional: for better color scale
   theme_minimal() +
   labs(
-    title = bquote("Earliest date of records of" * italic(.(spi_name$scientificName) * "at GBIF pixelwise")),
+    title = bquote("Earliest Date of Records of" * italic(.(spi_name$scientificName) * "at GBIF pixelwise")),
     x = "Latitude",
     y = "Longitude",    
     fill = "Year")
@@ -294,15 +294,19 @@ ggplot() +
     y = "Longitude",    
     fill = "Year")
 ```
-#### **Metrics 4 and 5:** Basis of records of the earliest and latest date of occurrenc in GBIF.
 
-First, we identify what are the unique "basis of record" of our IAS occurrence cube and add an identifier.
+#### **Metrics 4 and 5:** Basis of Record 
+
+We compute the basis of record for the earliest and latest occurrences at GBIF.
+
+First, we identify which are the unique "basis of record" in our IAS occurrence cube and add an identifier.
 ```{r}
 # select unique 'basis of record' from cin
 basis_rec <- data.frame(unique((cin$data)[3]))
 basis_rec <- basis_rec[order((basis_rec$basisofrecord)),]
 ```
-Now we use a data frame obtained previously when computing metric 2 and 3. Specifically, we refer to the second element of funtion `min_max_dates` that is a table with earliest and latest dates of species occurrences at GBIF.
+
+Next, we use a data frame obtained previously when computing metrics 2 and 3. Specifically, we refer to the second element of the min_max_dates function, which is a table containing the earliest and latest dates of species occurrences in GBIF.
 
 ```{r}
 # extract dataframe of earliest dates of records
@@ -357,7 +361,7 @@ datasource_bydate <- function(df, gridin, coorin){
 }
 ```
 
-In the following code chunk we compute metrics 4 and 5.
+In the following code chunk, we compute metrics 4 and 5.
 ```{r}
 # calculate metrics 4 and
 min_dates_datasource <- datasource_bydate(min_dates_df, gridin, coorin)
@@ -370,18 +374,19 @@ names(max_dates_datasource) <- spskey
 names(min_dates_datasource) <- spskey
 ```
 
-#### Saving data sets as individual tiffs
+
+### Saving data sets as individual tiffs
 
 ```{r}
-writeRaster(total_occ_sps, here("output/datacubes/tif_metrics/01_ias_total_occurrences.tif"), datatype = 'INT4U', overwrite = TRUE)
-writeRaster(min_dates, here("output/datacubes/tif_metrics/02_ias_earliest_date_records.tif"), datatype = 'INT4U', overwrite = TRUE)
-writeRaster(max_dates, here("output/datacubes/tif_metrics/03_ias_latest_date_records.tif"), datatype = 'INT4U', overwrite = TRUE)
-writeRaster(min_dates_datasource, here("output/datacubes/tif_metrics/04_ias_earliest_date_records_sourceofrecord.tif"), datatype = 'INT4U', overwrite = TRUE)
-writeRaster(max_dates_datasource, here("output/datacubes/tif_metrics/05_ias_latest_date_records_sourceofrecord.tif"), datatype = 'INT4U', overwrite = TRUE)
+# writeRaster(total_occ_sps, here("output/datacubes/tif_metrics/01_ias_total_occurrences.tif"), datatype = 'INT4U', overwrite = TRUE)
+# writeRaster(min_dates, here("output/datacubes/tif_metrics/02_ias_earliest_date_records.tif"), datatype = 'INT4U', overwrite = TRUE)
+# writeRaster(max_dates, here("output/datacubes/tif_metrics/03_ias_latest_date_records.tif"), datatype = 'INT4U', overwrite = TRUE)
+# writeRaster(min_dates_datasource, here("output/datacubes/tif_metrics/04_ias_earliest_date_records_sourceofrecord.tif"), datatype = 'INT4U', overwrite = TRUE)
+# writeRaster(max_dates_datasource, here("output/datacubes/tif_metrics/05_ias_latest_date_records_sourceofrecord.tif"), datatype = 'INT4U', overwrite = TRUE)
 ```
 
 #### Prepare taxonomy for the EBV Data Portal
-Due to missing data for 10 species, we prepared a new file including only taxonomic information for our results.
+Due to the absence of data for 10 species, we prepared a new file including only taxonomic information of 77 species for our results.
 ```{r}
 # filter taxonomy file for only species with data
 # import file for all IAS taxonomy and following the ebvcube format
