@@ -17,7 +17,7 @@ output:
 
 
 ### Introduction
-In this notebook we explore the occurrence data of invasive alien species (IAS) of union concern (IAS) available in GBIF until June 2024.
+In this notebook we explore the occurrence data of invasive alien species (IAS) of union concern available in GBIF until June 2024.
 To do this, an IAS occurrence cube was previously created using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) (B3)
 Details of the data query in GBIF are available at: [doi: 10.15468/dl.x4a25s](https://www.gbif.org/occurrence/download/0081452-240506114902167). 
 The cube generation script is also part of this repository.
@@ -41,7 +41,7 @@ library(dplyr)
 library(lubridate)
 ```
 
-After loading the necessary libraries, we load the occurrence IAS cube obtained previously through the GBIF API.
+After loading the necessary libraries, we load the occurrence cube of IAS obtained previously through the GBIF API.
 
 ```{r}
 # Load IAS occurrence cube obtained through GBIF
@@ -67,9 +67,10 @@ cag <- cin %>%
 # Rename columns for joining datasets
 colnames(tax)[colnames(tax) == "key"] <- "specieskey"
 
-# Merge data set and sort in ascending order
+# Rename columns for joining occurence cube with GBIF Backbone taxonomy
 xout <- merge(x=cag, y=tax[,c("scientificName", "specieskey", "kingdom", "phylum", "class", "order", "family")], by="specieskey")
 xout <- xout[order(xout$totalOcc), ]
+
 write.csv(xout, here("output/summary_data/csv/summary_ias_totalOccurrences.csv"))
 ```
 

@@ -56,7 +56,7 @@ my_password <- gbif_user[2,1]; # 'your_password'
 path_out <- here("output/datacubes/csv/birds")
 
 # Load the JSON with the query specifications
-query_ias <- "query_birds_annex1.json"
+query_ias <- "query_birds_annex1_test.json"
 ```
 
 

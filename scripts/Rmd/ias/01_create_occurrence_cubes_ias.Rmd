@@ -17,7 +17,7 @@ output:
 
 
 ### Introduction
-In this notebook we create a cube of occurrence of invasive alien species (IAS) of union concern (IAS) based on all species records available in GBIF until June 2024.
+In this notebook we create a cube of occurrence of invasive alien species (IAS) of union concern based on all species records available in GBIF until June 2024.
 To do this, we sent a request with the cube specifications (JSON file) via the GBIF API. We used the occurrence cube generation software developed in the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/).
 Details of the GBIF data query are available at: [doi: 10.15468/dl.x4a25s](https://www.gbif.org/occurrence/download/0081452-240506114902167). 
 
