@@ -1,9 +1,0 @@
-{
-  "creator": "linamaes",
-  "notificationAddresses": [
-    "lina.estupinans@idiv.de"
-  ],
-  "sendNotification": true,
-  "format": "SQL_TSV_ZIP",
-  "sql": "SELECT PRINTF('%04d-%02d', \"year\", \"month\") AS yearMonth, GBIF_EEARGCode(10000, decimalLatitude, decimalLongitude, COALESCE(coordinateUncertaintyInMeters, 10000)) AS eeaCellCode, basisOfRecord, datasetKey, countryCode, speciesKey, species, family, class, order_, COUNT(*) AS occurrences FROM occurrence WHERE occurrenceStatus = 'PRESENT' AND \"year\" <= 2024 AND continent = 'EUROPE' AND speciesKey IN (4408405, 2475001, 5229215, 2481178, 2492953) AND hasCoordinate = TRUE AND NOT ARRAY_CONTAINS(issue, 'ZERO_COORDINATE') AND NOT ARRAY_CONTAINS(issue, 'COORDINATE_OUT_OF_RANGE') AND NOT ARRAY_CONTAINS(issue, 'COORDINATE_INVALID') AND NOT ARRAY_CONTAINS(issue, 'COUNTRY_COORDINATE_MISMATCH') AND \"month\" IS NOT NULL GROUP BY yearMonth, eeaCellCode, basisOfRecord, datasetKey, countryCode, speciesKey, species, family, class, order_ ORDER BY yearMonth DESC, eeaCellCode ASC, countryCode ASC"
-}
