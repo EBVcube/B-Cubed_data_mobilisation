@@ -1,0 +1,224 @@
+---
+title: <span style="color:#005857"> Data exploration of species listed in<br> the Birds Directive Annex I 
+subtitle: <span style="color:#47A52A"> Data mobilisation from GBIF to the EBV Data Portal<span>
+author: 
+  - name: "Lina Estupinan-Suarez,  Miguel Fernandez"
+    affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
+    email: lina.estupinans@idiv.de
+institute: "**Institute**: German Centre for Integrative Biodiversity Research (iDiv)"
+date: "`r Sys.Date()`"
+output:
+ html_notebook:
+    highlight: tango
+---
+<!-- <img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\B3_logo_full.png" style='width: 200px; position:absolute; top:0; right:0; padding:10px;'/> -->
+<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3.png" style='width: 400px; position:absolute; top:0; right:0; padding:10px;'/>
+---
+
+
+### Introduction
+In this notebook we explore the occurrence data of species listed in the Annex I of the Birds Directive available in GBIF until June 2024.
+To do this, a Birds occurrence cube was previously created using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) (B3).
+Details of the data query in GBIF are available at: [doi: ](https://www.gbif.org/occurrence/download/). 
+The cube generation script is also part of this repository.
+
+*Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
+
+
+### Load library and input data
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE)
+```
+
+```{r}
+rm(list=ls())
+gc()
+
+# load requiered libraries
+library(here)
+library(b3gbi) # for csv occurrence cubes
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+library(stringr)
+```
+
+After loading the necessary libraries, we load the occurrence cube of birds obtained previously through the GBIF API.
+
+```{r}
+# File name from the JSON query
+occcube <- "0044085-240626123714530"
+
+# Load occurrence cube using b3gbi
+cin <- process_cube(here(paste0("output/datacubes/csv/birds/", occcube,".csv")))
+
+# Load species taxonomy only with ‘accepted’ scientific names in the GBIF backbone taxonomy
+tax <- read.csv(here("input/data/birds/taxonomy/list193birds_directive_annexi_allaccepted_usagekey_gbif.csv"))
+```
+
+
+### Data Analysis
+#### Calculate Total Number of Occurrence
+
+First we calculate the total number of occurence by family.
+```{r}
+cdata <- cin[["data"]]
+# rename columns
+colnames(cdata)[colnames(cdata) == "order"] <- "order_"
+colnames(cdata)[colnames(cdata) == "taxonKey"] <- "acceptedUsageKey"
+
+# Aggregate occurrences at the family level
+cag <- cdata %>%
+  group_by(family) %>%
+  summarize(totalOcc = sum(obs), Order = first(order_))
+
+# Sort in ascending order
+cag <- cag[order(cag$totalOcc), ]
+
+# # Save file
+# write.csv(cag, here("output/summary_data/csv/summary_birds_total_occurrences_byfamily+order.csv"))
+```
+
+Now, we calculate the total number of occurence by species.
+```{r}
+# Aggregate occurrences at species level
+cag_sp <- cdata %>%
+  group_by(acceptedUsageKey) %>%
+  summarize(totalOcc = sum(obs))
+
+# Sort in ascending order
+cag_sp <- cag_sp[order(cag_sp$totalOcc), ]
+
+# Check family with one record
+position <- which(cdata$family == "Columbidae") 
+second_row <- cdata %>%
+  slice(position)
+as.data.frame(second_row) # taxon key 2495406
+```
+
+```{r}
+# Rename columns for joining occurence cube with GBIF Backbone taxonomy. Remember our species identifier is the 'acceptedUsageKey'
+
+# Merge data sets and sort in ascending order
+xout <- merge(x=as.data.frame(cag_sp), y=tax[,c("scientificName", "key", "kingdom", "phylum", "class", "order", "family")], by="taxonKey") #
+xout <- cag_sp %>% 
+  inner_join(tax[,c("scientificName", "key", "kingdom", "phylum", "class", "order", "family", "acceptedUsageKey")], by = "acceptedUsageKey")
+
+xout <- xout[order(xout$totalOcc), ]
+
+# write.csv(xout, here("output/summary_data/csv/summary_birds_total_occurrences_acceptedusagekey.csv"))
+```
+
+#### Identify birds without Records in GBIF
+```{r}
+# Find what species have no records in GBIF
+noocc <- anti_join(tax, cag_sp, by = "acceptedUsageKey")
+# write.csv(noocc, here("output/summary_data/csv/birds_no_occurrences_acceptedusagekeys.csv"))
+# print(noocc[,c("scientificName", "acceptedUsageKey")])
+```
+
+### Data Exploration
+
+We will see the number of records since 1950.
+
+
+```{r}
+# Convert date from character to numeric
+todates <- as.data.frame(str_split(cdata$yearMonth, "-", simplify = TRUE))
+colnames(todates) <- c("year", "month")
+
+# Add year and month columns separate to the initial data
+cdata$year <- todates$year
+cdata$month <- todates$month
+
+# Filter data starting from 1950
+cdata2 <- cdata %>%
+  filter(year > 1950)
+
+# Group data by year
+cag_year <- cdata2 %>%
+    group_by(year) %>%
+  summarize(totalOcc = sum(obs))
+
+# Group data by month
+cag_month <- cdata %>%
+    group_by(month) %>%
+  summarize(totalOcc = sum(obs))
+
+```
+
+In the following code chunk we plot the GBIF occurrences available since 1950 for the Bird Directive species in Annex I.
+```{r}
+ggplot(cag_year, aes(x = as.numeric(year), y = totalOcc)) +
+  geom_bar(stat = "identity") +
+  # guides(fill=guide_legend(ncol=1)) +
+  scale_y_continuous(label = scales::label_comma(accuracy = 1)) +
+  # coord_flip() +
+  labs(title = "Total Number of Species Occurrences in GBIF for the Birds Directive Annex I since 1950",
+       x = "Year",
+       y = "Total number of occurence") +
+       guides(color = guide_legend(override.aes = list(size = 5))) +
+  theme_minimal()
+```
+
+
+Now we plot the all GBIF occurrences per month for the Bird Directive species in Annex I.
+```{r}
+ggplot(cag_month, aes(x = as.numeric(month), y = totalOcc)) +
+  geom_bar(stat = "identity") +
+  # guides(fill=guide_legend(ncol=1)) +
+  scale_x_continuous(breaks = c(1,4,7,10), labels = c("Jan", "Apr", "Jul", "Oct")) +
+  scale_y_continuous(label = scales::label_comma(accuracy = 1)) +
+  labs(title = "Total Number of Species Occurrences in GBIF for the Birds Directive Annex I per month",
+       x = "Month",
+       y = "Total number of occurence") +
+       guides(color = guide_legend(override.aes = list(size = 5))) +
+  theme_minimal()
+```
+
+
+The next plot shows the occurrence of birds by family and the bars are coloured by the taxonomic order.
+```{r, fig.width=9, fig.height= 6.5}
+# Read data (only for plot test)
+# cag <- read.csv(here("output/summary_data/csv/summary_birds_total_occurrences_byfamily+order.csv"))
+
+# Create a horizontal bar plot
+ggplot(cag, aes(x = reorder(family, -totalOcc), y = totalOcc, fill = Order)) +
+  geom_bar(stat = "identity") +
+  guides(fill=guide_legend(ncol=1)) +
+  scale_y_continuous(label = scales::label_comma(accuracy = 1)) +
+  coord_flip() +
+  labs(title = "Total Number of Species Occurrences in GBIF for the Birds Directive Annex I",
+       x = "Family",
+       y = "Total number of occurence") +
+       guides(color = guide_legend(override.aes = list(size = 5))) +
+  theme_minimal()
+```
+
+Our last plot shows the increasing number of records since 2000 for the five species with the highest records.
+```{r}
+# Select the five species with more records 
+cag_sel <- cag_sp[(dim(cag_sp)[1]-5):dim(cag_sp)[1],]
+
+# Subset data set
+cag_top5 <- cdata %>% 
+  inner_join(cag_sel[,c("acceptedUsageKey")], by = "acceptedUsageKey") %>%
+  filter(year > 1990)
+
+# Aggregate occurrences by year
+cag_top5year <- cag_top5 %>%
+  group_by(year, scientificName) %>%
+  summarize(totalOcc = sum(obs), scientificName = first(scientificName))
+
+```
+
+Plot the five species with more records in GBIF since 2000
+```{r}
+ggplot(cag_top5year, aes(x = as.numeric(year), y = totalOcc, color = scientificName, name = "Species")) +
+  geom_line(linewidth = 1.6) +
+  guides(color=guide_legend(ncol=1, title = "Species")) +
+  labs(title = "Yearly Species Occurrences Since 1990 for the Five Most Recorded Species in GBIF from the Birds Directive Annex I",
+       x = "Time",
+       y = "Total number of occurence") +
+  theme_minimal()
+```

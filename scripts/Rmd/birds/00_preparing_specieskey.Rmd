@@ -1,0 +1,55 @@
+---
+title: <span style="color:#005857">Data mobilisation from GBIF <br> to the EBV Data Portal<span>
+subtitle: <span style="color:#47A52A"> Harmonisation of species keys for JSON query of Annex I species of the Birds Directive
+author: 
+  - name: "Lina Estupinan-Suarez, Miguel Fernandez"
+    affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
+    email: lina.estupinans@idiv.de
+institute: "**Institute**: German Centre for Integrative Biodiversity Research (iDiv)"
+date: "`r Sys.Date()`"
+output:
+ html_notebook:
+    highlight: tango
+---
+<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3.png" style='width: 400px; position:absolute; top:0; right:0; padding:10px;'/>
+---
+
+
+### Introduction
+In this notebook we prepare the 'speciesUsageKey' for birds listed in Annex I of the Birds Directive. Subsequently, we will work with the GBIF occurrence data and therefore use the 'speciesUsageKey' in its backbone taxonomy.
+We have previously prepared a list from Annex I of the Birds Directive that includes the taxonomy.
+
+*Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
+
+### Load Libraries
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE)
+```
+
+
+```{r}
+rm(list=ls())
+gc()
+
+# Load requiered libraries
+library(here)
+library(dplyr)
+```
+
+### Data Pre-processing
+
+First we start loading the species taxonomy obtained through the [gbif spcies matching tool](https://www.gbif.org/tools/species-lookup).
+```{r}
+# Load species taxonomy only with ‘accepted’ scientific names in the GBIF backbone taxonomy
+tax <- read.csv(here("input/data/birds/taxonomy/list193birds_directive_annexi_match_gbif.csv"))
+```
+
+As some of the scientific names in Annex I of the Birds Directive are considered synonyms by the GBIF backbone taxonomy, we will use the 'acceptedUsageKey' for the synonyms and the 'key' for the accepted scientific names. To do this, we will fill in the 'acceptedUsageKey' column with the key for accepted names, and keep the 'acceptedUsageKey' for synonyms.
+```{r}
+# Merge in one column 'key' of accepted names and 'acceptedUsageKey' of synonyms
+usagekeys <- tax %>%
+  mutate(acceptedUsageKey = coalesce(acceptedUsageKey, key))
+
+# Write CSV with 'acceptedUsageKey' for all species to be used in the JSON query
+write.csv(usagekeys, here("input/data/birds/taxonomy/list193birds_directive_annexi_allaccepted_usagekey_gbif.csv"))
+```

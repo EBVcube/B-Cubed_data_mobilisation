@@ -45,7 +45,13 @@ After loading the necessary libraries, we load the occurrence cube of IAS obtain
 
 ```{r}
 # Load IAS occurrence cube obtained through GBIF
-cin <- read.csv(here(paste0("output/datacubes/csv/ias/","0077925-240506114902167.csv")),  sep = "\t")
+# cin <- read.csv(here(paste0("output/datacubes/csv/ias/","0077925-240506114902167.csv")),  sep = "\t")
+
+# File name from the JSON query
+occcube <- "0077925-240506114902167"
+
+# Load occurrence cube using b3gbi
+cin <- process_cube(here(paste0("output/datacubes/csv/ias/", occcube,".csv")))
 
 # Load species taxonomy only with scientific names ‘accepted’ in the GBIF backbone taxonomy
 tax <- read.csv(here("input/data/ias/taxonomy/List87IAS_EU_match_gbif_allaccepted.csv"))
@@ -56,19 +62,27 @@ tax <- read.csv(here("input/data/ias/taxonomy/List87IAS_EU_match_gbif_allaccepte
 #### Calculate Total Number of Occurrence
 
 ```{r}
-# Aggregate occurrences at species level
-cag <- cin %>%
-  group_by(specieskey) %>%
-  summarize(totalOcc = sum(occurrences))
-```
+cdata <- cin[["data"]]
+# rename columns
+colnames(cdata)[colnames(cdata) == "order"] <- "order_"
+colnames(cdata)[colnames(cdata) == "taxonKey"] <- "acceptedUsageKey"
 
+# Aggregate occurrences at species level
+cag <- cdata %>%
+  group_by(acceptedUsageKey) %>%
+  summarize(totalOcc = sum(obs))
+
+ # Sort in ascending order
+cag <- cag[order(cag$totalOcc), ] 
+```
 
 ```{r}
 # Rename columns for joining datasets
-colnames(tax)[colnames(tax) == "key"] <- "specieskey"
+# colnames(tax)[colnames(tax) == "key"] <- "acceptedUsageKey"
+tax[,c("accpetedUsageKey")] <- tax[,c("key")]
 
 # Rename columns for joining occurence cube with GBIF Backbone taxonomy
-xout <- merge(x=cag, y=tax[,c("scientificName", "specieskey", "kingdom", "phylum", "class", "order", "family")], by="specieskey")
+xout <- merge(x=cag, y=tax[,c("scientificName", "acceptedUsageKey", "kingdom", "phylum", "class", "order", "family")], by="acceptedUsageKey")
 xout <- xout[order(xout$totalOcc), ]
 
 write.csv(xout, here("output/summary_data/csv/summary_ias_totalOccurrences.csv"))
@@ -77,7 +91,38 @@ write.csv(xout, here("output/summary_data/csv/summary_ias_totalOccurrences.csv")
 #### Identify IAS without Records in GBIF
 ```{r}
 # Find what species have no records in GBIF
-noocc <- anti_join(tax, cag, by = "specieskey")
+noocc <- anti_join(tax, cag, by = "acceptedUsageKey")
 write.csv(noocc, here("output/summary_data/csv/ias_noOccurrences.csv"))
 print(noocc)
+```
+
+
+### Data Exploration
+
+We will explore data available since 1900. To do this, first we split the 'yearMonth' column into 'year' and 'month'.
+
+
+```{r}
+# Convert date from character to numeric
+todates <- as.data.frame(str_split(cdata$yearMonth, "-", simplify = TRUE))
+colnames(todates) <- c("year", "month")
+
+# Add year and month columns separate to the initial data
+cdata$year <- todates$year
+cdata$month <- todates$month
+
+# Filter data starting from 1950
+cdata2 <- cdata %>%
+  filter(year > 1950)
+
+# Group data by year
+cag_year <- cdata2 %>%
+    group_by(year) %>%
+  summarize(totalOcc = sum(obs))
+
+# Group data by month
+cag_month <- cdata %>%
+    group_by(month) %>%
+  summarize(totalOcc = sum(obs))
+
 ```

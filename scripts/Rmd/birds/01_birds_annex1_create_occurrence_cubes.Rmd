@@ -17,9 +17,9 @@ output:
 
 
 ### Introduction
-In this notebook we create a cube of occurrence of birds listed in the Annex I of the Birds Directive based on all species records available in GBIF until June 2024.
+In this notebook we create a cube of occurrence of birds listed in the Annex I of the Birds Directive based on all species records available in GBIF until July 2024.
 To do this, we sent a request with the cube specifications (JSON file) via the GBIF API. We used the occurrence cube generation software developed in the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/).
-Details of the GBIF data query are available at: [change!!!!](https://www.gbif.org/occurrence/download/0081452-240506114902167). 
+Details of the GBIF data query are available at: [change!!!!](https://www.gbif.org/occurrence/download/). 
 
 *Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
 
@@ -53,10 +53,10 @@ my_username <- gbif_user[1,1]; # 'your_username'
 my_password <- gbif_user[2,1]; # 'your_password'
 
 # Set the location for the resulting occurrence cube
-path_out <- here("output/datacubes/csv/birds")
+path_out <- here("output/datacubes/csv/birds/")
 
 # Load the JSON with the query specifications
-query_ias <- "query_birds_annex1_test.json"
+query_ias <- "query_birds_annex1_acceptedusagekeys.json"
 ```
 
 
@@ -70,7 +70,7 @@ req <-  request(gbif_url) |>
 
 # Perform the request and return the response (the response is a download ID)
 response <- req |> req_perform()  |> resp_body_string()
-#"0022303-240626123714530" # test query
+response <- "0044085-240626123714530"
 ```
 
 ### Unpack the IAS occurrence cube and load it into R
@@ -86,7 +86,7 @@ paste0(gbif_url, response)
 unzip(paste0(path_out, "/", response,".zip"), exdir=paste0(path_out,"/"))
 ```
 
-The resulting occurrence cube is in CSV format. The number of species occurrence is aggregated per cell based on the (coded) reference grid. There are several ways to load the resulting cube. Two examples are shown here. One is using the CSV read command and the other is using the `b3gbi` library.
+The resulting occurrence cube is in CSV format. The number of species occurrence is aggregated per cell based on the code of the reference grid. There are several ways to load the resulting cube. Two examples are shown here. One is using the CSV read command and the other is using the `b3gbi` library.
 
 ```{r}
 # Load GBIF data cube using a simple CSV read function
