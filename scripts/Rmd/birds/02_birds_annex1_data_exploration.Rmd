@@ -19,10 +19,10 @@ output:
 ### Introduction
 In this notebook we explore the occurrence data of species listed in the Annex I of the Birds Directive available in GBIF until June 2024.
 To do this, a Birds occurrence cube was previously created using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) (B3).
-Details of the data query in GBIF are available at: [doi: ](https://www.gbif.org/occurrence/download/). 
+Details of the data query in GBIF are available at: [doi: 10.15468/dl.43ydtq](https://doi.org/10.15468/dl.43ydtq). 
 The cube generation script is also part of this repository.
 
-*Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
+*Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) Project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
 
 
 ### Load library and input data
@@ -64,7 +64,7 @@ First we calculate the total number of occurence by family.
 ```{r}
 cdata <- cin[["data"]]
 # rename columns
-colnames(cdata)[colnames(cdata) == "order"] <- "order_"
+colnames(cdata)[colnames(cdata) == "order"] <- "order_" # Note that if the name only remains as "order" this can be confused with the R funtcion 'order' to sort data.
 colnames(cdata)[colnames(cdata) == "taxonKey"] <- "acceptedUsageKey"
 
 # Aggregate occurrences at the family level
@@ -75,8 +75,8 @@ cag <- cdata %>%
 # Sort in ascending order
 cag <- cag[order(cag$totalOcc), ]
 
-# # Save file
-# write.csv(cag, here("output/summary_data/csv/summary_birds_total_occurrences_byfamily+order.csv"))
+# Save file
+write.csv(cag, here("output/summary_data/csv/summary_birds_total_occurrences_byfamily+order.csv"))
 ```
 
 Now, we calculate the total number of occurence by species.
@@ -90,7 +90,7 @@ cag_sp <- cdata %>%
 cag_sp <- cag_sp[order(cag_sp$totalOcc), ]
 
 # Check family with one record
-position <- which(cdata$family == "Columbidae") 
+position <- which(cdata$family == "Columbidae")
 second_row <- cdata %>%
   slice(position)
 as.data.frame(second_row) # taxon key 2495406
@@ -100,27 +100,29 @@ as.data.frame(second_row) # taxon key 2495406
 # Rename columns for joining occurence cube with GBIF Backbone taxonomy. Remember our species identifier is the 'acceptedUsageKey'
 
 # Merge data sets and sort in ascending order
-xout <- merge(x=as.data.frame(cag_sp), y=tax[,c("scientificName", "key", "kingdom", "phylum", "class", "order", "family")], by="taxonKey") #
 xout <- cag_sp %>% 
   inner_join(tax[,c("scientificName", "key", "kingdom", "phylum", "class", "order", "family", "acceptedUsageKey")], by = "acceptedUsageKey")
 
 xout <- xout[order(xout$totalOcc), ]
 
-# write.csv(xout, here("output/summary_data/csv/summary_birds_total_occurrences_acceptedusagekey.csv"))
+# Save file
+write.csv(xout, here("output/summary_data/csv/summary_birds_total_occurrences_acceptedusagekey.csv"))
 ```
 
-#### Identify birds without Records in GBIF
+#### Identify birds without species occurrences through the GBIF occurrence cube software
+
 ```{r}
 # Find what species have no records in GBIF
 noocc <- anti_join(tax, cag_sp, by = "acceptedUsageKey")
-# write.csv(noocc, here("output/summary_data/csv/birds_no_occurrences_acceptedusagekeys.csv"))
-# print(noocc[,c("scientificName", "acceptedUsageKey")])
+write.csv(noocc, here("output/summary_data/csv/birds_no_occurrences_acceptedusagekeys.csv"))
+print(noocc[,c("scientificName", "acceptedUsageKey")])
 ```
+
+As a remark, the list above refers to Subspecies that cannot be identified by the 'speciesKey' of our JSON query.
 
 ### Data Exploration
 
-We will see the number of records since 1950.
-
+We will start checking the number of records since 1950.
 
 ```{r}
 # Convert date from character to numeric
@@ -179,9 +181,6 @@ ggplot(cag_month, aes(x = as.numeric(month), y = totalOcc)) +
 
 The next plot shows the occurrence of birds by family and the bars are coloured by the taxonomic order.
 ```{r, fig.width=9, fig.height= 6.5}
-# Read data (only for plot test)
-# cag <- read.csv(here("output/summary_data/csv/summary_birds_total_occurrences_byfamily+order.csv"))
-
 # Create a horizontal bar plot
 ggplot(cag, aes(x = reorder(family, -totalOcc), y = totalOcc, fill = Order)) +
   geom_bar(stat = "identity") +
@@ -212,10 +211,10 @@ cag_top5year <- cag_top5 %>%
 
 ```
 
-Plot the five species with more records in GBIF since 2000
+Lastly, this plot shows the five species with more records in GBIF since 2000.
 ```{r}
 ggplot(cag_top5year, aes(x = as.numeric(year), y = totalOcc, color = scientificName, name = "Species")) +
-  geom_line(linewidth = 1.6) +
+  geom_line(linewidth = 1.3) +
   guides(color=guide_legend(ncol=1, title = "Species")) +
   labs(title = "Yearly Species Occurrences Since 1990 for the Five Most Recorded Species in GBIF from the Birds Directive Annex I",
        x = "Time",

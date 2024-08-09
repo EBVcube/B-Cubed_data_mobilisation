@@ -11,7 +11,7 @@ output:
  html_notebook:
     highlight: tango
 ---
-<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3.png" style='width: 400px; position:absolute; top:0; right:0; padding:10px;'/>
+<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png" style='width: 400px; position:absolute; top:45px; right:50px; padding:5px;'/>
 ---
 
 
@@ -19,7 +19,7 @@ output:
 In this notebook we prepare the 'speciesUsageKey' for birds listed in Annex I of the Birds Directive. Subsequently, we will work with the GBIF occurrence data and therefore use the 'speciesUsageKey' in its backbone taxonomy.
 We have previously prepared a list from Annex I of the Birds Directive that includes the taxonomy.
 
-*Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
+*Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) Project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
 
 ### Load Libraries
 ```{r setup, include=FALSE}
