@@ -1,6 +1,6 @@
 ---
 title: <span style="color:#005857"> Metrics Computation for <br> the IAS Occurrences Cube
-subtitle: <span style="color:#47A52A"> Data Mobilization from GBIF to the EBV Data Portal<span>
+subtitle: <span style="color:#47A52A"> Data mobilisation from GBIF to the EBV Data Portal<span>
 author: 
   - name: "Lina Estupinan-Suarez, Miguel Fernandez"
     affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
@@ -15,7 +15,7 @@ output:
 ---
 
 ### Introduction
-In this notebook, we calculate simple metrics for the invasive alien species (IAS) of union concern in Europe. To do this, an IAS occurrence cube has been created previously (see Notebook 01) using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for Policy Project](https://b-cubed.eu/) (B3). Details of the data query in GBIF are available at: [doi: 10.15468/dl.x4a25s](https://www.gbif.org/occurrence/download/0081452-240506114902167). Here, we present five metrics:
+In this notebook, we calculate simple metrics for the invasive alien species (IAS) of union concern in Europe. To do this, an IAS occurrence cube has been created previously (see Notebook 01) using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) (B3) Project. Details of the data query in GBIF are available at: [doi: 10.15468/dl.x4a25s](https://www.gbif.org/occurrence/download/0081452-240506114902167). Here, we present five metrics:
 
  - Total number of occurrences
  - Earliest date of occurrence
@@ -23,7 +23,8 @@ In this notebook, we calculate simple metrics for the invasive alien species (IA
  - Basis of record of the earliest occurrence
  - Basis of record of the latest date of occurrence
 
-*Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy Project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
+*Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) Project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
+
 
 ### Load Library and Input Data
 ```{r setup, include=FALSE}
@@ -165,7 +166,7 @@ ggplot() +
 
 #### **Metric 2 and 3:** Earliest Date of Occurrence and Latest Date of Occurrence at GBIF
 
-We calculate the earliest (lateste) date of occurrence for each species. The function `min_max_dates` finds the earliest (or latest) dates of records per species at the pixel level across the entire dataset.
+We calculate the earliest (latest) date of occurrence for each species. The function `min_max_dates` finds the earliest (or latest) dates of records per species at the pixel level across the entire dataset.
 
 ```{r}
 min_max_dates <- function(cin, gridin, coorin, fxdates){
@@ -230,7 +231,7 @@ min_max_dates <- function(cin, gridin, coorin, fxdates){
 }
 ```
 
-In the following code chunk, we compute metrics 2 and 3. Note that the last function argument specifies whether we calculate the earliest or latest date of record in GBIF
+In the following code chunk, we compute metrics 2 and 3. Note that the last function argument specifies whether we calculate the earliest or latest date of record in GBIF.
 
 ```{r}
 min_dates_all <- min_max_dates(cin, gridin, coorin, "earliest dates")
@@ -365,7 +366,7 @@ datasource_bydate <- function(df, gridin, coorin, spskey){
 
 In the following code chunk, we compute metrics 4 and 5.
 ```{r}
-# Calculate metrics 4 and
+# Calculate metrics 4 and 5
 min_dates_datasource <- datasource_bydate(min_dates_df, gridin, coorin, spskey)
 max_dates_datasource <- datasource_bydate(max_dates_df, gridin, coorin, spskey)
 ```

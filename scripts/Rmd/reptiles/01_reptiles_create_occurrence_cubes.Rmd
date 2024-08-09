@@ -1,6 +1,6 @@
 ---
 title: <span style="color:#005857">Data mobilisation from GBIF <br> to the EBV Data Portal<span>
-subtitle: <span style="color:#47A52A"> Prototype for creating a occurrence cube of IAS
+subtitle: <span style="color:#47A52A"> Reptiles global assessment
 author: 
   - name: "Lina Estupinan-Suarez, Miguel Fernandez"
     affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
@@ -17,12 +17,11 @@ output:
 
 
 ### Introduction
-In this notebook we create a cube of occurrence of invasive alien species (IAS) of union concern based on all species records available in GBIF until June 2024.
+In this notebook we create a cube of occurrence of XXX based on all species records available in GBIF until July 2024.
 To do this, we sent a request with the cube specifications (JSON file) via the GBIF API. We used the occurrence cube generation software developed in the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/).
-Details of the GBIF data query are available at: [doi: 10.15468/dl.x4a25s](https://www.gbif.org/occurrence/download/0081452-240506114902167). 
+Details of the GBIF data query are available at: [change!!!!](https://www.gbif.org/occurrence/download/). 
 
-*Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) Project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
-
+*Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
 
 ### Load Libraries
 ```{r setup, include=FALSE}
@@ -33,7 +32,7 @@ knitr::opts_chunk$set(message=FALSE, warning=FALSE)
 rm(list=ls())
 gc()
 
-# load requiered libraries
+# Load requiered libraries
 library(here)
 library(httr)
 library(httr2)
@@ -42,7 +41,7 @@ library(b3gbi)
 ```
 
 ### Submit a JSON query
-The JSON file containing the query specification has been previously prepared (see the `input/queries` folder). In this case, the cube specification includes the geographical extent (EU27), the spatial resolution (~1 km), the time period (>1900), the specieskey of the species of interest (invasive alien species of Union concern (IAS)), and we request the number of occurrences per grid cell, the higher taxonomy and the basis of records. We used the European Environment Agency grid at 1km as a reference.
+The JSON file containing the query specification has been previously prepared (see the `input/queries` folder). In this case, the cube specification includes the geographical extent (EU27), the spatial resolution (~1 km), the time period (>1900), the specieskey of the species of interest (list of species in the Birds Directive Annex I), and we request the number of occurrences per grid cell, the higher taxonomy and the basis of records. We used the European Environment Agency grid at 1km as a reference.
 
 ```{r}
 # Save GBIF API address
@@ -54,10 +53,10 @@ my_username <- gbif_user[1,1]; # 'your_username'
 my_password <- gbif_user[2,1]; # 'your_password'
 
 # Set the location for the resulting occurrence cube
-path_out <- here("output/datacubes/csv/ias/")
+path_out <- here("output/datacubes/csv/reptiles_gra/")
 
 # Load the JSON with the query specifications
-query_ias <- "query_ias.json"
+json_query <- "query_reptiles_200sp.json"
 ```
 
 
@@ -67,11 +66,11 @@ req <-  request(gbif_url) |>
   req_auth_basic(username = my_username, password = my_password) |> 
   req_headers("Content-Type" = "application/json") |> 
   req_retry(max_tries = 5) |>
-  req_body_file(here(paste0("input/queries/", query_ias)), type = NULL)
+  req_body_file(here(paste0("input/queries/", json_query)), type = NULL)
 
 # Perform the request and return the response (the response is a download ID)
-# response <- req |> req_perform()  |> resp_body_string()
-response <- "0077925-240506114902167"
+response <- req |> req_perform()  |> resp_body_string()
+#response <- "0048330-240626123714530" # 1 specie
 ```
 
 ### Unpack the IAS occurrence cube and load it into R
@@ -87,7 +86,7 @@ paste0(gbif_url, response)
 unzip(paste0(path_out, "/", response,".zip"), exdir=paste0(path_out,"/"))
 ```
 
-The resulting occurrence cube is in CSV format. The number of species occurrence is aggregated per cell based on the (coded) reference grid. There are several ways to load the resulting cube. Two examples are shown here. One is using the CSV read command and the other is using the `b3gbi` library.
+The resulting occurrence cube is in CSV format. The number of species occurrence is aggregated per cell based on the code of the reference grid. There are several ways to load the resulting cube. Two examples are shown here. One is using the CSV read command and the other is using the `b3gbi` library.
 
 ```{r}
 # Load GBIF data cube using a simple CSV read function

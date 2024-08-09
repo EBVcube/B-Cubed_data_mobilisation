@@ -20,7 +20,8 @@ output:
 This is a preparatory notebook for mobilising species occurrence cubes from GBIF to the EBV Data Portal. Specifically, here we use the European Environment Agency (EEA) [grid](https://sdi.eea.europa.eu/catalogue/srv/eng/catalog.search#/metadata/e834751f-19d1-4842-823d-e90e600c5993) in vector format at 10 km as spatial reference.
 The subsequent notebooks focus on the generation of species cubes, the calculation of metrics, and the conversion of the results into the EBV cube format for final upload to the EBV data portal.
 
-*Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
+*Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) Project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
+
 
 ### Load Libraries
 ```{r setup, include=FALSE}

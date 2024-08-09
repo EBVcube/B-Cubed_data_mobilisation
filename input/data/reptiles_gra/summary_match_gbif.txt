@@ -1,0 +1,8 @@
+I run the species matching tool from GBIF and the results are very good. See below:
+We have a perfect match for:                     9857 species
+We can use the names exactly as they are in the GRA dataset to query GBIF.
+We have a fuzzy match for:                         143 species 
+For these 143 species we need to replace the GRA species name (verbatimScientificName_(GRA)) with the GBIF backbone name (species_(GBIF))for the queries to GBIF. Most of these are 97, 98, 99% match and with a missing “i” or “e” or a synonym.
+We have no match for:                                  3 species
+We leave these species out.
+File with the results attached.

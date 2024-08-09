@@ -18,11 +18,12 @@ output:
 
 ### Introduction
 In this notebook we explore the occurrence data of invasive alien species (IAS) of union concern available in GBIF until June 2024.
-To do this, an IAS occurrence cube was previously created using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) (B3)
+To do this, an IAS occurrence cube was previously created using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) (B3) project
 Details of the data query in GBIF are available at: [doi: 10.15468/dl.x4a25s](https://www.gbif.org/occurrence/download/0081452-240506114902167). 
 The cube generation script is also part of this repository.
 
-*Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
+*Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) Project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
+
 
 
 ### Load library and input data
@@ -39,6 +40,8 @@ library(here)
 library(ggplot2)
 library(dplyr)
 library(lubridate)
+library(b3gbi)
+library(stringr)
 ```
 
 After loading the necessary libraries, we load the occurrence cube of IAS obtained previously through the GBIF API.
@@ -79,7 +82,7 @@ cag <- cag[order(cag$totalOcc), ]
 ```{r}
 # Rename columns for joining datasets
 # colnames(tax)[colnames(tax) == "key"] <- "acceptedUsageKey"
-tax[,c("accpetedUsageKey")] <- tax[,c("key")]
+tax[,c("acceptedUsageKey")] <- tax[,c("key")]
 
 # Rename columns for joining occurence cube with GBIF Backbone taxonomy
 xout <- merge(x=cag, y=tax[,c("scientificName", "acceptedUsageKey", "kingdom", "phylum", "class", "order", "family")], by="acceptedUsageKey")
@@ -111,9 +114,9 @@ colnames(todates) <- c("year", "month")
 cdata$year <- todates$year
 cdata$month <- todates$month
 
-# Filter data starting from 1950
+# Filter data starting from 1900
 cdata2 <- cdata %>%
-  filter(year > 1950)
+  filter(year > 1900)
 
 # Group data by year
 cag_year <- cdata2 %>%
@@ -124,5 +127,65 @@ cag_year <- cdata2 %>%
 cag_month <- cdata %>%
     group_by(month) %>%
   summarize(totalOcc = sum(obs))
+```
 
+In the following code chunk we plot the GBIF occurrences available since 1900 for the IAS of union concern.
+```{r}
+ggplot(cag_year, aes(x = as.numeric(year), y = totalOcc)) +
+  geom_bar(stat = "identity") +
+  # guides(fill=guide_legend(ncol=1)) +
+  scale_y_continuous(label = scales::label_comma(accuracy = 1)) +
+  # coord_flip() +
+  labs(title = "Total Number of Species Occurrences in GBIF for IAS of union concern since 1900",
+       x = "Year",
+       y = "Total number of occurence") +
+       guides(color = guide_legend(override.aes = list(size = 5))) +
+  theme_minimal()
+```
+
+Now we plot the all GBIF occurrences per month for the IAS of union concern.
+```{r}
+ggplot(cag_month, aes(x = as.numeric(month), y = totalOcc)) +
+  geom_bar(stat = "identity") +
+  # guides(fill=guide_legend(ncol=1)) +
+  scale_x_continuous(breaks = c(1,4,7,10), labels = c("Jan", "Apr", "Jul", "Oct")) +
+  scale_y_continuous(label = scales::label_comma(accuracy = 1)) +
+  labs(title = "Total Number of Species Occurrences in GBIF for the IAS of union concern",
+       x = "Month",
+       y = "Total number of occurence") +
+       guides(color = guide_legend(override.aes = list(size = 5))) +
+  theme_minimal()
+```
+
+Our last plot shows the increasing number of records since 2000 for the five species with the highest records.
+```{r}
+# Aggregate occurrences at species level
+cag_sp <- cdata %>%
+  group_by(acceptedUsageKey) %>%
+  summarize(totalOcc = sum(obs))
+
+# Select the five species with more records 
+cag_sel <- cag_sp[(dim(cag_sp)[1]-5):dim(cag_sp)[1],]
+
+# Subset data set
+cag_top5 <- cdata %>% 
+  inner_join(cag_sel[,c("acceptedUsageKey")], by = "acceptedUsageKey") %>%
+  filter(year > 1990)
+
+# Aggregate occurrences by year
+cag_top5year <- cag_top5 %>%
+  group_by(year, scientificName) %>%
+  summarize(totalOcc = sum(obs), scientificName = first(scientificName))
+
+```
+
+Plot the five species with more records in GBIF since 2000
+```{r}
+ggplot(cag_top5year, aes(x = as.numeric(year), y = totalOcc, color = scientificName, name = "Species")) +
+  geom_line(linewidth = 1.6) +
+  guides(color=guide_legend(ncol=1, title = "Species")) +
+  labs(title = "Yearly Species Occurrences Since 1990 for the Five Most Recorded Species in GBIF from the Birds Directive Annex I",
+       x = "Time",
+       y = "Total number of occurence") +
+  theme_minimal()
 ```
