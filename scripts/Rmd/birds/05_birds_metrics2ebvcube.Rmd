@@ -1,0 +1,169 @@
+---
+title: <span style="color:#005857"> Data mobilisation from GBIF <br>to the EBV Data Portal<span>
+subtitle: <span style="color:#47A52A"> Creation of the EBV NetCDF for <br> the Birds Directive occurrences cube metrics
+author: 
+  - name: "Lina Estupinan-Suarez, Luise Quoss, Miguel Fernandez"
+    affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
+    email: lina.estupinans@idiv.de
+institute: "**Institute**: German Centre for Integrative Biodiversity Research (iDiv)"
+date: "`r Sys.Date()`"
+output:
+ html_notebook:
+    highlight: tango
+---
+<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png" style='width: 400px; position:absolute; top:45px; right:0px; padding:5px;'/>
+---
+
+
+### Introduction
+In this notebook we calculate simple metrics for the species in the Birds Directive of Europe.
+To do this, a species currence cube has been created previously (see Notebook 01) using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) (B3)
+Details of the data query in GBIF are available at [doi: 10.15468/dl.uh84tp](https://doi.org/10.15468/dl.uh84tp/). 
+Here we present six metrics: Total number of occurrences, Earliest month with records, Latest month with records, Month with the highest number of records, Month with the second highest number of records, Month with the third highest number of records.
+  
+*Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
+
+### Load libraries
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE)
+```
+
+```{r}
+rm(list=ls())
+gc()
+
+library(ebvcube)
+library(here)
+library(terra)
+```
+
+### Input data
+Define paths for reading input data and saving the results.
+
+ 
+```{r}
+# paths
+json <- file.path(here("input/ebvformat/json/birds/birds_6_metrics.json")) # EBV Metadata as JSON from the EBV Portal
+out <- file.path(here("output/datacubes/nc/birds/birds_6_metrics_test.nc")) # path to save EBV NetCDF 
+
+# tifs
+tif_root <- here("output/datacubes/tiff_metrics/birds/")
+
+# taxonomy file
+tax <- file.path(here("input/data/birds/taxonomy/List168_BirdsAnnexI_gbif_accepted_ebvcube.csv"))
+```
+
+Load all metrics as tiffs. Five in total.
+```{r}
+# input rasters: one for each metric
+r1 <- rast(here("output/datacubes/tif_metrics/birds/01_birds_total_occurrences_168.tif")) 
+r2 <- rast(here("output/datacubes/tif_metrics/birds/02_birds_earliest_month_records_168.tif"))
+r3 <- rast(here("output/datacubes/tif_metrics/birds/03_birds_latest_month_records_168.tif"))
+r4 <- rast(here("output/datacubes/tif_metrics/birds/04_birds_month_1sthigh_168.tif")) 
+r5 <- rast(here("output/datacubes/tif_metrics/birds/05_birds_month_2ndhigh_168.tif")) 
+r6 <- rast(here("output/datacubes/tif_metrics/birds/06_birds_month_3rdhigh_168.tif")) 
+```
+
+Set the raster settings.
+```{r}
+# define raster settings
+extent <- c(ext(r1)[1], ext(r1)[2], ext(r1)[3], ext(r1)[4])
+res <- res(r1)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      fillvalue <- NaN
+prec <- 'integer'
+epsg <- 3035
+sep <- ','
+```
+
+Read the species taxonomy.
+
+```{r}
+# species key to sort the data
+spskey <- names(r1)
+spstax <- read.csv(here("input/data/birds/taxonomy/List168_BirdsAnnexI_gbif_accepted_ebvcube+acceptedUsageKey.csv"))
+
+# check whether the spskey order is the same
+spstax$species == spskey
+```
+
+### Create EBV NetCDF
+
+Create empty EBV NetCDF.
+```{r}
+#create empty file
+ebv_create_taxonomy(jsonpath = json,
+           outputpath = out,
+           taxonomy = tax,
+           epsg = epsg,
+           extent = extent,
+           resolution = res,
+           fillvalue = fillvalue,
+           prec = prec,
+           sep = sep,
+           overwrite=T
+)
+```
+
+
+```{r}
+# check data
+ebv_datacubepaths(out)
+ebv_properties(out, metric=1)
+```
+
+
+```{r}
+#add data -----
+#get entity names
+entity_names <- ebv_properties(out, verbose=F)@general$entity_names
+```
+
+
+
+Map input data to the empty NetCDF
+```{r}
+for(i in 1:length(spskey)){
+spx <- which(spskey == spstax[["acceptedUsageKey"]][i])
+  ebv_add_data(filepath_nc = out,
+               data = terra::as.matrix(r1[[spx]], wide=T),
+               metric = 1,
+               entity = i,
+               timestep = 1,
+               ignore_RAM = T)
+
+  ebv_add_data(filepath_nc = out,
+               data = terra::as.matrix(r2[[spx]], wide=T),
+               metric = 2,
+               entity = i,
+               timestep = 1,
+               ignore_RAM = T)
+
+  ebv_add_data(filepath_nc = out,
+               data = terra::as.matrix(r3[[spx]], wide=T),
+               metric = 3,
+               entity = i,
+               timestep = 1,
+               ignore_RAM = T)
+
+  ebv_add_data(filepath_nc = out,
+               data = terra::as.matrix(r4[[spx]], wide=T),
+               metric = 4,
+               entity = i,
+               timestep = 1,
+               ignore_RAM = T)
+              
+  ebv_add_data(filepath_nc = out,
+               data = terra::as.matrix(r5[[spx]], wide=T),
+               metric = 5,
+               entity = i,
+               timestep = 1,
+               ignore_RAM = T)
+
+  ebv_add_data(filepath_nc = out,
+               data = terra::as.matrix(r6[[spx]], wide=T),
+               metric = 6,
+               entity = i,
+               timestep = 1,
+               ignore_RAM = T)            
+}
+```

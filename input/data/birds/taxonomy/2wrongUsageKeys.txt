@@ -1,0 +1,8 @@
+Two species from the matched GBIF taxonomy have the wrong acceptedUsageKey
+
+"wrong  acceptedUsageKey-> 6178421
+right -> 2498338"	Cygnus columbianus (Ord, 1815)
+
+
+"wrong  acceptedUsageKey->" 7192406
+right-> 5789279"	Sternula albifrons (Pallas, 1764)

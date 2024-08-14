@@ -1,6 +1,6 @@
 ---
-title: <span style="color:#005857"> Data exploration of species listed in<br> the Birds Directive Annex I 
-subtitle: <span style="color:#47A52A"> Data mobilisation from GBIF to the EBV Data Portal<span>
+title: <span style="color:#005857"> Data mobilisation from GBIF <br> to the EBV Data Portal<span>
+subtitle: <span style="color:#47A52A"> Data exploration of species listed in the Birds Directive Annex I 
 author: 
   - name: "Lina Estupinan-Suarez,  Miguel Fernandez"
     affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
@@ -11,18 +11,17 @@ output:
  html_notebook:
     highlight: tango
 ---
-<!-- <img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\B3_logo_full.png" style='width: 200px; position:absolute; top:0; right:0; padding:10px;'/> -->
-<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3.png" style='width: 400px; position:absolute; top:0; right:0; padding:10px;'/>
+<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png" style='width: 400px; position:absolute; top:45px; right:0px; padding:5px;'/>
 ---
 
 
 ### Introduction
 In this notebook we explore the occurrence data of species listed in the Annex I of the Birds Directive available in GBIF until June 2024.
 To do this, a Birds occurrence cube was previously created using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) (B3).
-Details of the data query in GBIF are available at: [doi: 10.15468/dl.43ydtq](https://doi.org/10.15468/dl.43ydtq). 
+Details of the data query in GBIF are available at [doi: 10.15468/dl.uh84tp](https://doi.org/10.15468/dl.uh84tp/). 
 The cube generation script is also part of this repository.
 
-*Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) Project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
+*Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
 
 
 ### Load library and input data
@@ -47,7 +46,7 @@ After loading the necessary libraries, we load the occurrence cube of birds obta
 
 ```{r}
 # File name from the JSON query
-occcube <- "0044085-240626123714530"
+occcube <- "0062979-240626123714530"
 
 # Load occurrence cube using b3gbi
 cin <- process_cube(here(paste0("output/datacubes/csv/birds/", occcube,".csv")))
@@ -106,7 +105,7 @@ xout <- cag_sp %>%
 xout <- xout[order(xout$totalOcc), ]
 
 # Save file
-write.csv(xout, here("output/summary_data/csv/summary_birds_total_occurrences_acceptedusagekey.csv"))
+write.csv(xout, here("output/summary_data/csv/summary_birds_total_occurrences_acceptedusagekey.csv"), quote = FALSE)
 ```
 
 #### Identify birds without species occurrences through the GBIF occurrence cube software
@@ -114,11 +113,40 @@ write.csv(xout, here("output/summary_data/csv/summary_birds_total_occurrences_ac
 ```{r}
 # Find what species have no records in GBIF
 noocc <- anti_join(tax, cag_sp, by = "acceptedUsageKey")
-write.csv(noocc, here("output/summary_data/csv/birds_no_occurrences_acceptedusagekeys.csv"))
+write.csv(noocc, here("output/summary_data/csv/birds_no_occurrences_acceptedusagekeys.csv"), quote = FALSE)
 print(noocc[,c("scientificName", "acceptedUsageKey")])
 ```
 
-As a remark, the list above refers to Subspecies that cannot be identified by the 'speciesKey' of our JSON query.
+As a remark, the list above refers mostly to subspecies that cannot be identified by the 'speciesKey' of our JSON query, and a few correspond to species from the Canary Islands or the Azores that are not covered by the EEA grid.
+
+#### Prepare taxonomy for the EBV Data Portal
+
+Due to the absence of data for 25 species, we prepared a new file including only taxonomic information of 168 species based on our results.
+```{r}
+# Filter taxonomy file for only species with data
+# Import file for all Birds Species and following the ebvcube format
+
+# Subset only for species with data occurrences in GBIF
+spskey <- unique(cin[["data"]][["taxonKey"]]) # "taxonKey" is the name of the species key in b3bgi
+
+gbif_spx <- tax %>%
+  filter(acceptedUsageKey %in% spskey)
+
+# Unmatched species
+gbif_spx_missing <- tax %>%
+  filter(acceptedUsageKey %in% setdiff(tax$acceptedUsageKey, spskey))
+
+# Sort the right taxonomic order for filling the EBV Data Portal requierement before saving
+gbif_spx2 <- gbif_spx[,c("kingdom", "phylum", "class", "order", "family", "genus", "species", "acceptedUsageKey", "scientificName")]
+
+# Save files
+write.csv(gbif_spx2[,1:8], here("input/data/birds/taxonomy/List168_BirdsAnnexI_gbif_accepted_ebvcube+acceptedUsageKey.csv"), quote=FALSE)
+write.csv(gbif_spx2, here("input/data/birds/taxonomy/List168_BirdsAnnexI_gbif_accepted_ebvcube+acceptedUsageKey+ETCname.csv"), quote=FALSE)
+write.csv(gbif_spx_missing, here("input/data/birds/taxonomy/List28_missing_BirdsAnnexI_gbif_accepted_ebvcube+acceptedUsageKey.csv"), quote=FALSE)
+```
+
+
+
 
 ### Data Exploration
 
@@ -129,7 +157,7 @@ We will start checking the number of records since 1950.
 todates <- as.data.frame(str_split(cdata$yearMonth, "-", simplify = TRUE))
 colnames(todates) <- c("year", "month")
 
-# Add year and month columns separate to the initial data
+# Add year and month columns separate to the initial dataset
 cdata$year <- todates$year
 cdata$month <- todates$month
 
@@ -216,7 +244,7 @@ Lastly, this plot shows the five species with more records in GBIF since 2000.
 ggplot(cag_top5year, aes(x = as.numeric(year), y = totalOcc, color = scientificName, name = "Species")) +
   geom_line(linewidth = 1.3) +
   guides(color=guide_legend(ncol=1, title = "Species")) +
-  labs(title = "Yearly Species Occurrences Since 1990 for the Five Most Recorded Species in GBIF from the Birds Directive Annex I",
+  labs(title = "Annual species occurrences since 1990 for the top five \n GBIF occurrence of species listed in Annex I of the Birds Directive",
        x = "Time",
        y = "Total number of occurence") +
   theme_minimal()
