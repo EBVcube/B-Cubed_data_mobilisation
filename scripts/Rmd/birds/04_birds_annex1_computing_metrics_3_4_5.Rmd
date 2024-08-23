@@ -1,25 +1,30 @@
 ---
-title: <span style="color:#005857"> Data mobilisation from GBIF <br>to the EBV Data Portal<span>
-subtitle: <span style="color:#47A52A"> Calculation of Metrics for the Birds Directive Annex I Using Occurrence Cubes (Part II)
-author: 
-  - name: "Lina Estupinan-Suarez, Miguel Fernandez"
-    affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
-    email: lina.estupinans@idiv.de
-institute: "**Institute**: German Centre for Integrative Biodiversity Research (iDiv)"
+title: <span style="color:#005857"> Data mobilisation from GBIF <br>to the EBV Data
+  Portal<span>
+author:
+- name: "Lina Estupinan-Suarez, Miguel Fernandez"
+  affiliation: German Centre for Integrative Biodiversity Research (iDiv)
+  email: lina.estupinans@idiv.de
 date: "`r Sys.Date()`"
 output:
+  html_document:
+    df_print: paged
   html_notebook:
     highlight: tango
+  pdf_document: default
+subtitle: <span style="color:#47A52A"> Calculation of Metrics for the Birds Directive<br>
+  Annex I Using Occurrence Cubes (Part II)
+institute: '**Institute**: German Centre for Integrative Biodiversity Research (iDiv)'
 ---
-<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png" style='width: 400px; position:absolute; top:45px; right:0px; padding:5px;'/>
+<img src="H:\B3\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png" style='width: 400px; position:absolute; top:45px; right:0px; padding:5px;'/>
 ---
 
 ### Introduction
 In this notebook, we calculate simple metrics for the EU Annex I Birds Directive based on species occurrence in GBIF. For this, a bird occurrence cube (see Notebook 01 in this repository) was previously created using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) (B3) Project. Details of the data query in GBIF are available at [doi: 10.15468/dl.uh84tp](https://doi.org/10.15468/dl.uh84tp/). In this notebook we calculate metrics 4, 5 and 6 listed below:
 
- - Month with the highest number of records
- - Month with the second highest number of records
- - Month with the third highest number of records
+-	Month with the highest total number of occurrences across all years
+-	Month with the second-highest total number of occurrences across all years
+-	Month with the third-highest total number of occurrences across all years
 
 *Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
 
@@ -74,7 +79,7 @@ coorin <- read.csv(here("input/grid/centroids/eeagrid_centroids_10K.csv"))
 colnames(coorin)[colnames(coorin) == "eeacellcode"] <- "cellCode"
 
 # Import and convert the EU borders to a data frame
-borders_eu <- st_read("C:/data/grid/eea_v_3035_100_k_adm-boundaries-eea38-plus_i_2018-2020_v01_r00/NUTS2021_3035.shp")
+borders_eu <- st_read(here("input/grid/shp/NUTS2021_3035.shp"))
 ```
 
 We now identify which species of the Birds Directive Annex I have data in our species occurrence cubes.
@@ -86,8 +91,7 @@ spskey <- unique(cin[["data"]][["taxonKey"]]) # "taxonKey" is the name of the sp
 
 For metrics 1 to 3, see the accompanying notebook in the same repository.
 
-#### **Metrics 4, 5 and 6:**  Months with the highest, second-highest, and third-highest number of GBIF records
-
+#### **Metrics 4, 5 and 6:**  Months with the highest, second-highest, and third-highest total number of GBIF occurrences across all years
 We identify the months with the highest (Metric 4), second highest (Metric 5), and third highest (Metric 6) number of records occurrences at GBIF.
 
 ```{r}
@@ -107,9 +111,9 @@ maxrec_month123 <- function(cin, gridin, coorin){
   r6 <- rast(ext(gridin), resolution=res(gridin), nlyrs=length(spskey), crs=crs(gridin))
   values(r6) <- NA
 
-  # i <- 24
+  # i <- 57
 
-  for (i in 1:length(spskey)){  # 
+  for (i in 1:length(spskey)){ # 1:length(spskey)){
   # print(i)
 
   # Subset one species
@@ -188,7 +192,6 @@ maxrec_month123 <- function(cin, gridin, coorin){
 In the following code chunk, we compute metrics 4, 5 and 6.
 ```{r}
 # Calculate metrics 4, 5 and 6
-```{r}
 months_high_rec <- maxrec_month123(cin, gridin, coorin)
 ```
 
@@ -202,7 +205,7 @@ month_3rdhigh <- months_high_rec[[3]]
 
 ```{r}
 # Convert raster layers to data frames
-spi <- 24
+spi <- 57
 df1 <- as.data.frame(month_1sthigh[[spi]], xy=TRUE)
 spid <- as.numeric(colnames(df1)[3])
 colnames(df1)[colnames(df1) == colnames(df1)[3]] <- "Value"
@@ -227,27 +230,14 @@ spi_name <- gbif_tax %>%
 
 ```{r}
 ggplot() +
-  geom_raster(data = df1, aes(x = x, y = y, fill = Value)) + # Use alpha for transparency
-  geom_sf(data = borders_eu, fill = NA, color = "gray") +
+  geom_sf(data = borders_eu, fill = "gray") +
+  geom_raster(data = df1, aes(x = x, y = y, fill = Value)) + 
+  geom_sf(data = borders_eu, fill = NA, color = "white") +
   scale_fill_viridis(name="Month", option = "C", direction = 1) + # 
   theme_minimal() +
   labs(
-    title = bquote("Month with the highest GBIF records for " * italic(.(spi_name$scientificName) * "per pixel")),
-    x = "Latitude",
-    y = "Longitude",    
-    fill = "Month")
-```
-
-
-
-```{r}
-ggplot() +
-  geom_raster(data = df2, aes(x = x, y = y, fill = Value)) + # Use alpha for transparency
-  geom_sf(data = borders_eu, fill = NA, color = "gray") +
-  scale_fill_viridis(name="Month", option = "C", direction = 1) + # 
-  theme_minimal() +
-  labs(
-    title = bquote("Month with the second-highest GBIF records for " * italic(.(spi_name$scientificName) * "per pixel")),
+    title = bquote(atop("Month with the highest total number of occurrences",
+                        "across all years for " * italic(.(spi_name$scientificName)))),
     x = "Latitude",
     y = "Longitude",    
     fill = "Month")
@@ -255,17 +245,53 @@ ggplot() +
 
 
 ```{r}
+# save figure if needed
+ggsave(here("output/figures/nb_birds/ias_metric4_id82.png"))
+```
+
+
+```{r}
 ggplot() +
-  geom_raster(data = df3, aes(x = x, y = y, fill = Value)) + # Use alpha for transparency
-  geom_sf(data = borders_eu, fill = NA, color = "gray") +
+  geom_sf(data = borders_eu, fill = "gray") +
+  geom_raster(data = df2, aes(x = x, y = y, fill = Value)) + 
+  geom_sf(data = borders_eu, fill = NA, color = "white") +
   scale_fill_viridis(name="Month", option = "C", direction = 1) + # 
   theme_minimal() +
   labs(
-    title = bquote("Month with the third-highest GBIF records for " * italic(.(spi_name$scientificName) * "per pixel")),
+    title = bquote(atop("Month with the second highest total number of occurrences",
+                        "across all years for " * italic(.(spi_name$scientificName)))),
+                          
     x = "Latitude",
     y = "Longitude",    
     fill = "Month")
 ```
+```{r}
+# save figure if needed
+ggsave(here("output/figures/nb_birds/ias_metric5_id82.png"))
+```
+
+
+
+```{r}
+ggplot() +
+  geom_sf(data = borders_eu, fill = "gray") +
+  geom_raster(data = df3, aes(x = x, y = y, fill = Value)) + 
+  geom_sf(data = borders_eu, fill = NA, color = "white") +
+  scale_fill_viridis(name="Month", option = "C", direction = 1) + # 
+  theme_minimal() +
+  labs(
+    title = bquote(atop("Month with the third highest total number of occurrences",
+                        "across all years for " * italic(.(spi_name$scientificName)))),
+    x = "Latitude",
+    y = "Longitude",    
+    fill = "Month")
+```
+
+```{r}
+# save figure if needed
+ggsave(here("output/figures/nb_birds/ias_metric6_id82.png"))
+```
+
 
 ### Saving data sets as individual tiffs
 

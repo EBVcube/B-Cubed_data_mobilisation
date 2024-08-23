@@ -44,7 +44,7 @@ First we start loading the species taxonomy obtained through the [gbif spcies ma
 tax <- read.csv(here("input/data/birds/taxonomy/list193birds_directive_annexi_match_gbif_updated.csv"))
 ```
 
-As some of the scientific names in Annex I of the Birds Directive are considered synonyms by the GBIF backbone taxonomy, we will use the `acceptedUsageKey` for the synonyms and the `key` for the accepted scientific names. To do this, we will fill in the `acceptedUsageKey` column with the key for accepted names, and keep the `acceptedUsageKey` for synonyms.
+As some of the scientific names in Annex I of the Birds Directive are considered synonyms by the GBIF backbone taxonomy, we will use the `acceptedUsageKey` for the synonyms and the `key` for the accepted scientific names. To do this, we will fill in the `acceptedUsageKey` column with the key for accepted names, and keep the `acceptedUsageKey` for synonyms. Thus, the accepted keys for all species in the list will appear in the `acceptedUsageKey` column.
 ```{r}
 # Merge in one column `key` of accepted names and `acceptedUsageKey` of synonyms
 usagekeys <- tax %>%

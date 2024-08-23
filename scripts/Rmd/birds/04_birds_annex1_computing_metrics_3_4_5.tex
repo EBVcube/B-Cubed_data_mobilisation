@@ -1,0 +1,497 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={ Data mobilisation from GBIF  to the EBV Data Portal},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{ Data mobilisation from GBIF to the EBV Data Portal}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{ Calculation of Metrics for the Birds Directive Annex I Using
+Occurrence Cubes (Part II)}
+\author{true}
+\date{2024-08-22}
+
+\begin{document}
+\maketitle
+
+\subsection{}\label{section}
+
+\subsubsection{Introduction}\label{introduction}
+
+In this notebook, we calculate simple metrics for the EU Annex I Birds
+Directive based on species occurrence in GBIF. For this, a bird
+occurrence cube (see Notebook 01 in this repository) was previously
+created using the
+\href{https://techdocs.gbif.org/en/data-use/data-cubes}{occurrence cube
+software} developed by GBIF under the
+\href{https://b-cubed.eu/}{Biodiversity Building Blocks for Policy} (B3)
+Project. Details of the data query in GBIF are available at
+\href{https://doi.org/10.15468/dl.uh84tp/}{doi: 10.15468/dl.uh84tp}. In
+this notebook we calculate metrics 4, 5 and 6 listed below:
+
+\begin{itemize}
+\tightlist
+\item
+  Month with the highest total number of occurrences across all years
+\item
+  Month with the second-highest total number of occurrences across all
+  years
+\item
+  Month with the third-highest total number of occurrences across all
+  years
+\end{itemize}
+
+\emph{Note: This series of notebooks is part of the results of Task 3.3
+of the \href{https://b-cubed.eu/}{Biodiversity Building Blocks for
+Policy} project funded by the European Union's Horizon Europe Research
+and Innovation Programme (ID No 101059592). Additional notebooks
+exploring the results and calculating simple metrics are also available
+in the same repository.}
+
+\subsubsection{Load Library and Input
+Data}\label{load-library-and-input-data}
+
+We start by loading all the libraries needed in this notebook.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{rm}\NormalTok{(}\AttributeTok{list=}\FunctionTok{ls}\NormalTok{())}
+\FunctionTok{gc}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          used (Mb) gc trigger (Mb) max used (Mb)
+## Ncells 470297 25.2    1021605 54.6   644200 34.5
+## Vcells 846515  6.5    8388608 64.0  1636226 12.5
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Load requiered libraries}
+\FunctionTok{library}\NormalTok{(b3gbi) }\CommentTok{\# for csv occurrence cubes}
+\FunctionTok{library}\NormalTok{(purrr) }\CommentTok{\# for data summary and grouping}
+\FunctionTok{library}\NormalTok{(here)}
+\FunctionTok{library}\NormalTok{(dplyr)}
+\FunctionTok{library}\NormalTok{(lubridate) }\CommentTok{\# for dates}
+\FunctionTok{library}\NormalTok{(terra) }\CommentTok{\# for raster}
+\FunctionTok{library}\NormalTok{(ncdf4)}
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\FunctionTok{library}\NormalTok{(sf)}
+\FunctionTok{library}\NormalTok{(stringr)}
+\FunctionTok{library}\NormalTok{(viridis)}
+\end{Highlighting}
+\end{Shaded}
+
+Now we load all input data obtained in the previous notebooks. These
+are:
+
+\begin{itemize}
+\tightlist
+\item
+  The occurrence cube of the Birds Directive Annex I obtained previously
+  through GBIF API.
+\item
+  Taxonomic information of all analysed species.
+\item
+  Inputs related to the EEA grid at 10 km for rasterisation.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{occcube }\OtherTok{\textless{}{-}} \StringTok{"0062979{-}240626123714530"}
+
+\CommentTok{\# Load occurrence cube using b3gbi}
+\NormalTok{cin }\OtherTok{\textless{}{-}} \FunctionTok{process\_cube}\NormalTok{(}\FunctionTok{here}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"output/datacubes/csv/birds/"}\NormalTok{, occcube,}\StringTok{".csv"}\NormalTok{)))}
+
+\CommentTok{\# Import the taxonomy of all species listed in the Birds Directive Annex 1 based on gbif backbone taxonomy}
+\NormalTok{gbif\_tax }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\FunctionTok{here}\NormalTok{(}\StringTok{"input/data/birds/taxonomy/list193birds\_directive\_annexi\_allaccepted\_usagekey\_gbif.csv"}\NormalTok{))}
+
+\CommentTok{\# Load reference EEA grid in raster format}
+\NormalTok{gridin }\OtherTok{\textless{}{-}} \FunctionTok{rast}\NormalTok{(}\FunctionTok{here}\NormalTok{(}\StringTok{"input/grid/eeagrid\_10K.tif"}\NormalTok{))}
+\NormalTok{res }\OtherTok{\textless{}{-}} \FunctionTok{res}\NormalTok{(gridin)[}\DecValTok{1}\NormalTok{] }\CommentTok{\#resolution of reference raster}
+
+\CommentTok{\# Load precomputed centroids for EEA 10 km grid}
+\NormalTok{coorin }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\FunctionTok{here}\NormalTok{(}\StringTok{"input/grid/centroids/eeagrid\_centroids\_10K.csv"}\NormalTok{))}
+
+\CommentTok{\# Replace by corresponding column name of input dataset}
+\FunctionTok{colnames}\NormalTok{(coorin)[}\FunctionTok{colnames}\NormalTok{(coorin) }\SpecialCharTok{==} \StringTok{"eeacellcode"}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{"cellCode"}
+
+\CommentTok{\# Import and convert the EU borders to a data frame}
+\NormalTok{borders\_eu }\OtherTok{\textless{}{-}} \FunctionTok{st\_read}\NormalTok{(}\FunctionTok{here}\NormalTok{(}\StringTok{"input/grid/shp/NUTS2021\_3035.shp"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Reading layer `NUTS2021_3035' from data source 
+##   `H:\B3\B-Cubed_data_mobilization\input\grid\shp\NUTS2021_3035.shp' 
+##   using driver `ESRI Shapefile'
+## Simple feature collection with 44 features and 27 fields
+## Geometry type: MULTIPOLYGON
+## Dimension:     XY
+## Bounding box:  xmin: 943758.8 ymin: 941658.1 xmax: 7316569 ymax: 6405005
+## Projected CRS: ETRS89-extended / LAEA Europe
+\end{verbatim}
+
+We now identify which species of the Birds Directive Annex I have data
+in our species occurrence cubes.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Find number of species}
+\NormalTok{spskey }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(cin[[}\StringTok{"data"}\NormalTok{]][[}\StringTok{"taxonKey"}\NormalTok{]]) }\CommentTok{\# "taxonKey" is the name of the species key in b3bgi}
+\end{Highlighting}
+\end{Shaded}
+
+For metrics 1 to 3, see the accompanying notebook in the same
+repository.
+
+\paragraph{\texorpdfstring{\textbf{Metrics 4, 5 and 6:} Months with the
+highest, second-highest, and third-highest total number of GBIF
+occurrences across all
+years}{Metrics 4, 5 and 6: Months with the highest, second-highest, and third-highest total number of GBIF occurrences across all years}}\label{metrics-4-5-and-6-months-with-the-highest-second-highest-and-third-highest-total-number-of-gbif-occurrences-across-all-years}
+
+We identify the months with the highest (Metric 4), second highest
+(Metric 5), and third highest (Metric 6) number of records occurrences
+at GBIF.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{maxrec\_month123 }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(cin, gridin, coorin)\{}
+  \CommentTok{\# Find number of species}
+\NormalTok{  spskey }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(cin[[}\StringTok{"data"}\NormalTok{]][[}\StringTok{"taxonKey"}\NormalTok{]])}
+
+  \CommentTok{\# Create empty raster for metric 4}
+\NormalTok{  r4 }\OtherTok{\textless{}{-}} \FunctionTok{rast}\NormalTok{(}\FunctionTok{ext}\NormalTok{(gridin), }\AttributeTok{resolution=}\FunctionTok{res}\NormalTok{(gridin), }\AttributeTok{nlyrs=}\FunctionTok{length}\NormalTok{(spskey), }\AttributeTok{crs=}\FunctionTok{crs}\NormalTok{(gridin))}
+  \FunctionTok{values}\NormalTok{(r4) }\OtherTok{\textless{}{-}} \ConstantTok{NA}
+  
+  \CommentTok{\# Create empty raster for metric 5}
+\NormalTok{  r5 }\OtherTok{\textless{}{-}} \FunctionTok{rast}\NormalTok{(}\FunctionTok{ext}\NormalTok{(gridin), }\AttributeTok{resolution=}\FunctionTok{res}\NormalTok{(gridin), }\AttributeTok{nlyrs=}\FunctionTok{length}\NormalTok{(spskey), }\AttributeTok{crs=}\FunctionTok{crs}\NormalTok{(gridin))}
+  \FunctionTok{values}\NormalTok{(r5) }\OtherTok{\textless{}{-}} \ConstantTok{NA}
+  
+  \CommentTok{\# Create empty raster for metric 6}
+\NormalTok{  r6 }\OtherTok{\textless{}{-}} \FunctionTok{rast}\NormalTok{(}\FunctionTok{ext}\NormalTok{(gridin), }\AttributeTok{resolution=}\FunctionTok{res}\NormalTok{(gridin), }\AttributeTok{nlyrs=}\FunctionTok{length}\NormalTok{(spskey), }\AttributeTok{crs=}\FunctionTok{crs}\NormalTok{(gridin))}
+  \FunctionTok{values}\NormalTok{(r6) }\OtherTok{\textless{}{-}} \ConstantTok{NA}
+
+  \CommentTok{\# i \textless{}{-} 24}
+
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{56}\SpecialCharTok{:}\DecValTok{58}\NormalTok{)\{ }\CommentTok{\# 1:length(spskey))\{}
+  \CommentTok{\# print(i)}
+
+  \CommentTok{\# Subset one species}
+\NormalTok{  spsi }\OtherTok{\textless{}{-}}\NormalTok{ cin[[}\StringTok{"data"}\NormalTok{]][cin[[}\StringTok{"data"}\NormalTok{]]}\SpecialCharTok{$}\NormalTok{taxonKey }\SpecialCharTok{==}\NormalTok{ spskey[i], ]}
+
+  \CommentTok{\# Convert date from character to numeric}
+\NormalTok{  todates }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(}\FunctionTok{str\_split}\NormalTok{(spsi}\SpecialCharTok{$}\NormalTok{yearMonth, }\StringTok{"{-}"}\NormalTok{, }\AttributeTok{simplify =} \ConstantTok{TRUE}\NormalTok{))}
+  \FunctionTok{colnames}\NormalTok{(todates) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"year"}\NormalTok{, }\StringTok{"month"}\NormalTok{)}
+
+  \CommentTok{\# Add year and month columns separate to the initial data}
+\NormalTok{  spsi}\SpecialCharTok{$}\NormalTok{year }\OtherTok{\textless{}{-}}\NormalTok{ todates}\SpecialCharTok{$}\NormalTok{year}
+\NormalTok{  spsi}\SpecialCharTok{$}\NormalTok{month }\OtherTok{\textless{}{-}}\NormalTok{ todates}\SpecialCharTok{$}\NormalTok{month}
+
+  \CommentTok{\# Aggregate occurrences by cell and month}
+\NormalTok{  month\_occ }\OtherTok{\textless{}{-}}\NormalTok{ spsi }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{group\_by}\NormalTok{(cellCode, month) }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{summarize}\NormalTok{(}\AttributeTok{total\_occurrences =} \FunctionTok{sum}\NormalTok{(obs), }\AttributeTok{cellCode =} \FunctionTok{first}\NormalTok{(cellCode)) }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{ungroup}\NormalTok{()}
+
+    \CommentTok{\# Calculate metrics 4, 5, and 6 (1st, 2nd, and 3rd highest months)}
+\NormalTok{    metric4 }\OtherTok{\textless{}{-}}\NormalTok{ month\_occ }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{group\_by}\NormalTok{(cellCode) }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{slice\_max}\NormalTok{(total\_occurrences, }\AttributeTok{n =} \DecValTok{1}\NormalTok{, }\AttributeTok{with\_ties =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{ungroup}\NormalTok{()}
+
+\NormalTok{    metric5 }\OtherTok{\textless{}{-}}\NormalTok{ month\_occ }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{group\_by}\NormalTok{(cellCode) }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{slice\_max}\NormalTok{(total\_occurrences, }\AttributeTok{n =} \DecValTok{2}\NormalTok{, }\AttributeTok{with\_ties =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{slice\_min}\NormalTok{(total\_occurrences, }\AttributeTok{n =} \DecValTok{1}\NormalTok{, }\AttributeTok{with\_ties =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{ungroup}\NormalTok{()}
+
+\NormalTok{    metric6 }\OtherTok{\textless{}{-}}\NormalTok{ month\_occ }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{group\_by}\NormalTok{(cellCode) }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{slice\_max}\NormalTok{(total\_occurrences, }\AttributeTok{n =} \DecValTok{3}\NormalTok{, }\AttributeTok{with\_ties =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{slice\_min}\NormalTok{(total\_occurrences, }\AttributeTok{n =} \DecValTok{1}\NormalTok{, }\AttributeTok{with\_ties =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{ungroup}\NormalTok{()}
+
+\NormalTok{  metricx\_coor }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(metricx, coorin, res)\{}
+    
+    \CommentTok{\# Merge pixel coordinates with the corresponing EEA grid ID pre{-}rasterisation}
+\NormalTok{    metriccoorx }\OtherTok{\textless{}{-}} \FunctionTok{merge}\NormalTok{(metricx[,}\FunctionTok{c}\NormalTok{(}\StringTok{"month"}\NormalTok{, }\StringTok{"cellCode"}\NormalTok{)], coorin, }\AttributeTok{by=}\StringTok{"cellCode"}\NormalTok{)}
+    \CommentTok{\# print(length(unique(metriccoorx$x)))}
+
+    \ControlFlowTok{if}\NormalTok{(}\FunctionTok{length}\NormalTok{(}\FunctionTok{unique}\NormalTok{(metriccoorx}\SpecialCharTok{$}\NormalTok{x)) }\SpecialCharTok{\textless{}} \DecValTok{10}\NormalTok{)\{}
+      \CommentTok{\#add second empty point}
+\NormalTok{      x }\OtherTok{\textless{}{-}}\NormalTok{ metriccoorx}\SpecialCharTok{$}\NormalTok{x[}\DecValTok{1}\NormalTok{] }\SpecialCharTok{+}\NormalTok{ res}
+\NormalTok{      y }\OtherTok{\textless{}{-}}\NormalTok{ metriccoorx}\SpecialCharTok{$}\NormalTok{y[}\DecValTok{1}\NormalTok{] }\SpecialCharTok{+}\NormalTok{ res}
+\NormalTok{      metriccoorx }\OtherTok{\textless{}{-}} \FunctionTok{rbind}\NormalTok{(metriccoorx, }\FunctionTok{c}\NormalTok{(}\ConstantTok{NA}\NormalTok{, }\ConstantTok{NA}\NormalTok{ ,}\ConstantTok{NA}\NormalTok{, x, y))}
+\NormalTok{    \}}
+    \FunctionTok{return}\NormalTok{(metriccoorx)}
+\NormalTok{  \}}
+  
+  \CommentTok{\# Run function for each metric}
+\NormalTok{  metric4\_coor }\OtherTok{\textless{}{-}} \FunctionTok{metricx\_coor}\NormalTok{(metric4, coorin, res)}
+\NormalTok{  metric5\_coor }\OtherTok{\textless{}{-}} \FunctionTok{metricx\_coor}\NormalTok{(metric5, coorin, res)}
+\NormalTok{  metric6\_coor }\OtherTok{\textless{}{-}} \FunctionTok{metricx\_coor}\NormalTok{(metric6, coorin, res)}
+  
+  \CommentTok{\# Rasterize data}
+\NormalTok{  r4[[i]]  }\OtherTok{\textless{}{-}} \FunctionTok{rast}\NormalTok{(metric4\_coor[,}\FunctionTok{c}\NormalTok{(}\StringTok{"x"}\NormalTok{, }\StringTok{"y"}\NormalTok{, }\StringTok{"month"}\NormalTok{)], }\AttributeTok{type=}\StringTok{"xyz"}\NormalTok{, }\AttributeTok{crs=}\FunctionTok{crs}\NormalTok{(gridin), }\AttributeTok{extent=}\FunctionTok{ext}\NormalTok{(gridin))}
+\NormalTok{  r5[[i]]  }\OtherTok{\textless{}{-}} \FunctionTok{rast}\NormalTok{(metric5\_coor[,}\FunctionTok{c}\NormalTok{(}\StringTok{"x"}\NormalTok{, }\StringTok{"y"}\NormalTok{, }\StringTok{"month"}\NormalTok{)], }\AttributeTok{type=}\StringTok{"xyz"}\NormalTok{, }\AttributeTok{crs=}\FunctionTok{crs}\NormalTok{(gridin), }\AttributeTok{extent=}\FunctionTok{ext}\NormalTok{(gridin))}
+\NormalTok{  r6[[i]]  }\OtherTok{\textless{}{-}} \FunctionTok{rast}\NormalTok{(metric6\_coor[,}\FunctionTok{c}\NormalTok{(}\StringTok{"x"}\NormalTok{, }\StringTok{"y"}\NormalTok{, }\StringTok{"month"}\NormalTok{)], }\AttributeTok{type=}\StringTok{"xyz"}\NormalTok{, }\AttributeTok{crs=}\FunctionTok{crs}\NormalTok{(gridin), }\AttributeTok{extent=}\FunctionTok{ext}\NormalTok{(gridin))}
+
+\NormalTok{ \}}
+
+  \CommentTok{\# Assign name of species key to the corresponding raster \textquotesingle{}layer\textquotesingle{}}
+  \FunctionTok{names}\NormalTok{(r4) }\OtherTok{\textless{}{-}}\NormalTok{ spskey}
+  \FunctionTok{names}\NormalTok{(r5) }\OtherTok{\textless{}{-}}\NormalTok{ spskey}
+  \FunctionTok{names}\NormalTok{(r6) }\OtherTok{\textless{}{-}}\NormalTok{ spskey}
+  
+\NormalTok{  results\_list }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\AttributeTok{month\_with\_highest\_records =}\NormalTok{ r4, }\AttributeTok{month\_with\_2ndhighest\_records =}\NormalTok{ r5, }\AttributeTok{month\_with\_3rdhighest\_records =}\NormalTok{ r6)}
+  \FunctionTok{return}\NormalTok{(results\_list)}
+
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+In the following code chunk, we compute metrics 4, 5 and 6.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Calculate metrics 4, 5 and 6}
+\NormalTok{months\_high\_rec }\OtherTok{\textless{}{-}} \FunctionTok{maxrec\_month123}\NormalTok{(cin, gridin, coorin)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Calculate metrics 4, 5 and 6}
+\NormalTok{month\_1sthigh }\OtherTok{\textless{}{-}}\NormalTok{ months\_high\_rec[[}\DecValTok{1}\NormalTok{]]}
+\NormalTok{month\_2ndhigh }\OtherTok{\textless{}{-}}\NormalTok{ months\_high\_rec[[}\DecValTok{2}\NormalTok{]]}
+\NormalTok{month\_3rdhigh }\OtherTok{\textless{}{-}}\NormalTok{ months\_high\_rec[[}\DecValTok{3}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Convert raster layers to data frames}
+\NormalTok{spi }\OtherTok{\textless{}{-}} \DecValTok{57}
+\NormalTok{df1 }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(month\_1sthigh[[spi]], }\AttributeTok{xy=}\ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{spid }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{colnames}\NormalTok{(df1)[}\DecValTok{3}\NormalTok{])}
+\FunctionTok{colnames}\NormalTok{(df1)[}\FunctionTok{colnames}\NormalTok{(df1) }\SpecialCharTok{==} \FunctionTok{colnames}\NormalTok{(df1)[}\DecValTok{3}\NormalTok{]] }\OtherTok{\textless{}{-}} \StringTok{"Value"}
+\NormalTok{df1[[}\StringTok{"Value"}\NormalTok{]] }\OtherTok{\textless{}{-}}\NormalTok{ df1[[}\StringTok{"Value"}\NormalTok{]]}
+
+\NormalTok{df2 }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(month\_2ndhigh[[spi]], }\AttributeTok{xy=}\ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{spid }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{colnames}\NormalTok{(df2)[}\DecValTok{3}\NormalTok{])}
+\FunctionTok{colnames}\NormalTok{(df2)[}\FunctionTok{colnames}\NormalTok{(df2) }\SpecialCharTok{==} \FunctionTok{colnames}\NormalTok{(df2)[}\DecValTok{3}\NormalTok{]] }\OtherTok{\textless{}{-}} \StringTok{"Value"}
+\NormalTok{df2[[}\StringTok{"Value"}\NormalTok{]] }\OtherTok{\textless{}{-}}\NormalTok{ df2[[}\StringTok{"Value"}\NormalTok{]]}
+
+\NormalTok{df3 }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(month\_3rdhigh[[spi]], }\AttributeTok{xy=}\ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{spid }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{colnames}\NormalTok{(df3)[}\DecValTok{3}\NormalTok{])}
+\FunctionTok{colnames}\NormalTok{(df3)[}\FunctionTok{colnames}\NormalTok{(df3) }\SpecialCharTok{==} \FunctionTok{colnames}\NormalTok{(df3)[}\DecValTok{3}\NormalTok{]] }\OtherTok{\textless{}{-}} \StringTok{"Value"}
+\NormalTok{df3[[}\StringTok{"Value"}\NormalTok{]] }\OtherTok{\textless{}{-}}\NormalTok{ df3[[}\StringTok{"Value"}\NormalTok{]]}
+
+
+\CommentTok{\# Find the specie scientific name}
+\NormalTok{spi\_name }\OtherTok{\textless{}{-}}\NormalTok{ gbif\_tax }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(acceptedUsageKey }\SpecialCharTok{\%in\%}\NormalTok{ spid)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_sf}\NormalTok{(}\AttributeTok{data =}\NormalTok{ borders\_eu, }\AttributeTok{fill =} \StringTok{"gray"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_raster}\NormalTok{(}\AttributeTok{data =}\NormalTok{ df1, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x, }\AttributeTok{y =}\NormalTok{ y, }\AttributeTok{fill =}\NormalTok{ Value)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_sf}\NormalTok{(}\AttributeTok{data =}\NormalTok{ borders\_eu, }\AttributeTok{fill =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{color =} \StringTok{"white"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_viridis}\NormalTok{(}\AttributeTok{name=}\StringTok{"Month"}\NormalTok{, }\AttributeTok{option =} \StringTok{"C"}\NormalTok{, }\AttributeTok{direction =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \CommentTok{\# }
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \FunctionTok{bquote}\NormalTok{(}\FunctionTok{atop}\NormalTok{(}\StringTok{"Month with the highest total number of occurrences"}\NormalTok{,}
+                        \StringTok{"across all years for "} \SpecialCharTok{*} \FunctionTok{italic}\NormalTok{(.(spi\_name}\SpecialCharTok{$}\NormalTok{scientificName)))),}
+    \AttributeTok{x =} \StringTok{"Latitude"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Longitude"}\NormalTok{,    }
+    \AttributeTok{fill =} \StringTok{"Month"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{04_birds_annex1_computing_metrics_3_4_5_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# save figure if needed}
+\FunctionTok{ggsave}\NormalTok{(}\FunctionTok{here}\NormalTok{(}\StringTok{"output/figures/nb\_birds/ias\_metric4\_id82.png"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_sf}\NormalTok{(}\AttributeTok{data =}\NormalTok{ borders\_eu, }\AttributeTok{fill =} \StringTok{"gray"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_raster}\NormalTok{(}\AttributeTok{data =}\NormalTok{ df2, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x, }\AttributeTok{y =}\NormalTok{ y, }\AttributeTok{fill =}\NormalTok{ Value)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_sf}\NormalTok{(}\AttributeTok{data =}\NormalTok{ borders\_eu, }\AttributeTok{fill =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{color =} \StringTok{"white"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_viridis}\NormalTok{(}\AttributeTok{name=}\StringTok{"Month"}\NormalTok{, }\AttributeTok{option =} \StringTok{"C"}\NormalTok{, }\AttributeTok{direction =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \CommentTok{\# }
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \FunctionTok{bquote}\NormalTok{(}\FunctionTok{atop}\NormalTok{(}\StringTok{"Month with the second highest total number of occurrences"}\NormalTok{,}
+                        \StringTok{"across all years for "} \SpecialCharTok{*} \FunctionTok{italic}\NormalTok{(.(spi\_name}\SpecialCharTok{$}\NormalTok{scientificName)))),}
+                          
+    \AttributeTok{x =} \StringTok{"Latitude"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Longitude"}\NormalTok{,    }
+    \AttributeTok{fill =} \StringTok{"Month"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{04_birds_annex1_computing_metrics_3_4_5_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# save figure if needed}
+\FunctionTok{ggsave}\NormalTok{(}\FunctionTok{here}\NormalTok{(}\StringTok{"output/figures/nb\_birds/ias\_metric5\_id82.png"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_sf}\NormalTok{(}\AttributeTok{data =}\NormalTok{ borders\_eu, }\AttributeTok{fill =} \StringTok{"gray"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_raster}\NormalTok{(}\AttributeTok{data =}\NormalTok{ df3, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x, }\AttributeTok{y =}\NormalTok{ y, }\AttributeTok{fill =}\NormalTok{ Value)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_sf}\NormalTok{(}\AttributeTok{data =}\NormalTok{ borders\_eu, }\AttributeTok{fill =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{color =} \StringTok{"white"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_viridis}\NormalTok{(}\AttributeTok{name=}\StringTok{"Month"}\NormalTok{, }\AttributeTok{option =} \StringTok{"C"}\NormalTok{, }\AttributeTok{direction =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \CommentTok{\# }
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \FunctionTok{bquote}\NormalTok{(}\FunctionTok{atop}\NormalTok{(}\StringTok{"Month with the third highest total number of occurrences"}\NormalTok{,}
+                        \StringTok{"across all years for "} \SpecialCharTok{*} \FunctionTok{italic}\NormalTok{(.(spi\_name}\SpecialCharTok{$}\NormalTok{scientificName)))),}
+    \AttributeTok{x =} \StringTok{"Latitude"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Longitude"}\NormalTok{,    }
+    \AttributeTok{fill =} \StringTok{"Month"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{04_birds_annex1_computing_metrics_3_4_5_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# save figure if needed}
+\FunctionTok{ggsave}\NormalTok{(}\FunctionTok{here}\NormalTok{(}\StringTok{"output/figures/nb\_birds/ias\_metric6\_id82.png"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Saving data sets as individual
+tiffs}\label{saving-data-sets-as-individual-tiffs}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Save files}
+\FunctionTok{writeRaster}\NormalTok{(month\_1sthigh, }\FunctionTok{here}\NormalTok{(}\StringTok{"output/datacubes/tif\_metrics/birds/04\_birds\_month\_1sthigh.tif"}\NormalTok{), }\AttributeTok{datatype =} \StringTok{\textquotesingle{}INT4U\textquotesingle{}}\NormalTok{, }\AttributeTok{overwrite =} \ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{writeRaster}\NormalTok{(month\_2ndhigh, }\FunctionTok{here}\NormalTok{(}\StringTok{"output/datacubes/tif\_metrics/birds/05\_birds\_month\_2ndhigh.tif"}\NormalTok{), }\AttributeTok{datatype =} \StringTok{\textquotesingle{}INT4U\textquotesingle{}}\NormalTok{, }\AttributeTok{overwrite =} \ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{writeRaster}\NormalTok{(month\_3rdhigh, }\FunctionTok{here}\NormalTok{(}\StringTok{"output/datacubes/tif\_metrics/birds/06\_birds\_month\_3rdhigh.tif"}\NormalTok{), }\AttributeTok{datatype =} \StringTok{\textquotesingle{}INT4U\textquotesingle{}}\NormalTok{, }\AttributeTok{overwrite =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}

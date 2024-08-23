@@ -1,25 +1,29 @@
 ---
-title: <span style="color:#005857"> Data mobilisation from GBIF to the EBV Data Portal<span>
-subtitle: <span style="color:#47A52A"> Calculation of Metrics for the Birds Directive Annex I Using Occurrence Cubes (Part I)
-author: 
-  - name: "Lina Estupinan-Suarez, Miguel Fernandez"
-    affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
-    email: lina.estupinans@idiv.de
-institute: "**Institute**: German Centre for Integrative Biodiversity Research (iDiv)"
+title: <span style="color:#005857"> Data mobilisation from GBIF to the EBV Data Portal for the Birds Directive Annex I<span>
+author:
+- name: "Lina Estupinan-Suarez, Miguel Fernandez"
+  affiliation: German Centre for Integrative Biodiversity Research (iDiv)
+  email: lina.estupinans@idiv.de
 date: "`r Sys.Date()`"
 output:
+  html_document:
+    df_print: paged
   html_notebook:
     highlight: tango
+  pdf_document: default
+subtitle: "<span style=\"color:#47A52A\"> Notebook 03 - Calculation of Metrics for
+  the Birds Directive Annex I Using Occurrence Cubes (Part I)"
+institute: '**Institute**: German Centre for Integrative Biodiversity Research (iDiv)'
 ---
-<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png" style='width: 400px; position:absolute; top:45px; right:0px; padding:5px;'/>
+<img src="H:\B3\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png" style='width: 400px; position:absolute; top:45px; right:0px; padding:5px;'/>
 ---
 
 ### Introduction
 In this notebook, we calculate simple metrics for the EU Birds Directive Annex I based on species occurrence in GBIF. For this, a bird occurrence cube (see Notebook 01 in this repository) was previously created using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) (B3) Project. Details of the data query in GBIF are available at [doi: 10.15468/dl.uh84tp](https://doi.org/10.15468/dl.uh84tp/). We present three metrics below:
 
- - Total number of occurrences
- - Earliest month with records
- - Latest month with records
+- Total number of occurrences
+- Earliest month with occurrences across all years
+- Latest month with occurrences across all years
 
 *Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
 
@@ -74,7 +78,7 @@ coorin <- read.csv(here("input/grid/centroids/eeagrid_centroids_10K.csv"))
 colnames(coorin)[colnames(coorin) == "eeacellcode"] <- "cellCode"
 
 # Import and convert the EU borders to a data frame
-borders_eu <- st_read("C:/data/grid/eea_v_3035_100_k_adm-boundaries-eea38-plus_i_2018-2020_v01_r00/NUTS2021_3035.shp")
+borders_eu <- st_read(here("input/grid/shp/NUTS2021_3035.shp"))
 ```
 
 We now identify which species of the Birds Directive Annex I have data in our species occurrence cubes.
@@ -100,7 +104,7 @@ total_occ <- function(cin, gridin, coorin){
   
   # Calculate separately the total occurrence of each species
   for (i in 1:length(spskey)){
-  # print(i)
+  
     # Subset one species
     spsi <- cin[["data"]][cin[["data"]]$taxonKey == spskey[i], ]
 
@@ -146,7 +150,7 @@ writeRaster(total_occ_sps, here("output/datacubes/tif_metrics/birds/01_birds_tot
 Prepare data for plotting
 ```{r}
 # Select one specie
-spi <- 24
+spi <- 57
 
 # Convert data to a data frame
 df <- as.data.frame(total_occ_sps[[spi]], xy=TRUE)
@@ -161,21 +165,28 @@ spi_name <- gbif_tax %>%
 
 ```{r}
 ggplot() +
-  geom_raster(data = df, aes(x = x, y = y, fill = Value)) + # Use alpha for transparency
-  geom_sf(data = borders_eu, fill = NA, color = "gray") +
-  # scale_fill_binned(name = "Total occurrences", type = "gradient") + # Optional: for better color scale
+  geom_sf(data = borders_eu, fill = "gray") +
+  geom_raster(data = df, aes(x = x, y = y, fill = Value)) + 
+  geom_sf(data = borders_eu, fill = NA, color = "white") +
   scale_fill_distiller(name="Total occurrences", palette="RdPu") +
   theme_minimal() +
   labs(
-    title = bquote("Total number of occurrences of " * italic(.(spi_name$scientificName)) * "at GBIF pixelwise"),
+    title = bquote(atop("Total number of occurrences of ",
+                    italic(.(spi_name$scientificName), "per pixel"))),
     x = "Latitude",
     y = "Longitude",    
     fill = "Total <br> occurrences")
 ```
 
-#### **Metric 2 and 3:** Earliest and Latest Month of Species Occurrence at GBIF
+```{r}
+# save figure if needed
+ggsave(here("output/figures/birds_ias/fig1_ias_grey_id82.png"))
+```
 
-We calculate the earliest (latest) month of occurrence for each species. The function `min_max_month` finds the earliest (latest) month of records per species at the pixel level across the entire dataset.
+x
+#### **Metric 2 and 3:** Earliest month with occurrences across all years at GBIF
+
+We calculate the earliest (latest) month of occurrence across all years for each species. The function `min_max_month` finds the earliest (latest) month of records per species at the pixel level across the entire dataset.
 
 ```{r}
 min_max_month <- function(cin, gridin, coorin){
@@ -191,7 +202,7 @@ min_max_month <- function(cin, gridin, coorin){
   values(rmax) <- NA
   
     
-  for (i in 1:length(spskey)){ 
+  for (i in 1:length(spskey)){ # length(spskey)){
 
   # Subset one species
   spsi <- cin[["data"]][cin[["data"]]$taxonKey == spskey[i], ]
@@ -280,7 +291,7 @@ Prepare data for plotting.
 
 ```{r}
 # Convert raster layers to data frames
-spi <- 24
+spi <- 57
 
 df1 <- as.data.frame(earliest_month[[spi]], xy=TRUE)
 spid <- as.numeric(colnames(df1)[3])
@@ -299,8 +310,9 @@ This code chunk is for plotting the 'Earliest month of Records at GBIF' for one 
 
 ```{r}
 ggplot() +
-  geom_raster(data = df1, aes(x = x, y = y, fill = Value)) + # Use alpha for transparency
-  geom_sf(data = borders_eu, fill = NA, color = "gray") +
+  geom_sf(data = borders_eu, fill = "gray") +
+  geom_raster(data = df1, aes(x = x, y = y, fill = Value)) +
+  geom_sf(data = borders_eu, fill = NA, color = "white") +
   scale_fill_gradientn(
     name = "Month",
     colors = c("blue", "purple", "pink", "yellow", "orange", "blue"), # Cyclic colors
@@ -309,18 +321,25 @@ ggplot() +
   ) + 
   theme_minimal() +
   labs(
-    title = bquote("Earliest month of GBIF records for " * italic(.(spi_name$scientificName) * " by pixel")),
+    title = bquote(atop("Earliest month of GBIF records across all years for ",
+                         italic(.(spi_name$scientificName), "per pixel"))),
     x = "Latitude",
     y = "Longitude",    
     fill = "Month")
 ```
 
 
+```{r}
+# save figure if needed
+ggsave(here("output/figures/birds_ias/fig2_ias_grey_id82.png"))
+```
+
 And the following code chunck is for plotting the "Latest month of records at GBIF" for the same specie.
 ```{r}
 ggplot() +
-  geom_raster(data = df2, aes(x = x, y = y, fill = Value)) + # Use alpha for transparency
-  geom_sf(data = borders_eu, fill = NA, color = "gray") +
+  geom_sf(data = borders_eu, fill = "gray") +
+  geom_raster(data = df2, aes(x = x, y = y, fill = Value)) + 
+  geom_sf(data = borders_eu, fill = NA, color = "white") +
   scale_fill_gradientn(
     name = "Month",
     colors = c("blue", "purple", "pink", "yellow", "orange", "blue"), # Cyclic colors
@@ -329,8 +348,15 @@ ggplot() +
   ) + 
   theme_minimal() +
   labs(
-    title = bquote("Latest month of GBIF records for " * italic(.(spi_name$scientificName) * "by pixel")),
+     title = bquote(atop("Latest month of GBIF records across all years for ",
+                         italic(.(spi_name$scientificName), "per pixel"))),
     x = "Latitude",
     y = "Longitude",    
     fill = "Month")
+```
+
+
+```{r}
+# save figure if needed
+ggsave(here("output/figures/birds_ias/fig3_ias_grey_id82.png"))
 ```

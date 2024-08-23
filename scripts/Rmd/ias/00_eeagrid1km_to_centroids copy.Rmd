@@ -1,0 +1,83 @@
+---
+title: <span style="color:#005857"> Data Mobilisation from GBIF <br> to the EBV Data Portal<span>
+subtitle: <span style="color:#47A52A"> Inputs for occurrence cubes rasterisation using the 10 Km EEA vector grid
+author: 
+  - name: "Lina Estupinan-Suarez, Miguel Fernandez"
+    affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
+    email: lina.estupinans@idiv.de
+institute: "**Institute**: German Centre for Integrative Biodiversity Research (iDiv)"
+date: "`r Sys.Date()`"
+output:
+ html_notebook:
+    highlight: tango
+---
+<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png" style='width: 400px; position:absolute; top:45px; right:0px; padding:5px;'/>
+---
+
+
+### Introduction
+This is a preparatory notebook for mobilising species occurrence cubes from [GBIF—the Global Biodiversity Information Facility—](https://www.gbif.org/) to the [EBV Data Portal](https://portal.geobon.org). Specifically, here we use the European Environment Agency (EEA) [grid](https://sdi.eea.europa.eu/catalogue/srv/eng/catalog.search#/metadata/e834751f-19d1-4842-823d-e90e600c5993) in vector format at 10 km as spatial reference.
+The subsequent notebooks focus on the generation of species cubes, the calculation of metrics, and the conversion of the results into the EBV cube format for final upload to the EBV data portal.
+
+*Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
+
+
+### Load Libraries
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE)
+```
+
+```{r}
+rm(list=ls())
+gc()
+
+# Load requiered libraries
+library(here)
+library(sf)
+library(terra)
+library(dplyr)
+```
+
+### Load EEA vector grid
+European Union grids are available at different spatial scales in vector format. The EEA vector grids can be downloaded from the Data Hub [website](https://sdi.eea.europa.eu/catalogue/srv/eng/catalog.search#/metadata/e834751f-19d1-4842-823d-e90e600c5993). We start by loading the EEA vector grid at the desired spatial resolution. For this, we use the 10 km grid.
+
+```{r}
+# Load EEE grid vector file
+resx <- "1_km" # "10K" or "100K" # define the spatial resolution of the vector file
+gridin <- st_read("C:/data/grid/EEA_1km/EEA/eea_v_3035_1_km_eea-ref-grid-europe_p_2013_v01_r00/EEA-reference-GRID-2013.gpkg")
+```
+
+We then rasterise the EEA vector grid and save it as a tif file. This file will later be used as a grid reference for rasterisation of the metrics.
+
+```{r}
+# Calculate the number of rows and columns corresponding respectively to latitude and longitude
+eo <- length(unique(gridin$EofOrigin))
+no <- length(unique(gridin$NofOrigin))
+
+# Create raster from vector file
+eear <- rast(gridin, nrows=no, ncols=eo, nlyrs=1, crs(gridin), vals=gridin$NofOrigin)
+plot(eear)
+
+# Save raster
+# writeRaster(eear, here(paste0("input/grid/eeagrid_", resx, ".tif")), datatype = 'INT4S', overwrite=TRUE)
+```
+
+As a last step, we calculate the centroids of the EEA grid to easily link the occurrence cubes, in CSV format, with the corresponding latitude and longitude coordinates of the respective cell. For this we will use the `eeacellcode`.
+
+```{r}
+# Estimate the EEA grid centroids from the vector file
+gridxy <- st_coordinates(st_centroid(gridin))
+
+# Add the coordinates to the reference grid
+gridin$x <- gridxy[,1]
+gridin$y <- gridxy[,2]
+
+# Create a data frame from the polygons attribute table
+eeax <- as.data.frame(gridin)
+
+# Substet the dataframe columns to export
+eeacoor <- eeax[,c("CellCode", "x", "y")]
+colnames(eeacoor) <- c("eeacellcode", "x", "y")
+eeacoor[1:5,]
+# write.csv(eeacoor, here(paste0("input/grid/centroids/eeagrid_centroids_", resx, ".csv"))) # overwrite=TRUE,  datatype = 'INT4S', )
+```

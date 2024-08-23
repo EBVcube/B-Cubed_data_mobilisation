@@ -1,6 +1,6 @@
 ---
 title: <span style="color:#005857"> Data mobilisation from GBIF <br> to the EBV Data Portal<span>
-subtitle: <span style="color:#47A52A"> Data exploration of species listed in the Birds Directive Annex I 
+subtitle: <span style="color:#47A52A"> Notebook 02 - Data exploration of species listed in the Birds Directive Annex I 
 author: 
   - name: "Lina Estupinan-Suarez,  Miguel Fernandez"
     affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
@@ -17,7 +17,7 @@ output:
 
 ### Introduction
 In this notebook we explore the occurrence data of species listed in the Annex I of the Birds Directive available in GBIF until June 2024.
-To do this, a Birds occurrence cube was previously created using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) (B3).
+To do this, a Birds occurrence cube was previously created using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for Policy (B3)](https://b-cubed.eu/) project.
 Details of the data query in GBIF are available at [doi: 10.15468/dl.uh84tp](https://doi.org/10.15468/dl.uh84tp/). 
 The cube generation script is also part of this repository.
 
@@ -75,7 +75,7 @@ cag <- cdata %>%
 cag <- cag[order(cag$totalOcc), ]
 
 # Save file
-write.csv(cag, here("output/summary_data/csv/summary_birds_total_occurrences_byfamily+order.csv"))
+write.csv(cag, here("output/summary_data/csv/birds/summary_birds_total_occurrences_byfamily+order.csv"))
 ```
 
 Now, we calculate the total number of occurence by species.
@@ -105,7 +105,7 @@ xout <- cag_sp %>%
 xout <- xout[order(xout$totalOcc), ]
 
 # Save file
-write.csv(xout, here("output/summary_data/csv/summary_birds_total_occurrences_acceptedusagekey.csv"), quote = FALSE)
+write.csv(xout, here("output/summary_data/csv/birds/summary_birds_total_occurrences_acceptedusagekey.csv"))
 ```
 
 #### Identify birds without species occurrences through the GBIF occurrence cube software
@@ -113,7 +113,7 @@ write.csv(xout, here("output/summary_data/csv/summary_birds_total_occurrences_ac
 ```{r}
 # Find what species have no records in GBIF
 noocc <- anti_join(tax, cag_sp, by = "acceptedUsageKey")
-write.csv(noocc, here("output/summary_data/csv/birds_no_occurrences_acceptedusagekeys.csv"), quote = FALSE)
+write.csv(noocc, here("output/summary_data/csv/birds/birds_no_occurrences_acceptedusagekeys.csv"))
 print(noocc[,c("scientificName", "acceptedUsageKey")])
 ```
 
@@ -140,9 +140,9 @@ gbif_spx_missing <- tax %>%
 gbif_spx2 <- gbif_spx[,c("kingdom", "phylum", "class", "order", "family", "genus", "species", "acceptedUsageKey", "scientificName")]
 
 # Save files
-write.csv(gbif_spx2[,1:8], here("input/data/birds/taxonomy/List168_BirdsAnnexI_gbif_accepted_ebvcube+acceptedUsageKey.csv"), quote=FALSE)
-write.csv(gbif_spx2, here("input/data/birds/taxonomy/List168_BirdsAnnexI_gbif_accepted_ebvcube+acceptedUsageKey+ETCname.csv"), quote=FALSE)
-write.csv(gbif_spx_missing, here("input/data/birds/taxonomy/List28_missing_BirdsAnnexI_gbif_accepted_ebvcube+acceptedUsageKey.csv"), quote=FALSE)
+write.csv(gbif_spx2[,1:8], here("input/data/birds/taxonomy/list168_BirdsAnnexI_gbif_accepted_ebvcube+acceptedUsageKey.csv"), quote=FALSE)
+write.csv(gbif_spx2, here("input/data/birds/taxonomy/list168_BirdsAnnexI_gbif_accepted_ebvcube+acceptedUsageKey+ETCname.csv"))
+write.csv(gbif_spx_missing, here("input/data/birds/taxonomy/list_missing_BirdsAnnexI_gbif_accepted_ebvcube+acceptedUsageKey.csv"), quote=FALSE)
 ```
 
 
@@ -215,7 +215,7 @@ ggplot(cag, aes(x = reorder(family, -totalOcc), y = totalOcc, fill = Order)) +
   guides(fill=guide_legend(ncol=1)) +
   scale_y_continuous(label = scales::label_comma(accuracy = 1)) +
   coord_flip() +
-  labs(title = "Total Number of Species Occurrences in GBIF for the Birds Directive Annex I",
+  labs(title = "Total Number of Species Occurrences in GBIF\n for the Birds Directive Annex I",
        x = "Family",
        y = "Total number of occurence") +
        guides(color = guide_legend(override.aes = list(size = 5))) +

@@ -1,6 +1,6 @@
 ---
-title: <span style="color:#005857"> Data exploration of <br> the IAS occurrences cube
-subtitle: <span style="color:#47A52A"> Data mobilisation from GBIF to the EBV Data Portal<span>
+title: <span style="color:#005857"> Data Mobilisation from GBIF to the EBV Data Portal for IAS of Union Concern<span>
+subtitle: <span style="color:#47A52A"> Notebook 02 - Data exploration of the IAS occurrence cube
 author: 
   - name: "Lina Estupinan-Suarez, Emmanuel Oceguera, Miguel Fernandez"
     affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
@@ -8,27 +8,33 @@ author:
 institute: "**Institute**: German Centre for Integrative Biodiversity Research (iDiv)"
 date: "`r Sys.Date()`"
 output:
- html_notebook:
+#  pdf_document:
+#    fig_caption: yes
+  html_notebook:
     highlight: tango
+# logo: "C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png"
+header-includes:
+  - \usepackage{graphicx}
+  - \title{\includegraphics[width=400px]{"C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png"}
 ---
-<!-- <img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\B3_logo_full.png" style='width: 200px; position:absolute; top:0; right:0; padding:10px;'/> -->
-<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3.png" style='width: 400px; position:absolute; top:0; right:0; padding:10px;'/>
+<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png" style='width: 400px; position:absolute; top:45px; right:0px; padding:5px;'/>
 ---
 
 
 ### Introduction
-In this notebook we explore the occurrence data of invasive alien species (IAS) of union concern available in GBIF until June 2024.
-To do this, an IAS occurrence cube was previously created using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) (B3) project
-Details of the data query in GBIF are available at: [doi: 10.15468/dl.x4a25s](https://www.gbif.org/occurrence/download/0081452-240506114902167). 
-The cube generation script is also part of this repository.
+In this notebook we explore the occurrence data of invasive alien species (IAS) of union concern available in [GBIF—the Global Biodiversity Information Facility—](https://www.gbif.org/) until mid August 2024.
+To do this, an IAS occurrence cube was previously created using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for Policy (B3)](https://b-cubed.eu/) project.
+Details of the data query in GBIF are available at [DOI 10.15468/dl.gxk3vh](https://doi.org/10.15468/dl.gxk3vh). The cube generation script is also part of this repository.
 
-*Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) Project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
+*Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
 
 
 
 ### Load library and input data
-```{r setup, include=FALSE}
+```{r setup, include=FALSE}   
 knitr::opts_chunk$set(message=FALSE, warning=FALSE)
+# options(tinytex.verbose = TRUE)
+# knitr::include_graphics("C:/gitrepo/B-Cubed_data_mobilization/input/logos/idiv+b3+EU.png") # out.width='100px'
 ```
 
 ```{r}
@@ -48,7 +54,6 @@ After loading the necessary libraries, we load the occurrence cube of IAS obtain
 
 ```{r}
 # Load IAS occurrence cube obtained through GBIF
-# cin <- read.csv(here(paste0("output/datacubes/csv/ias/","0077925-240506114902167.csv")),  sep = "\t")
 
 # File name from the JSON query
 occcube <- "0077925-240506114902167"
@@ -56,8 +61,18 @@ occcube <- "0077925-240506114902167"
 # Load occurrence cube using b3gbi
 cin <- process_cube(here(paste0("output/datacubes/csv/ias/", occcube,".csv")))
 
-# Load species taxonomy only with scientific names ‘accepted’ in the GBIF backbone taxonomy
-tax <- read.csv(here("input/data/ias/taxonomy/List87IAS_EU_match_gbif_allaccepted.csv"))
+# Load species taxonomy resulting from the match between the updates IAS list of union concern and the GBIF backbone taxonomy
+tax <- read.csv(here("input/data/ias/taxonomy/List87IAS_EU_match_gbif_synonyms.csv"))
+```
+
+As some of the scientific names of the IAS of union are considered synonyms by the GBIF backbone taxonomy, we will use the `acceptedUsageKey` for the synonyms and the `key` for the accepted scientific names. To do this, we will fill in the `acceptedUsageKey` column with the `key` for accepted names, and keep the `acceptedUsageKey` for synonyms. Thus, the accepted keys for all species in the list will appear in the `acceptedUsageKey` column.
+```{r}
+# Merge in one column `key` of accepted names and `acceptedUsageKey` of synonyms
+tax <- tax %>%
+  mutate(acceptedUsageKey = coalesce(acceptedUsageKey, key))
+
+# Write CSV with `acceptedUsageKey` for all species to be used in the JSON query
+write.csv(tax, here("input/data/ias/taxonomy/List87IAS_EU_match_gbif_synonyms_acceptedUsageKeys.csv"))
 ```
 
 
@@ -80,22 +95,18 @@ cag <- cag[order(cag$totalOcc), ]
 ```
 
 ```{r}
-# Rename columns for joining datasets
-# colnames(tax)[colnames(tax) == "key"] <- "acceptedUsageKey"
-tax[,c("acceptedUsageKey")] <- tax[,c("key")]
-
 # Rename columns for joining occurence cube with GBIF Backbone taxonomy
 xout <- merge(x=cag, y=tax[,c("scientificName", "acceptedUsageKey", "kingdom", "phylum", "class", "order", "family")], by="acceptedUsageKey")
 xout <- xout[order(xout$totalOcc), ]
 
-write.csv(xout, here("output/summary_data/csv/summary_ias_totalOccurrences.csv"))
+write.csv(xout, here("output/summary_data/csv/ias/summary_ias_totalOccurrences.csv"), quote = FALSE)
 ```
 
 #### Identify IAS without Records in GBIF
 ```{r}
-# Find what species have no records in GBIF
+# # Find what species have no records in GBIF
 noocc <- anti_join(tax, cag, by = "acceptedUsageKey")
-write.csv(noocc, here("output/summary_data/csv/ias_noOccurrences.csv"))
+write.csv(noocc, here("output/summary_data/csv/ias/ias_noOccurrences.csv"), quote = FALSE)
 print(noocc)
 ```
 
@@ -131,15 +142,15 @@ cag_month <- cdata %>%
 
 In the following code chunk we plot the GBIF occurrences available since 1900 for the IAS of union concern.
 ```{r}
+theme_update(plot.title = element_text(hjust = 0.5))
 ggplot(cag_year, aes(x = as.numeric(year), y = totalOcc)) +
   geom_bar(stat = "identity") +
-  # guides(fill=guide_legend(ncol=1)) +
   scale_y_continuous(label = scales::label_comma(accuracy = 1)) +
-  # coord_flip() +
-  labs(title = "Total Number of Species Occurrences in GBIF for IAS of union concern since 1900",
-       x = "Year",
+  ggtitle("Total Number of Species Occurrences in GBIF \nfor IAS of union concern since 1900") +
+  labs(x = "Year",
        y = "Total number of occurence") +
        guides(color = guide_legend(override.aes = list(size = 5))) +
+  theme(plot.title = element_text(hjust = 0.5)) +
   theme_minimal()
 ```
 
@@ -147,11 +158,10 @@ Now we plot the all GBIF occurrences per month for the IAS of union concern.
 ```{r}
 ggplot(cag_month, aes(x = as.numeric(month), y = totalOcc)) +
   geom_bar(stat = "identity") +
-  # guides(fill=guide_legend(ncol=1)) +
   scale_x_continuous(breaks = c(1,4,7,10), labels = c("Jan", "Apr", "Jul", "Oct")) +
   scale_y_continuous(label = scales::label_comma(accuracy = 1)) +
-  labs(title = "Total Number of Species Occurrences in GBIF for the IAS of union concern",
-       x = "Month",
+  ggtitle("Total Number of Species Occurrences \nin GBIF for the IAS of union concern") +
+  labs(x = "Month",
        y = "Total number of occurence") +
        guides(color = guide_legend(override.aes = list(size = 5))) +
   theme_minimal()
@@ -176,16 +186,15 @@ cag_top5 <- cdata %>%
 cag_top5year <- cag_top5 %>%
   group_by(year, scientificName) %>%
   summarize(totalOcc = sum(obs), scientificName = first(scientificName))
-
 ```
 
-Plot the five species with more records in GBIF since 2000
+Plot the five species with more records in GBIF since 1990.
 ```{r}
 ggplot(cag_top5year, aes(x = as.numeric(year), y = totalOcc, color = scientificName, name = "Species")) +
   geom_line(linewidth = 1.6) +
   guides(color=guide_legend(ncol=1, title = "Species")) +
-  labs(title = "Yearly Species Occurrences Since 1990 for the Five Most Recorded Species in GBIF from the Birds Directive Annex I",
-       x = "Time",
+  ggtitle("Annual species occurrences since 1990 for the top five \nGBIF occurrence of the IAS of union concern") +
+  labs(x = "Year",
        y = "Total number of occurence") +
   theme_minimal()
 ```

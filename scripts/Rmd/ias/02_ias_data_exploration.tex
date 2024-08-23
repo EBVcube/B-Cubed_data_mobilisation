@@ -1,0 +1,459 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{graphicx}
+\title{\includegraphics[width=400px]{"C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png"}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={ Data Mobilisation from GBIF to the EBV Data Portal for IAS of Union Concern},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{ Data Mobilisation from GBIF to the EBV Data Portal for IAS of
+Union Concern}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{ Notebook 02 - Data exploration of the IAS occurrence cube}
+\author{true}
+\date{2024-08-23}
+
+\begin{document}
+\maketitle
+
+\subsection{}\label{section}
+
+\subsubsection{Introduction}\label{introduction}
+
+In this notebook we explore the occurrence data of invasive alien
+species (IAS) of union concern available in
+\href{https://www.gbif.org/}{GBIF---the Global Biodiversity Information
+Facility---} until mid August 2024. To do this, an IAS occurrence cube
+was previously created using the
+\href{https://techdocs.gbif.org/en/data-use/data-cubes}{occurrence cube
+software} developed by GBIF under the
+\href{https://b-cubed.eu/}{Biodiversity Building Blocks for Policy (B3)}
+project. Details of the data query in GBIF are available at
+\href{https://doi.org/10.15468/dl.gxk3vh}{DOI 10.15468/dl.gxk3vh}. The
+cube generation script is also part of this repository.
+
+\emph{Note: This series of notebooks is part of the results of Task 3.3
+of the \href{https://b-cubed.eu/}{Biodiversity Building Blocks for
+Policy} project funded by the European Union's Horizon Europe Research
+and Innovation Programme (ID No 101059592). Additional notebooks
+exploring the results and calculating simple metrics are also available
+in the same repository.}
+
+\subsubsection{Load library and input
+data}\label{load-library-and-input-data}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{rm}\NormalTok{(}\AttributeTok{list=}\FunctionTok{ls}\NormalTok{())}
+\FunctionTok{gc}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          used (Mb) gc trigger (Mb) max used (Mb)
+## Ncells 475962 25.5    1030904 55.1   657974 35.2
+## Vcells 887291  6.8    8388608 64.0  1768271 13.5
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# load requiered libraries}
+\FunctionTok{library}\NormalTok{(here)}
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\FunctionTok{library}\NormalTok{(dplyr)}
+\FunctionTok{library}\NormalTok{(lubridate)}
+\FunctionTok{library}\NormalTok{(b3gbi)}
+\FunctionTok{library}\NormalTok{(stringr)}
+\end{Highlighting}
+\end{Shaded}
+
+After loading the necessary libraries, we load the occurrence cube of
+IAS obtained previously through the GBIF API.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Load IAS occurrence cube obtained through GBIF}
+
+\CommentTok{\# File name from the JSON query}
+\NormalTok{occcube }\OtherTok{\textless{}{-}} \StringTok{"0077925{-}240506114902167"}
+
+\CommentTok{\# Load occurrence cube using b3gbi}
+\NormalTok{cin }\OtherTok{\textless{}{-}} \FunctionTok{process\_cube}\NormalTok{(}\FunctionTok{here}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"output/datacubes/csv/ias/"}\NormalTok{, occcube,}\StringTok{".csv"}\NormalTok{)))}
+
+\CommentTok{\# Load species taxonomy resulting from the match between the updates IAS list of union concern and the GBIF backbone taxonomy}
+\NormalTok{tax }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\FunctionTok{here}\NormalTok{(}\StringTok{"input/data/ias/taxonomy/List87IAS\_EU\_match\_gbif\_synonyms.csv"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+As some of the scientific names of the IAS of union are considered
+synonyms by the GBIF backbone taxonomy, we will use the
+\texttt{acceptedUsageKey} for the synonyms and the \texttt{key} for the
+accepted scientific names. To do this, we will fill in the
+\texttt{acceptedUsageKey} column with the \texttt{key} for accepted
+names, and keep the \texttt{acceptedUsageKey} for synonyms. Thus, the
+accepted keys for all species in the list will appear in the
+\texttt{acceptedUsageKey} column.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Merge in one column \textasciigrave{}key\textasciigrave{} of accepted names and \textasciigrave{}acceptedUsageKey\textasciigrave{} of synonyms}
+\NormalTok{tax }\OtherTok{\textless{}{-}}\NormalTok{ tax }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{acceptedUsageKey =} \FunctionTok{coalesce}\NormalTok{(acceptedUsageKey, key))}
+
+\CommentTok{\# Write CSV with \textasciigrave{}acceptedUsageKey\textasciigrave{} for all species to be used in the JSON query}
+\FunctionTok{write.csv}\NormalTok{(tax, }\FunctionTok{here}\NormalTok{(}\StringTok{"input/data/ias/taxonomy/List87IAS\_EU\_match\_gbif\_synonyms\_acceptedUsageKeys.csv"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Data Analysis}\label{data-analysis}
+
+\paragraph{Calculate Total Number of
+Occurrence}\label{calculate-total-number-of-occurrence}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cdata }\OtherTok{\textless{}{-}}\NormalTok{ cin[[}\StringTok{"data"}\NormalTok{]]}
+\CommentTok{\# rename columns}
+\FunctionTok{colnames}\NormalTok{(cdata)[}\FunctionTok{colnames}\NormalTok{(cdata) }\SpecialCharTok{==} \StringTok{"order"}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{"order\_"}
+\FunctionTok{colnames}\NormalTok{(cdata)[}\FunctionTok{colnames}\NormalTok{(cdata) }\SpecialCharTok{==} \StringTok{"taxonKey"}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{"acceptedUsageKey"}
+
+\CommentTok{\# Aggregate occurrences at species level}
+\NormalTok{cag }\OtherTok{\textless{}{-}}\NormalTok{ cdata }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(acceptedUsageKey) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{totalOcc =} \FunctionTok{sum}\NormalTok{(obs))}
+
+ \CommentTok{\# Sort in ascending order}
+\NormalTok{cag }\OtherTok{\textless{}{-}}\NormalTok{ cag[}\FunctionTok{order}\NormalTok{(cag}\SpecialCharTok{$}\NormalTok{totalOcc), ] }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Rename columns for joining occurence cube with GBIF Backbone taxonomy}
+\NormalTok{xout }\OtherTok{\textless{}{-}} \FunctionTok{merge}\NormalTok{(}\AttributeTok{x=}\NormalTok{cag, }\AttributeTok{y=}\NormalTok{tax[,}\FunctionTok{c}\NormalTok{(}\StringTok{"scientificName"}\NormalTok{, }\StringTok{"acceptedUsageKey"}\NormalTok{, }\StringTok{"kingdom"}\NormalTok{, }\StringTok{"phylum"}\NormalTok{, }\StringTok{"class"}\NormalTok{, }\StringTok{"order"}\NormalTok{, }\StringTok{"family"}\NormalTok{)], }\AttributeTok{by=}\StringTok{"acceptedUsageKey"}\NormalTok{)}
+\NormalTok{xout }\OtherTok{\textless{}{-}}\NormalTok{ xout[}\FunctionTok{order}\NormalTok{(xout}\SpecialCharTok{$}\NormalTok{totalOcc), ]}
+
+\FunctionTok{write.csv}\NormalTok{(xout, }\FunctionTok{here}\NormalTok{(}\StringTok{"output/summary\_data/csv/ias/summary\_ias\_totalOccurrences.csv"}\NormalTok{), }\AttributeTok{quote =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\paragraph{Identify IAS without Records in
+GBIF}\label{identify-ias-without-records-in-gbif}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# \# Find what species have no records in GBIF}
+\NormalTok{noocc }\OtherTok{\textless{}{-}} \FunctionTok{anti\_join}\NormalTok{(tax, cag, }\AttributeTok{by =} \StringTok{"acceptedUsageKey"}\NormalTok{)}
+\FunctionTok{write.csv}\NormalTok{(noocc, }\FunctionTok{here}\NormalTok{(}\StringTok{"output/summary\_data/csv/ias/ias\_noOccurrences.csv"}\NormalTok{), }\AttributeTok{quote =} \ConstantTok{FALSE}\NormalTok{)}
+\FunctionTok{print}\NormalTok{(noocc)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    occurrenceId
+## 1            NA
+## 2            NA
+## 3            NA
+## 4            NA
+## 5            NA
+## 6            NA
+## 7            NA
+## 8            NA
+## 9            NA
+## 10           NA
+##                                                                            verbatimScientificName
+## 1                                                                     Channa argus (Cantor, 1842)
+## 2                                  Cortaderia selloana subsp. jubata (Lemoine) Testoni & Villamil
+## 3                                                              Limnoperna fortunei (Dunker, 1857)
+## 4                                                                 Morone americana (Gmelin, 1789)
+## 5                                                              Plotosus lineatus (Thunberg, 1787)
+## 6  Pueraria montana (Lour.) Merr. var. lobata (Willd.) Maesen & S.M.Almeida ex Sanjappa & Predeep
+## 7                                                           Solenopsis geminata (Fabricius, 1804)
+## 8                                                                 Solenopsis richteri Forel, 1909
+## 9                                                               Urva auropunctata (Hodgson, 1836)
+## 10                                                    Vespa velutina nigrithorax du Buysson, 1905
+##                                                                      scientificName
+## 1                                                       Channa argus (Cantor, 1842)
+## 2                                                 Cortaderia jubata (Lemoine) Stapf
+## 3                                                Limnoperna fortunei (Dunker, 1857)
+## 4                                                   Morone americana (Gmelin, 1789)
+## 5                                                Plotosus lineatus (Thunberg, 1787)
+## 6  Pueraria montana var. lobata (Willd.) Maesen & S.M.Almeida ex Sanjappa & Predeep
+## 7                                             Solenopsis geminata (Fabricius, 1804)
+## 8                                                   Solenopsis richteri Forel, 1909
+## 9                          Herpestes javanicus subsp. auropunctatus (Hodgson, 1836)
+## 10                                         Vespa velutina nigrithorax Buysson, 1905
+##         key matchType confidence   status       rank  kingdom       phylum
+## 1   4284921     EXACT         99 ACCEPTED    SPECIES Animalia     Chordata
+## 2   9355348     EXACT        100  SYNONYM SUBSPECIES  Plantae Tracheophyta
+## 3   5855350     EXACT         99 ACCEPTED    SPECIES Animalia     Mollusca
+## 4   2394604     EXACT         99 ACCEPTED    SPECIES Animalia     Chordata
+## 5   7965247     EXACT         99 ACCEPTED    SPECIES Animalia     Chordata
+## 6   2977647     EXACT        100 ACCEPTED    VARIETY  Plantae Tracheophyta
+## 7   5035187     EXACT         99 ACCEPTED    SPECIES Animalia   Arthropoda
+## 8   5035017     EXACT        100 ACCEPTED    SPECIES Animalia   Arthropoda
+## 9  10504616     EXACT         99  SYNONYM    SPECIES Animalia     Chordata
+## 10  6247411     EXACT        100 ACCEPTED SUBSPECIES Animalia   Arthropoda
+##            class        order      family      genus             species
+## 1                 Perciformes   Channidae     Channa        Channa argus
+## 2     Liliopsida       Poales     Poaceae Cortaderia   Cortaderia jubata
+## 3       Bivalvia     Mytilida   Mytilidae Limnoperna Limnoperna fortunei
+## 4                 Perciformes   Moronidae     Morone    Morone americana
+## 5                Siluriformes  Plotosidae   Plotosus   Plotosus lineatus
+## 6  Magnoliopsida      Fabales    Fabaceae   Pueraria    Pueraria montana
+## 7        Insecta  Hymenoptera  Formicidae Solenopsis Solenopsis geminata
+## 8        Insecta  Hymenoptera  Formicidae Solenopsis Solenopsis richteri
+## 9       Mammalia    Carnivora Herpestidae  Herpestes Herpestes javanicus
+## 10       Insecta  Hymenoptera    Vespidae      Vespa      Vespa velutina
+##                 canonicalName
+## 1                Channa argus
+## 2  Cortaderia selloana jubata
+## 3         Limnoperna fortunei
+## 4            Morone americana
+## 5           Plotosus lineatus
+## 6     Pueraria montana lobata
+## 7         Solenopsis geminata
+## 8         Solenopsis richteri
+## 9           Urva auropunctata
+## 10 Vespa velutina nigrithorax
+##                                             authorship usageKey
+## 1                                      (Cantor, 1842)   4284921
+## 2                         (Lemoine) Testoni & Villamil  9355348
+## 3                                      (Dunker, 1857)   5855350
+## 4                                      (Gmelin, 1789)   2394604
+## 5                                    (Thunberg, 1787)   7965247
+## 6  (Willd.) Maesen & S.M.Almeida ex Sanjappa & Predeep  2977647
+## 7                                   (Fabricius, 1804)   5035187
+## 8                                          Forel, 1909  5035017
+## 9                                     (Hodgson, 1836)  10504616
+## 10                                       Buysson, 1905  6247411
+##    acceptedUsageKey
+## 1           4284921
+## 2           2704521
+## 3           5855350
+## 4           2394604
+## 5           7965247
+## 6           2977647
+## 7           5035187
+## 8           5035017
+## 9           6164088
+## 10          6247411
+\end{verbatim}
+
+\subsubsection{Data Exploration}\label{data-exploration}
+
+We will explore data available since 1900. To do this, first we split
+the `yearMonth' column into `year' and `month'.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Convert date from character to numeric}
+\NormalTok{todates }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(}\FunctionTok{str\_split}\NormalTok{(cdata}\SpecialCharTok{$}\NormalTok{yearMonth, }\StringTok{"{-}"}\NormalTok{, }\AttributeTok{simplify =} \ConstantTok{TRUE}\NormalTok{))}
+\FunctionTok{colnames}\NormalTok{(todates) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"year"}\NormalTok{, }\StringTok{"month"}\NormalTok{)}
+
+\CommentTok{\# Add year and month columns separate to the initial data}
+\NormalTok{cdata}\SpecialCharTok{$}\NormalTok{year }\OtherTok{\textless{}{-}}\NormalTok{ todates}\SpecialCharTok{$}\NormalTok{year}
+\NormalTok{cdata}\SpecialCharTok{$}\NormalTok{month }\OtherTok{\textless{}{-}}\NormalTok{ todates}\SpecialCharTok{$}\NormalTok{month}
+
+\CommentTok{\# Filter data starting from 1900}
+\NormalTok{cdata2 }\OtherTok{\textless{}{-}}\NormalTok{ cdata }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{\textgreater{}} \DecValTok{1900}\NormalTok{)}
+
+\CommentTok{\# Group data by year}
+\NormalTok{cag\_year }\OtherTok{\textless{}{-}}\NormalTok{ cdata2 }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{group\_by}\NormalTok{(year) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{totalOcc =} \FunctionTok{sum}\NormalTok{(obs))}
+
+\CommentTok{\# Group data by month}
+\NormalTok{cag\_month }\OtherTok{\textless{}{-}}\NormalTok{ cdata }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{group\_by}\NormalTok{(month) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{totalOcc =} \FunctionTok{sum}\NormalTok{(obs))}
+\end{Highlighting}
+\end{Shaded}
+
+In the following code chunk we plot the GBIF occurrences available since
+1900 for the IAS of union concern.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{theme\_update}\NormalTok{(}\AttributeTok{plot.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{hjust =} \FloatTok{0.5}\NormalTok{))}
+\FunctionTok{ggplot}\NormalTok{(cag\_year, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{as.numeric}\NormalTok{(year), }\AttributeTok{y =}\NormalTok{ totalOcc)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat =} \StringTok{"identity"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{label =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{label\_comma}\NormalTok{(}\AttributeTok{accuracy =} \DecValTok{1}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Total Number of Species Occurrences in GBIF }\SpecialCharTok{\textbackslash{}n}\StringTok{for IAS of union concern since 1900"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Year"}\NormalTok{,}
+       \AttributeTok{y =} \StringTok{"Total number of occurence"}\NormalTok{) }\SpecialCharTok{+}
+       \FunctionTok{guides}\NormalTok{(}\AttributeTok{color =} \FunctionTok{guide\_legend}\NormalTok{(}\AttributeTok{override.aes =} \FunctionTok{list}\NormalTok{(}\AttributeTok{size =} \DecValTok{5}\NormalTok{))) }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{plot.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{hjust =} \FloatTok{0.5}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_ias_data_exploration_files/figure-latex/unnamed-chunk-8-1.pdf}}
+
+Now we plot the all GBIF occurrences per month for the IAS of union
+concern.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(cag\_month, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{as.numeric}\NormalTok{(month), }\AttributeTok{y =}\NormalTok{ totalOcc)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat =} \StringTok{"identity"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{breaks =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{10}\NormalTok{), }\AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Jan"}\NormalTok{, }\StringTok{"Apr"}\NormalTok{, }\StringTok{"Jul"}\NormalTok{, }\StringTok{"Oct"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{label =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{label\_comma}\NormalTok{(}\AttributeTok{accuracy =} \DecValTok{1}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Total Number of Species Occurrences }\SpecialCharTok{\textbackslash{}n}\StringTok{in GBIF for the IAS of union concern"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Month"}\NormalTok{,}
+       \AttributeTok{y =} \StringTok{"Total number of occurence"}\NormalTok{) }\SpecialCharTok{+}
+       \FunctionTok{guides}\NormalTok{(}\AttributeTok{color =} \FunctionTok{guide\_legend}\NormalTok{(}\AttributeTok{override.aes =} \FunctionTok{list}\NormalTok{(}\AttributeTok{size =} \DecValTok{5}\NormalTok{))) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_ias_data_exploration_files/figure-latex/unnamed-chunk-9-1.pdf}}
+
+Our last plot shows the increasing number of records since 2000 for the
+five species with the highest records.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Aggregate occurrences at species level}
+\NormalTok{cag\_sp }\OtherTok{\textless{}{-}}\NormalTok{ cdata }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(acceptedUsageKey) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{totalOcc =} \FunctionTok{sum}\NormalTok{(obs))}
+
+\CommentTok{\# Select the five species with more records }
+\NormalTok{cag\_sel }\OtherTok{\textless{}{-}}\NormalTok{ cag\_sp[(}\FunctionTok{dim}\NormalTok{(cag\_sp)[}\DecValTok{1}\NormalTok{]}\SpecialCharTok{{-}}\DecValTok{5}\NormalTok{)}\SpecialCharTok{:}\FunctionTok{dim}\NormalTok{(cag\_sp)[}\DecValTok{1}\NormalTok{],]}
+
+\CommentTok{\# Subset data set}
+\NormalTok{cag\_top5 }\OtherTok{\textless{}{-}}\NormalTok{ cdata }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{inner\_join}\NormalTok{(cag\_sel[,}\FunctionTok{c}\NormalTok{(}\StringTok{"acceptedUsageKey"}\NormalTok{)], }\AttributeTok{by =} \StringTok{"acceptedUsageKey"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{\textgreater{}} \DecValTok{1990}\NormalTok{)}
+
+\CommentTok{\# Aggregate occurrences by year}
+\NormalTok{cag\_top5year }\OtherTok{\textless{}{-}}\NormalTok{ cag\_top5 }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(year, scientificName) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{totalOcc =} \FunctionTok{sum}\NormalTok{(obs), }\AttributeTok{scientificName =} \FunctionTok{first}\NormalTok{(scientificName))}
+\end{Highlighting}
+\end{Shaded}
+
+Plot the five species with more records in GBIF since 1990.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(cag\_top5year, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{as.numeric}\NormalTok{(year), }\AttributeTok{y =}\NormalTok{ totalOcc, }\AttributeTok{color =}\NormalTok{ scientificName, }\AttributeTok{name =} \StringTok{"Species"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{linewidth =} \FloatTok{1.6}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{guides}\NormalTok{(}\AttributeTok{color=}\FunctionTok{guide\_legend}\NormalTok{(}\AttributeTok{ncol=}\DecValTok{1}\NormalTok{, }\AttributeTok{title =} \StringTok{"Species"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Annual species occurrences since 1990 for the top five }\SpecialCharTok{\textbackslash{}n}\StringTok{GBIF occurrence of the IAS of union concern"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Year"}\NormalTok{,}
+       \AttributeTok{y =} \StringTok{"Total number of occurence"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_ias_data_exploration_files/figure-latex/unnamed-chunk-11-1.pdf}}
+
+\end{document}

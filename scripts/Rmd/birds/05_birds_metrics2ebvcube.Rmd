@@ -1,6 +1,6 @@
 ---
-title: <span style="color:#005857"> Data mobilisation from GBIF <br>to the EBV Data Portal<span>
-subtitle: <span style="color:#47A52A"> Creation of the EBV NetCDF for <br> the Birds Directive occurrences cube metrics
+title: <span style="color:#005857"> Data mobilisation from GBIF to the EBV Data Portal for the Birds Directive Annex I<span>
+subtitle: <span style="color:#47A52A"> Notebook 5 - Creation of the EBV NetCDF for the Birds Directive occurrences cube metrics
 author: 
   - name: "Lina Estupinan-Suarez, Luise Quoss, Miguel Fernandez"
     affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
@@ -43,8 +43,8 @@ Define paths for reading input data and saving the results.
  
 ```{r}
 # paths
-json <- file.path(here("input/ebvformat/json/birds/birds_6_metrics.json")) # EBV Metadata as JSON from the EBV Portal
-out <- file.path(here("output/datacubes/nc/birds/birds_6_metrics_test.nc")) # path to save EBV NetCDF 
+json <- file.path(here("input/ebvformat/json/birds/birds_6_metrics_20240814.json")) # EBV Metadata as JSON from the EBV Portal
+out <- file.path(here("output/datacubes/nc/birds/birds_6_metrics.nc")) # path to save EBV NetCDF 
 
 # tifs
 tif_root <- here("output/datacubes/tiff_metrics/birds/")
@@ -100,7 +100,7 @@ ebv_create_taxonomy(jsonpath = json,
            fillvalue = fillvalue,
            prec = prec,
            sep = sep,
-           overwrite=T
+           overwrite = T
 )
 ```
 
@@ -123,6 +123,7 @@ entity_names <- ebv_properties(out, verbose=F)@general$entity_names
 Map input data to the empty NetCDF
 ```{r}
 for(i in 1:length(spskey)){
+print(i)
 spx <- which(spskey == spstax[["acceptedUsageKey"]][i])
   ebv_add_data(filepath_nc = out,
                data = terra::as.matrix(r1[[spx]], wide=T),

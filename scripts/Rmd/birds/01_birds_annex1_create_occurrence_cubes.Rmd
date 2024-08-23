@@ -18,7 +18,7 @@ output:
 ### Introduction
 In this notebook we create a cube of occurrence of birds listed in the Annex I of the Birds Directive based on all species records available in GBIF until July 2024.
 To do this, we sent a request with the cube specifications (JSON file) via the GBIF API. We used the occurrence cube generation software developed in the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/).
-Details of the GBIF data query are available at [doi: 10.15468/dl.uh84tp](https://doi.org/10.15468/dl.uh84tp/). 
+Details of the GBIF data query are available at [DOI 10.15468/dl.uh84tp](https://doi.org/10.15468/dl.uh84tp/). 
 
 *Note: This series of notebooks is part of the results of Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available in the same repository.*
 
