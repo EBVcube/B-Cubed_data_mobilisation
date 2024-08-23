@@ -1,6 +1,6 @@
 ---
-title: <span style="color:#005857"> Creation of the EBV NetCDF for <br> the IAS occurrences cube metrics
-subtitle: <span style="color:#47A52A"> Data mobilisation from GBIF to the EBV Data Portal<span>
+title: <span style="color:#005857"> Data Mobilisation from GBIF to the EBV Data Portal for IAS of Union Concern<span>
+subtitle: <span style="color:#47A52A"> Notebook 4 - Creation of the EBV NetCDF for <br> the IAS occurrences cube metrics
 author: 
   - name: "Lina Estupinan-Suarez, Luise Quoss, Miguel Fernandez"
     affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
@@ -11,17 +11,17 @@ output:
  html_notebook:
     highlight: tango
 ---
-<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3.png" style='width: 400px; position:absolute; top:0; right:0; padding:10px;'/>
+<img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png" style='width: 400px; position:absolute; top:45px; right:0px; padding:5px;'/>
 ---
 
 
 ### Introduction
-In this notebook we calculate simple metrics for the invasive alien species (IAS) of union concern in Europe.
-To do this, an IAS occurrence cube has been created previously (see Notebook 01) using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) (B3)
-Details of the data query in GBIF are available at: [doi: 10.15468/dl.x4a25s](https://www.gbif.org/occurrence/download/0081452-240506114902167). 
+In this notebook we calculate simple metrics for the Annex I of the Birds Directive in Europe.
+To do this, a Birds Directive occurrence cube has been created previously (see Notebook 01) using the [occurrence cube software](https://techdocs.gbif.org/en/data-use/data-cubes) developed by GBIF under the [Biodiversity Building Blocks for Policy (B3)](https://b-cubed.eu/) project.
+Details of the data query in GBIF are available at [DOI 10.15468/dl.gxk3vh](https://doi.org/10.15468/dl.gxk3vh). 
 Here we present five metrics: Total number of occurences, earliest date of occurrence, latest date of occurrences, basis of record of the earliest and latests date of occurrence.
 
-*Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for policy project](https://b-cubed.eu/) funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
+*Note: This series of notebooks is part of the results of the Task 3.3 of the [Biodiversity Building Blocks for Policy](https://b-cubed.eu/) project funded by the European Union’s Horizon Europe Research and Innovation Programme (ID No 101059592). Additional notebooks exploring the results and calculating simple metrics are also available at the same repository.*
 
 ### Load libraries
 ```{r setup, include=FALSE}
@@ -42,30 +42,30 @@ Define paths for reading input data and saving the results.
 
  
 ```{r}
-# paths
-json <- file.path(here("input/ebvformat/json/ias_5metrics_dates.json")) # EBV Metadata as JSON from the EBV Portal
-out <- file.path(here("output/datacubes/nc/IAS_5_metrics.nc")) # path to save EBV NetCDF 
+# Paths
+json <- file.path(here("input/ebvformat/json/ias/ias_metrics_20280815.json")) # EBV metadata as JSON from the EBV Portal
+out <- file.path(here("output/datacubes/nc/ias/ias_5_metrics_77sps_.nc")) # path to save EBV NetCDF 
 
-# tifs
-tif_root <- here("output/datacubes/tiff_metrics/")
+# Tifs
+tif_root <- here("output/datacubes/tiff_metrics/ias/")
 
-# taxonomy file
-tax <- file.path(here("input/data/ias/taxonomy/List77IAS_EU_match_gbif_synonyms_ebvcube.csv"))
+# Taxonomy file
+tax <- file.path(here("input/data/ias/taxonomy/List77IAS_EU_gbif_acceptedUsageKey_ebvcube.csv"))
 ```
 
 Load all metrics as tiffs. Five in total.
 ```{r}
-# input rasters: one for each metric
-r1 <- rast(here("output/datacubes/tif_metrics/01_ias_total_occurrences.tif")) 
-r2 <- rast(here("output/datacubes/tif_metrics/02_ias_earliest_date_records.tif"))
-r3 <- rast(here("output/datacubes/tif_metrics/03_ias_latest_date_records.tif"))
-r4 <- rast(here("output/datacubes/tif_metrics/04_ias_earliest_date_records_sourceofrecord.tif")) 
-r5 <- rast(here("output/datacubes/tif_metrics/05_ias_latest_date_records_sourceofrecord.tif")) 
+# Input rasters: one for each metric
+r1 <- rast(here("output/datacubes/tif_metrics/ias/01_ias_total_occurrences.tif")) 
+r2 <- rast(here("output/datacubes/tif_metrics/ias/02_ias_earliest_date_records.tif"))
+r3 <- rast(here("output/datacubes/tif_metrics/ias/03_ias_latest_date_records.tif"))
+r4 <- rast(here("output/datacubes/tif_metrics/ias/04_ias_earliest_date_records_sourceofrecord.tif")) 
+r5 <- rast(here("output/datacubes/tif_metrics/ias/05_ias_latest_date_records_sourceofrecord.tif")) 
 ```
 
 Set the raster settings.
 ```{r}
-# define raster settings
+# Define raster settings
 extent <- c(ext(r1)[1], ext(r1)[2], ext(r1)[3], ext(r1)[4])
 res <- res(r1)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       fillvalue <- NaN
@@ -74,14 +74,14 @@ epsg <- 3035
 sep <- ','
 ```
 
-Read the species taxonomy.
+Load species taxonomy.
 
 ```{r}
-# species key to sort the data
+# Species key to sort the data
 spskey <- names(r1)
-spstax <- read.csv(here("input/data/ias/taxonomy/List77IAS_EU_gbif_accepted_ebvcube+key.csv"))
+spstax <- read.csv(here("input/data/ias/taxonomy/List77IAS_EU_gbif_acceptedUsageKey_ebvcube+key.csv"))
 
-# check whether the spskey order is the same
+# Check whether the spskey order is the same
 spstax$species == spskey
 ```
 
@@ -89,7 +89,7 @@ spstax$species == spskey
 
 Create empty EBV NetCDF.
 ```{r}
-#create empty file
+# Create empty file
 ebv_create_taxonomy(jsonpath = json,
            outputpath = out,
            taxonomy = tax,
@@ -99,63 +99,63 @@ ebv_create_taxonomy(jsonpath = json,
            fillvalue = fillvalue,
            prec = prec,
            sep = sep,
-           overwrite=T
+           overwrite = T
 )
 ```
 
 
 ```{r}
-# check data
+# Check data
 ebv_datacubepaths(out)
 ebv_properties(out, metric=1)
 ```
 
 
 ```{r}
-#add data -----
-#get entity names
+# Add data -----
+# Get entity names
 entity_names <- ebv_properties(out, verbose=F)@general$entity_names
 ```
 
 
-
 Map input data to the empty NetCDF
 ```{r}
-for(i in 1:77){
-spx <- which(spskey == spstax[["key"]][i])
-  ebv_add_data(filepath_nc = out,
-               data = terra::as.matrix(r1[[spx]], wide=T),
-               metric = 1,
-               entity = i,
-               timestep = 1,
-               ignore_RAM = T)
+# for(i in 1:length(spskey)){
+# print(i)
+# spx <- which(spskey == spstax[["acceptedUsageKey"]][i])
+#   ebv_add_data(filepath_nc = out,
+#                data = terra::as.matrix(r1[[spx]], wide = T),
+#                metric = 1,
+#                entity = i,
+#                timestep = 1,
+#                ignore_RAM = T)
 
-  ebv_add_data(filepath_nc = out,
-               data = terra::as.matrix(r2[[spx]], wide=T),
-               metric = 2,
-               entity = i,
-               timestep = 1,
-               ignore_RAM = T)
+#   ebv_add_data(filepath_nc = out,
+#                data = terra::as.matrix(r2[[spx]], wide = T),
+#                metric = 2,
+#                entity = i,
+#                timestep = 1,
+#                ignore_RAM = T)
 
-  ebv_add_data(filepath_nc = out,
-               data = terra::as.matrix(r3[[spx]], wide=T),
-               metric = 3,
-               entity = i,
-               timestep = 1,
-               ignore_RAM = T)
+#   ebv_add_data(filepath_nc = out,
+#                data = terra::as.matrix(r3[[spx]], wide = T),
+#                metric = 3,
+#                entity = i,
+#                timestep = 1,
+#                ignore_RAM = T)
 
-  ebv_add_data(filepath_nc = out,
-               data = terra::as.matrix(r4[[spx]], wide=T),
-               metric = 4,
-               entity = i,
-               timestep = 1,
-               ignore_RAM = T)
+#   ebv_add_data(filepath_nc = out,
+#                data = terra::as.matrix(r4[[spx]], wide = T),
+#                metric = 4,
+#                entity = i,
+#                timestep = 1,
+#                ignore_RAM = T)
               
-  ebv_add_data(filepath_nc = out,
-               data = terra::as.matrix(r5[[spx]], wide=T),
-               metric = 5,
-               entity = i,
-               timestep = 1,
-               ignore_RAM = T)
-}
+#   ebv_add_data(filepath_nc = out,
+#                data = terra::as.matrix(r5[[spx]], wide = T),
+#                metric = 5,
+#                entity = i,
+#                timestep = 1,
+#                ignore_RAM = T)
+# }
 ```

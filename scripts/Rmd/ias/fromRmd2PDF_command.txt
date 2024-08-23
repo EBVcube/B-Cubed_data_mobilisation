@@ -1,0 +1,6 @@
+
+
+rmarkdown::render("scripts/Rmd/ias/03_ias_computing_metrics_cubes.Rmd", output_format = "pdf_document")
+
+Cluster
+rmarkdown::render("H:/B3/B-Cubed_data_mobilization/scripts/Rmd/birds/03_birds_annex1_computing_metrics_1_2_3.Rmd", output_format = "pdf_document")
