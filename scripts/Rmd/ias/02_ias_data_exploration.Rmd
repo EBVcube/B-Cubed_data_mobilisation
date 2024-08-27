@@ -1,6 +1,6 @@
 ---
 title: <span style="color:#005857"> Data Mobilisation from GBIF to the EBV Data Portal for IAS of Union Concern<span>
-subtitle: <span style="color:#47A52A"> Notebook 02 - Data exploration of the IAS occurrence cube
+subtitle: <span style="color:#47A52A"> Notebook 2 - Data exploration of the IAS occurrence cube
 author: 
   - name: "Lina Estupinan-Suarez, Emmanuel Oceguera, Miguel Fernandez"
     affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"
@@ -8,14 +8,8 @@ author:
 institute: "**Institute**: German Centre for Integrative Biodiversity Research (iDiv)"
 date: "`r Sys.Date()`"
 output:
-#  pdf_document:
-#    fig_caption: yes
   html_notebook:
     highlight: tango
-# logo: "C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png"
-header-includes:
-  - \usepackage{graphicx}
-  - \title{\includegraphics[width=400px]{"C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png"}
 ---
 <img src="C:\gitrepo\B-Cubed_data_mobilization\input\logos\idiv+b3+EU.png" style='width: 400px; position:absolute; top:45px; right:0px; padding:5px;'/>
 ---
@@ -72,7 +66,7 @@ tax <- tax %>%
   mutate(acceptedUsageKey = coalesce(acceptedUsageKey, key))
 
 # Write CSV with `acceptedUsageKey` for all species to be used in the JSON query
-write.csv(tax, here("input/data/ias/taxonomy/List87IAS_EU_match_gbif_synonyms_acceptedUsageKeys.csv"))
+write.csv(tax, here("input/data/ias/taxonomy/List87IAS_EU_match_gbif_synonyms_acceptedUsageKeys.csv"), row.names = FALSE)
 ```
 
 
@@ -99,14 +93,14 @@ cag <- cag[order(cag$totalOcc), ]
 xout <- merge(x=cag, y=tax[,c("scientificName", "acceptedUsageKey", "kingdom", "phylum", "class", "order", "family")], by="acceptedUsageKey")
 xout <- xout[order(xout$totalOcc), ]
 
-write.csv(xout, here("output/summary_data/csv/ias/summary_ias_totalOccurrences.csv"), quote = FALSE)
+write.csv(xout, here("output/summary_data/csv/ias/summary_ias_totalOccurrences.csv"), quote = FALSE, row.names = FALSE)
 ```
 
 #### Identify IAS without Records in GBIF
 ```{r}
 # # Find what species have no records in GBIF
 noocc <- anti_join(tax, cag, by = "acceptedUsageKey")
-write.csv(noocc, here("output/summary_data/csv/ias/ias_noOccurrences.csv"), quote = FALSE)
+write.csv(noocc, here("output/summary_data/csv/ias/ias_noOccurrences.csv"), quote = FALSE, row.names = FALSE)
 print(noocc)
 ```
 

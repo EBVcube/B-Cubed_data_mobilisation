@@ -1,6 +1,6 @@
 ---
-title: <span style="color:#005857">Data mobilisation from GBIF <br> to the EBV Data Portal<span>
-subtitle: <span style="color:#47A52A"> Prototype for creating a occurrence cube of birds <br> listed in the Annex I of the Birds Directive
+title: <span style="color:#005857"> Data mobilisation from GBIF to the EBV Data Portal for the Birds Directive Annex I<span>
+subtitle: <span style="color:#47A52A"> Notebook 01 - Prototype for creating a occurrence cube of birds <br> listed in the Annex I of the Birds Directive
 author: 
   - name: "Lina Estupinan-Suarez, Miguel Fernandez"
     affiliation: "German Centre for Integrative Biodiversity Research (iDiv)"

@@ -1,5 +1,5 @@
 ---
-title: <span style="color:#005857"> Data mobilisation from GBIF <br> to the EBV Data Portal<span>
+title: <span style="color:#005857"> Data mobilisation from GBIF to the EBV Data Portal for the Birds Directive Annex I<span>
 subtitle: <span style="color:#47A52A"> Notebook 02 - Data exploration of species listed in the Birds Directive Annex I 
 author: 
   - name: "Lina Estupinan-Suarez,  Miguel Fernandez"

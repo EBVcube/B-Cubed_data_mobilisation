@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2024-08-14" />
+<meta name="date" content="2024-08-23" />
 
 <title>Data mobilisation from GBIF   to the EBV Data Portal</title>
 
@@ -1831,15 +1831,15 @@ display: none;
 
 <h1 class="title toc-ignore"><span style="color:#005857">Data
 mobilisation from GBIF <br> to the EBV Data Portal<span></h1>
-<h3 class="subtitle"><span style="color:#47A52A"> Harmonisation of
-species keys for the JSON query <br> of species listed in the Annex I of
-the Birds Directive</h3>
+<h3 class="subtitle"><span style="color:#47A52A"> Pre-processing
+notebook - Harmonisation of species keys for the JSON query <br> of
+species listed in the Annex I of the Birds Directive</h3>
 <h4 class="author">Lina Estupinan-Suarez, Miguel Fernandez</h4>
 <address class="author_afil">
 German Centre for Integrative Biodiversity Research
 (iDiv)<br><a class="author_email" href="mailto:#"><a href="mailto:lina.estupinans@idiv.de" class="email">lina.estupinans@idiv.de</a></a>
 </address>
-<h4 class="date">2024-08-14</h4>
+<h4 class="date">2024-08-23</h4>
 
 </div>
 
@@ -1854,7 +1854,7 @@ birds listed in Annex I of the Birds Directive. Subsequently, we will
 work with the GBIF occurrence data and therefore use the
 <code>speciesUsageKey</code> in its backbone taxonomy. We have
 previously prepared a list from Annex I of the Birds Directive that
-includes the taxonomy.</p>
+includes the taxonomy. proc</p>
 <p><em>Note: This series of notebooks is part of the results of Task 3.3
 of the <a href="https://b-cubed.eu/">Biodiversity Building Blocks for
 Policy</a> project funded by the European Union’s Horizon Europe
@@ -1872,10 +1872,10 @@ available in the same repository.</em></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list=</span><span class="fu">ls</span>())</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgdXNlZCAoTWIpIGdjIHRyaWdnZXIgKE1iKSBtYXggdXNlZCAoTWIpXG5OY2VsbHMgNTMwMTI3IDI4LjQgICAgMTE4NTY2MSA2My40ICAgNjU3OTc0IDM1LjJcblZjZWxscyA5NjYyMjIgIDcuNCAgICA4Mzg4NjA4IDY0LjAgIDE3NjgxNzggMTMuNVxuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgdXNlZCAoTWIpIGdjIHRyaWdnZXIgKE1iKSBtYXggdXNlZCAoTWIpXG5OY2VsbHMgNTMwODk0IDI4LjQgICAgMTE4Nzg1MiA2My41ICAgNjU3OTc0IDM1LjJcblZjZWxscyA5Njc2NDYgIDcuNCAgICA4Mzg4NjA4IDY0LjAgIDE3NjgyNzEgMTMuNVxuIn0= -->
 <pre><code>         used (Mb) gc trigger (Mb) max used (Mb)
-Ncells 530127 28.4    1185661 63.4   657974 35.2
-Vcells 966222  7.4    8388608 64.0  1768178 13.5</code></pre>
+Ncells 530894 28.4    1187852 63.5   657974 35.2
+Vcells 967646  7.4    8388608 64.0  1768271 13.5</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-source-begin eyJkYXRhIjpbIiMgTG9hZCByZXF1aWVyZWQgbGlicmFyaWVzIiwibGlicmFyeShoZXJlKSIsImxpYnJhcnkoZHBseXIpIl19 -->
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Load requiered libraries</span></span>
@@ -1902,22 +1902,24 @@ considered synonyms by the GBIF backbone taxonomy, we will use the
 <code>acceptedUsageKey</code> for the synonyms and the <code>key</code>
 for the accepted scientific names. To do this, we will fill in the
 <code>acceptedUsageKey</code> column with the key for accepted names,
-and keep the <code>acceptedUsageKey</code> for synonyms.</p>
+and keep the <code>acceptedUsageKey</code> for synonyms. Thus, the
+accepted keys for all species in the list will appear in the
+<code>acceptedUsageKey</code> column.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgTWVyZ2UgaW4gb25lIGNvbHVtbiBga2V5YCBvZiBhY2NlcHRlZCBuYW1lcyBhbmQgYGFjY2VwdGVkVXNhZ2VLZXlgIG9mIHN5bm9ueW1zIiwidXNhZ2VrZXlzIDwtIHRheCAlPiVcbiAgbXV0YXRlKGFjY2VwdGVkVXNhZ2VLZXkgPSBjb2FsZXNjZShhY2NlcHRlZFVzYWdlS2V5LCBrZXkpKSIsIiIsIiMgV3JpdGUgQ1NWIHdpdGggYGFjY2VwdGVkVXNhZ2VLZXlgIGZvciBhbGwgc3BlY2llcyB0byBiZSB1c2VkIGluIHRoZSBKU09OIHF1ZXJ5Iiwid3JpdGUuY3N2KHVzYWdla2V5cywgaGVyZShcImlucHV0L2RhdGEvYmlyZHMvdGF4b25vbXkvbGlzdDE5M2JpcmRzX2RpcmVjdGl2ZV9hbm5leGlfYWxsYWNjZXB0ZWRfdXNhZ2VrZXlfZ2JpZi5jc3ZcIikpIl19 -->
+<!-- rnb-source-begin eyJkYXRhIjpbIiMgTWVyZ2UgaW4gb25lIGNvbHVtbiBga2V5YCBvZiBhY2NlcHRlZCBuYW1lcyBhbmQgYGFjY2VwdGVkVXNhZ2VLZXlgIG9mIHN5bm9ueW1zIiwidXNhZ2VrZXlzIDwtIHRheCAlPiVcbiAgbXV0YXRlKGFjY2VwdGVkVXNhZ2VLZXkgPSBjb2FsZXNjZShhY2NlcHRlZFVzYWdlS2V5LCBrZXkpKSIsIiIsIiMgV3JpdGUgQ1NWIHdpdGggYGFjY2VwdGVkVXNhZ2VLZXlgIGZvciBhbGwgc3BlY2llcyB0byBiZSB1c2VkIGluIHRoZSBKU09OIHF1ZXJ5Iiwid3JpdGUuY3N2KHVzYWdla2V5cywgaGVyZShcImlucHV0L2RhdGEvYmlyZHMvdGF4b25vbXkvbGlzdDE5M2JpcmRzX2RpcmVjdGl2ZV9hbm5leGlfYWxsYWNjZXB0ZWRfdXNhZ2VrZXlfZ2JpZi5jc3ZcIiksIHJvdy5uYW1lcyA9IEZBTFNFKSJdfQ== -->
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Merge in one column `key` of accepted names and `acceptedUsageKey` of synonyms</span></span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>usagekeys <span class="ot">&lt;-</span> tax <span class="sc">%&gt;%</span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">acceptedUsageKey =</span> <span class="fu">coalesce</span>(acceptedUsageKey, key))</span>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a></span>
 <span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co"># Write CSV with `acceptedUsageKey` for all species to be used in the JSON query</span></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="fu">write.csv</span>(usagekeys, <span class="fu">here</span>(<span class="st">&quot;input/data/birds/taxonomy/list193birds_directive_annexi_allaccepted_usagekey_gbif.csv&quot;</span>))</span></code></pre></div>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="fu">write.csv</span>(usagekeys, <span class="fu">here</span>(<span class="st">&quot;input/data/birds/taxonomy/list193birds_directive_annexi_allaccepted_usagekey_gbif.csv&quot;</span>), <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogPHNwYW4gc3R5bGU9ImNvbG9yOiMwMDU4NTciPkRhdGEgbW9iaWxpc2F0aW9uIGZyb20gR0JJRiA8YnI+IHRvIHRoZSBFQlYgRGF0YSBQb3J0YWw8c3Bhbj4NCnN1YnRpdGxlOiA8c3BhbiBzdHlsZT0iY29sb3I6IzQ3QTUyQSI+IEhhcm1vbmlzYXRpb24gb2Ygc3BlY2llcyBrZXlzIGZvciB0aGUgSlNPTiBxdWVyeSA8YnI+IG9mIHNwZWNpZXMgbGlzdGVkIGluIHRoZSBBbm5leCBJIG9mIHRoZSBCaXJkcyBEaXJlY3RpdmUNCmF1dGhvcjogDQogIC0gbmFtZTogIkxpbmEgRXN0dXBpbmFuLVN1YXJleiwgTWlndWVsIEZlcm5hbmRleiINCiAgICBhZmZpbGlhdGlvbjogIkdlcm1hbiBDZW50cmUgZm9yIEludGVncmF0aXZlIEJpb2RpdmVyc2l0eSBSZXNlYXJjaCAoaURpdikiDQogICAgZW1haWw6IGxpbmEuZXN0dXBpbmFuc0BpZGl2LmRlDQppbnN0aXR1dGU6ICIqKkluc3RpdHV0ZSoqOiBHZXJtYW4gQ2VudHJlIGZvciBJbnRlZ3JhdGl2ZSBCaW9kaXZlcnNpdHkgUmVzZWFyY2ggKGlEaXYpIg0KZGF0ZTogImByIFN5cy5EYXRlKClgIg0Kb3V0cHV0Og0KIGh0bWxfbm90ZWJvb2s6DQogICAgaGlnaGxpZ2h0OiB0YW5nbw0KLS0tDQo8aW1nIHNyYz0iQzpcZ2l0cmVwb1xCLUN1YmVkX2RhdGFfbW9iaWxpemF0aW9uXGlucHV0XGxvZ29zXGlkaXYrYjMrRVUucG5nIiBzdHlsZT0nd2lkdGg6IDQwMHB4OyBwb3NpdGlvbjphYnNvbHV0ZTsgdG9wOjQ1cHg7IHJpZ2h0OjBweDsgcGFkZGluZzo1cHg7Jy8+DQotLS0NCg0KDQojIyMgSW50cm9kdWN0aW9uDQpJbiB0aGlzIG5vdGVib29rIHdlIHByZXBhcmUgdGhlIGBzcGVjaWVzVXNhZ2VLZXlgIGZvciBiaXJkcyBsaXN0ZWQgaW4gQW5uZXggSSBvZiB0aGUgQmlyZHMgRGlyZWN0aXZlLiBTdWJzZXF1ZW50bHksIHdlIHdpbGwgd29yayB3aXRoIHRoZSBHQklGIG9jY3VycmVuY2UgZGF0YSBhbmQgdGhlcmVmb3JlIHVzZSB0aGUgYHNwZWNpZXNVc2FnZUtleWAgaW4gaXRzIGJhY2tib25lIHRheG9ub215Lg0KV2UgaGF2ZSBwcmV2aW91c2x5IHByZXBhcmVkIGEgbGlzdCBmcm9tIEFubmV4IEkgb2YgdGhlIEJpcmRzIERpcmVjdGl2ZSB0aGF0IGluY2x1ZGVzIHRoZSB0YXhvbm9teS4NCg0KKk5vdGU6IFRoaXMgc2VyaWVzIG9mIG5vdGVib29rcyBpcyBwYXJ0IG9mIHRoZSByZXN1bHRzIG9mIFRhc2sgMy4zIG9mIHRoZSBbQmlvZGl2ZXJzaXR5IEJ1aWxkaW5nIEJsb2NrcyBmb3IgUG9saWN5XShodHRwczovL2ItY3ViZWQuZXUvKSBwcm9qZWN0IGZ1bmRlZCBieSB0aGUgRXVyb3BlYW4gVW5pb27igJlzIEhvcml6b24gRXVyb3BlIFJlc2VhcmNoIGFuZCBJbm5vdmF0aW9uIFByb2dyYW1tZSAoSUQgTm8gMTAxMDU5NTkyKS4gQWRkaXRpb25hbCBub3RlYm9va3MgZXhwbG9yaW5nIHRoZSByZXN1bHRzIGFuZCBjYWxjdWxhdGluZyBzaW1wbGUgbWV0cmljcyBhcmUgYWxzbyBhdmFpbGFibGUgaW4gdGhlIHNhbWUgcmVwb3NpdG9yeS4qDQoNCiMjIyBMb2FkIExpYnJhcmllcw0KYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9DQprbml0cjo6b3B0c19jaHVuayRzZXQobWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRSkNCmBgYA0KDQoNCmBgYHtyfQ0Kcm0obGlzdD1scygpKQ0KZ2MoKQ0KDQojIExvYWQgcmVxdWllcmVkIGxpYnJhcmllcw0KbGlicmFyeShoZXJlKQ0KbGlicmFyeShkcGx5cikNCmBgYA0KDQojIyMgRGF0YSBQcmUtcHJvY2Vzc2luZw0KDQpGaXJzdCB3ZSBzdGFydCBsb2FkaW5nIHRoZSBzcGVjaWVzIHRheG9ub215IG9idGFpbmVkIHRocm91Z2ggdGhlIFtnYmlmIHNwY2llcyBtYXRjaGluZyB0b29sXShodHRwczovL3d3dy5nYmlmLm9yZy90b29scy9zcGVjaWVzLWxvb2t1cCkuDQpgYGB7cn0NCiMgTG9hZCBzcGVjaWVzIHRheG9ub215IG9ubHkgd2l0aCDigJhhY2NlcHRlZOKAmSBzY2llbnRpZmljIG5hbWVzIGluIHRoZSBHQklGIGJhY2tib25lIHRheG9ub215DQp0YXggPC0gcmVhZC5jc3YoaGVyZSgiaW5wdXQvZGF0YS9iaXJkcy90YXhvbm9teS9saXN0MTkzYmlyZHNfZGlyZWN0aXZlX2FubmV4aV9tYXRjaF9nYmlmX3VwZGF0ZWQuY3N2IikpDQpgYGANCg0KQXMgc29tZSBvZiB0aGUgc2NpZW50aWZpYyBuYW1lcyBpbiBBbm5leCBJIG9mIHRoZSBCaXJkcyBEaXJlY3RpdmUgYXJlIGNvbnNpZGVyZWQgc3lub255bXMgYnkgdGhlIEdCSUYgYmFja2JvbmUgdGF4b25vbXksIHdlIHdpbGwgdXNlIHRoZSBgYWNjZXB0ZWRVc2FnZUtleWAgZm9yIHRoZSBzeW5vbnltcyBhbmQgdGhlIGBrZXlgIGZvciB0aGUgYWNjZXB0ZWQgc2NpZW50aWZpYyBuYW1lcy4gVG8gZG8gdGhpcywgd2Ugd2lsbCBmaWxsIGluIHRoZSBgYWNjZXB0ZWRVc2FnZUtleWAgY29sdW1uIHdpdGggdGhlIGtleSBmb3IgYWNjZXB0ZWQgbmFtZXMsIGFuZCBrZWVwIHRoZSBgYWNjZXB0ZWRVc2FnZUtleWAgZm9yIHN5bm9ueW1zLg0KYGBge3J9DQojIE1lcmdlIGluIG9uZSBjb2x1bW4gYGtleWAgb2YgYWNjZXB0ZWQgbmFtZXMgYW5kIGBhY2NlcHRlZFVzYWdlS2V5YCBvZiBzeW5vbnltcw0KdXNhZ2VrZXlzIDwtIHRheCAlPiUNCiAgbXV0YXRlKGFjY2VwdGVkVXNhZ2VLZXkgPSBjb2FsZXNjZShhY2NlcHRlZFVzYWdlS2V5LCBrZXkpKQ0KDQojIFdyaXRlIENTViB3aXRoIGBhY2NlcHRlZFVzYWdlS2V5YCBmb3IgYWxsIHNwZWNpZXMgdG8gYmUgdXNlZCBpbiB0aGUgSlNPTiBxdWVyeQ0Kd3JpdGUuY3N2KHVzYWdla2V5cywgaGVyZSgiaW5wdXQvZGF0YS9iaXJkcy90YXhvbm9teS9saXN0MTkzYmlyZHNfZGlyZWN0aXZlX2FubmV4aV9hbGxhY2NlcHRlZF91c2FnZWtleV9nYmlmLmNzdiIpKQ0KYGBg</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogPHNwYW4gc3R5bGU9ImNvbG9yOiMwMDU4NTciPkRhdGEgbW9iaWxpc2F0aW9uIGZyb20gR0JJRiA8YnI+IHRvIHRoZSBFQlYgRGF0YSBQb3J0YWw8c3Bhbj4NCnN1YnRpdGxlOiA8c3BhbiBzdHlsZT0iY29sb3I6IzQ3QTUyQSI+IFByZS1wcm9jZXNzaW5nIG5vdGVib29rIC0gSGFybW9uaXNhdGlvbiBvZiBzcGVjaWVzIGtleXMgZm9yIHRoZSBKU09OIHF1ZXJ5IDxicj4gb2Ygc3BlY2llcyBsaXN0ZWQgaW4gdGhlIEFubmV4IEkgb2YgdGhlIEJpcmRzIERpcmVjdGl2ZQ0KYXV0aG9yOiANCiAgLSBuYW1lOiAiTGluYSBFc3R1cGluYW4tU3VhcmV6LCBNaWd1ZWwgRmVybmFuZGV6Ig0KICAgIGFmZmlsaWF0aW9uOiAiR2VybWFuIENlbnRyZSBmb3IgSW50ZWdyYXRpdmUgQmlvZGl2ZXJzaXR5IFJlc2VhcmNoIChpRGl2KSINCiAgICBlbWFpbDogbGluYS5lc3R1cGluYW5zQGlkaXYuZGUNCmluc3RpdHV0ZTogIioqSW5zdGl0dXRlKio6IEdlcm1hbiBDZW50cmUgZm9yIEludGVncmF0aXZlIEJpb2RpdmVyc2l0eSBSZXNlYXJjaCAoaURpdikiDQpkYXRlOiAiYHIgU3lzLkRhdGUoKWAiDQpvdXRwdXQ6DQogaHRtbF9ub3RlYm9vazoNCiAgICBoaWdobGlnaHQ6IHRhbmdvDQotLS0NCjxpbWcgc3JjPSJDOlxnaXRyZXBvXEItQ3ViZWRfZGF0YV9tb2JpbGl6YXRpb25caW5wdXRcbG9nb3NcaWRpditiMytFVS5wbmciIHN0eWxlPSd3aWR0aDogNDAwcHg7IHBvc2l0aW9uOmFic29sdXRlOyB0b3A6NDVweDsgcmlnaHQ6MHB4OyBwYWRkaW5nOjVweDsnLz4NCi0tLQ0KDQoNCiMjIyBJbnRyb2R1Y3Rpb24NCkluIHRoaXMgbm90ZWJvb2sgd2UgcHJlcGFyZSB0aGUgYHNwZWNpZXNVc2FnZUtleWAgZm9yIGJpcmRzIGxpc3RlZCBpbiBBbm5leCBJIG9mIHRoZSBCaXJkcyBEaXJlY3RpdmUuIFN1YnNlcXVlbnRseSwgd2Ugd2lsbCB3b3JrIHdpdGggdGhlIEdCSUYgb2NjdXJyZW5jZSBkYXRhIGFuZCB0aGVyZWZvcmUgdXNlIHRoZSBgc3BlY2llc1VzYWdlS2V5YCBpbiBpdHMgYmFja2JvbmUgdGF4b25vbXkuDQpXZSBoYXZlIHByZXZpb3VzbHkgcHJlcGFyZWQgYSBsaXN0IGZyb20gQW5uZXggSSBvZiB0aGUgQmlyZHMgRGlyZWN0aXZlIHRoYXQgaW5jbHVkZXMgdGhlIHRheG9ub215LiBwcm9jDQoNCipOb3RlOiBUaGlzIHNlcmllcyBvZiBub3RlYm9va3MgaXMgcGFydCBvZiB0aGUgcmVzdWx0cyBvZiBUYXNrIDMuMyBvZiB0aGUgW0Jpb2RpdmVyc2l0eSBCdWlsZGluZyBCbG9ja3MgZm9yIFBvbGljeV0oaHR0cHM6Ly9iLWN1YmVkLmV1LykgcHJvamVjdCBmdW5kZWQgYnkgdGhlIEV1cm9wZWFuIFVuaW9u4oCZcyBIb3Jpem9uIEV1cm9wZSBSZXNlYXJjaCBhbmQgSW5ub3ZhdGlvbiBQcm9ncmFtbWUgKElEIE5vIDEwMTA1OTU5MikuIEFkZGl0aW9uYWwgbm90ZWJvb2tzIGV4cGxvcmluZyB0aGUgcmVzdWx0cyBhbmQgY2FsY3VsYXRpbmcgc2ltcGxlIG1ldHJpY3MgYXJlIGFsc28gYXZhaWxhYmxlIGluIHRoZSBzYW1lIHJlcG9zaXRvcnkuKg0KDQojIyMgTG9hZCBMaWJyYXJpZXMNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0UpDQpgYGANCg0KDQpgYGB7cn0NCnJtKGxpc3Q9bHMoKSkNCmdjKCkNCg0KIyBMb2FkIHJlcXVpZXJlZCBsaWJyYXJpZXMNCmxpYnJhcnkoaGVyZSkNCmxpYnJhcnkoZHBseXIpDQpgYGANCg0KIyMjIERhdGEgUHJlLXByb2Nlc3NpbmcNCg0KRmlyc3Qgd2Ugc3RhcnQgbG9hZGluZyB0aGUgc3BlY2llcyB0YXhvbm9teSBvYnRhaW5lZCB0aHJvdWdoIHRoZSBbZ2JpZiBzcGNpZXMgbWF0Y2hpbmcgdG9vbF0oaHR0cHM6Ly93d3cuZ2JpZi5vcmcvdG9vbHMvc3BlY2llcy1sb29rdXApLg0KYGBge3J9DQojIExvYWQgc3BlY2llcyB0YXhvbm9teSBvbmx5IHdpdGgg4oCYYWNjZXB0ZWTigJkgc2NpZW50aWZpYyBuYW1lcyBpbiB0aGUgR0JJRiBiYWNrYm9uZSB0YXhvbm9teQ0KdGF4IDwtIHJlYWQuY3N2KGhlcmUoImlucHV0L2RhdGEvYmlyZHMvdGF4b25vbXkvbGlzdDE5M2JpcmRzX2RpcmVjdGl2ZV9hbm5leGlfbWF0Y2hfZ2JpZl91cGRhdGVkLmNzdiIpKQ0KYGBgDQoNCkFzIHNvbWUgb2YgdGhlIHNjaWVudGlmaWMgbmFtZXMgaW4gQW5uZXggSSBvZiB0aGUgQmlyZHMgRGlyZWN0aXZlIGFyZSBjb25zaWRlcmVkIHN5bm9ueW1zIGJ5IHRoZSBHQklGIGJhY2tib25lIHRheG9ub215LCB3ZSB3aWxsIHVzZSB0aGUgYGFjY2VwdGVkVXNhZ2VLZXlgIGZvciB0aGUgc3lub255bXMgYW5kIHRoZSBga2V5YCBmb3IgdGhlIGFjY2VwdGVkIHNjaWVudGlmaWMgbmFtZXMuIFRvIGRvIHRoaXMsIHdlIHdpbGwgZmlsbCBpbiB0aGUgYGFjY2VwdGVkVXNhZ2VLZXlgIGNvbHVtbiB3aXRoIHRoZSBrZXkgZm9yIGFjY2VwdGVkIG5hbWVzLCBhbmQga2VlcCB0aGUgYGFjY2VwdGVkVXNhZ2VLZXlgIGZvciBzeW5vbnltcy4gVGh1cywgdGhlIGFjY2VwdGVkIGtleXMgZm9yIGFsbCBzcGVjaWVzIGluIHRoZSBsaXN0IHdpbGwgYXBwZWFyIGluIHRoZSBgYWNjZXB0ZWRVc2FnZUtleWAgY29sdW1uLg0KYGBge3J9DQojIE1lcmdlIGluIG9uZSBjb2x1bW4gYGtleWAgb2YgYWNjZXB0ZWQgbmFtZXMgYW5kIGBhY2NlcHRlZFVzYWdlS2V5YCBvZiBzeW5vbnltcw0KdXNhZ2VrZXlzIDwtIHRheCAlPiUNCiAgbXV0YXRlKGFjY2VwdGVkVXNhZ2VLZXkgPSBjb2FsZXNjZShhY2NlcHRlZFVzYWdlS2V5LCBrZXkpKQ0KDQojIFdyaXRlIENTViB3aXRoIGBhY2NlcHRlZFVzYWdlS2V5YCBmb3IgYWxsIHNwZWNpZXMgdG8gYmUgdXNlZCBpbiB0aGUgSlNPTiBxdWVyeQ0Kd3JpdGUuY3N2KHVzYWdla2V5cywgaGVyZSgiaW5wdXQvZGF0YS9iaXJkcy90YXhvbm9teS9saXN0MTkzYmlyZHNfZGlyZWN0aXZlX2FubmV4aV9hbGxhY2NlcHRlZF91c2FnZWtleV9nYmlmLmNzdiIpLCByb3cubmFtZXMgPSBGQUxTRSkNCmBgYA==</div>
 
 
 

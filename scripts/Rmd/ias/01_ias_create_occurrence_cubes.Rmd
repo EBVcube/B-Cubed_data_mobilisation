@@ -93,7 +93,7 @@ The resulting occurrence cube is in CSV format. The number of species occurrence
 c1 <- read.csv(paste0(path_out, "/", response,".csv"), sep = "\t")
 colnames(c1)
 ```
-Alternatively, we can use the `process_cube` function from the `b3gbi` library.
+Alternatively, we can use the `process_cube` function from the [b3gbi](https://b-cubed-eu.github.io/b3gbi/articles/b3gbi.html) library.
 
 ```{r}
 # Prepare cube using b3gbi

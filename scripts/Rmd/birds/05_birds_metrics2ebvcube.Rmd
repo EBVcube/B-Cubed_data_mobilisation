@@ -122,7 +122,7 @@ entity_names <- ebv_properties(out, verbose=F)@general$entity_names
 
 Map input data to the empty NetCDF
 ```{r}
-for(i in 1:length(spskey)){
+for(i in 1:length(spskey)){ # uncomment lines was used to create the HTML and PDS due to the large outcome messages when running the loop
 print(i)
 spx <- which(spskey == spstax[["acceptedUsageKey"]][i])
   ebv_add_data(filepath_nc = out,
