@@ -1,16 +1,17 @@
 # B-Cubed_data_mobilisation
-This repository documents the development of the first B-Cubed data mobilisation. Data will be mobilised from GBIF to the EBV Portals using both the B-Cubed software developed by GBIF and the ebvcube package.
+This repository documents the development of the first B-Cubed data mobilisation. Data has been mobilised from GBIF to the EBV Portal using both the B-Cubed software developed by GBIF and the ebvcube package.
 
-We start by mobilising the occurrence of species listed in:
+We have started by mobilising the occurrence of species listed in:
 1. The list of Invasive Alien Species (IAS) of EU concern (88 species).
 2. Annex I of the Birds Directive (~200 species)
 
 Later we will mobilise:
 3. The Global Reptile Assessment (~10000 species) 
 
-The specifications for the generation of the occurence cubes can be found in separate files in this repository. 
+The specifications for the generation of the occurence cubes (JSON format) can be found in separate files in this repository. 
 
 The code is available in Rmarkdown and rendered as HTML and PDF notebooks. The notebooks are listed in Table 1 for Annex I of the Birds Directive and in Table 2 for IAS of Union concern.
+
 
 Table 1. Data Mobilisation Notebooks from GBIF to the EBV Data Portal for the Birds Directive Annex I (path: scripts/Rmd/birds). _*Preprocessing notebook_.
 | Title/Subtitle                                                                                                                      | File name                                   |
@@ -31,3 +32,5 @@ Table 2. Data Mobilisation Notebooks from GBIF to the EBV Data Portal for IAS of
 | Notebook 02 - Data exploration of the IAS occurrence cube                           |  02_ias_data_exploration.Rmd       |
 |  Notebook 03 - Metrics computation for the IAS occurrences cube                     | 03_ias_computing_metrics_cubes.Rmd |
 | Notebook 04 - Creation of the EBV NetCDF for the IAS occurrences cube metrics0      | 04_ias_metrics2ebvcube.Rmd         |
+
+The resulting datasets can be visualised and accessed through the [EBV Data Portal](https://portal.geobon.org/home) [DOI 10.25829/mbw554](https://doi.org/10.25829/mbw554) and [DOI 10.25829/w0vf54](https://doi.org/10.25829/w0vf54).
